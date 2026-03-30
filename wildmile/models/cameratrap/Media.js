@@ -42,6 +42,12 @@ const MediaSchema = new mongoose.Schema(
         confBlank: Number,
         confHuman: Number,
         confAnimal: Number,
+        animalDetections: [
+          {
+            bbox: [Number],
+            conf: Number,
+          },
+        ],
       },
     ],
     favorite: {
