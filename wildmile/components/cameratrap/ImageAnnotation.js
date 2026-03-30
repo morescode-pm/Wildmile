@@ -32,6 +32,7 @@ import {
   IconPhotoSearch,
   IconZoomQuestion,
   IconMoodWrrr,
+  IconFocus2,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useImage, useSelection, useRecentSpecies } from "./ContextCamera";
@@ -55,6 +56,7 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
   const [vehiclePresent, setVehiclePresent] = useState(false);
   const [needsReview, setNeedsReview] = useState(false);
   const [flagged, setFlagged] = useState(false);
+  const [showAIBoxes, setShowAIBoxes] = useState(false);
 
   useEffect(() => {
     if (currentImage) {
@@ -301,13 +303,51 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
             // doubleClick={{ disabled: true }} // optional: disable double-click zoom
           >
             <TransformComponent>
-              <Image
-                src={currentImage.publicURL}
-                fit="contain"
-                // maxHeight={700}
-                width="100%"
-                alt="Wildlife image"
-              />
+              <div style={{ position: "relative", width: "100%" }}>
+                <Image
+                  src={currentImage.publicURL}
+                  fit="contain"
+                  // maxHeight={700}
+                  width="100%"
+                  alt="Wildlife image"
+                />
+                {showAIBoxes &&
+                  currentImage.aiResults?.[0]?.animalDetections?.map(
+                    (detection, index) => {
+                      const [xmin, ymin, width, height] = detection.bbox;
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            position: "absolute",
+                            left: `${xmin * 100}%`,
+                            top: `${ymin * 100}%`,
+                            width: `${width * 100}%`,
+                            height: `${height * 100}%`,
+                            border: "2px solid #00ff00",
+                            pointerEvents: "none",
+                            boxSizing: "border-box",
+                            zIndex: 10,
+                          }}
+                        >
+                          <Badge
+                            variant="filled"
+                            color="green"
+                            size="xs"
+                            style={{
+                              position: "absolute",
+                              top: -20,
+                              left: 0,
+                              pointerEvents: "none",
+                            }}
+                          >
+                            {Math.round(detection.conf * 100)}%
+                          </Badge>
+                        </div>
+                      );
+                    }
+                  )}
+              </div>
             </TransformComponent>
           </TransformWrapper>
           <ActionIcon
@@ -342,6 +382,21 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
               >
                 <IconLink />
               </ActionIcon>
+              <Tooltip label="Show AI Detections">
+                <ActionIcon
+                  onClick={() => setShowAIBoxes((prev) => !prev)}
+                  variant={showAIBoxes ? "filled" : "outline"}
+                  color="blue"
+                  disabled={
+                    !currentImage.aiResults ||
+                    currentImage.aiResults.length === 0 ||
+                    !currentImage.aiResults[0].animalDetections ||
+                    currentImage.aiResults[0].animalDetections.length === 0
+                  }
+                >
+                  <IconFocus2 />
+                </ActionIcon>
+              </Tooltip>
               <Tooltip label="Need Help with ID">
                 <ActionIcon
                   onClick={handleNeedsReview}
@@ -527,13 +582,51 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
             // doubleClick={{ disabled: true }} // optional: disable double-click zoom
           >
             <TransformComponent>
-              <Image
-                src={currentImage.publicURL}
-                fit="contain"
-                // height="100vh"
-                // width="90vw"
-                alt="Enlarged wildlife image"
-              />
+              <div style={{ position: "relative", width: "100%" }}>
+                <Image
+                  src={currentImage.publicURL}
+                  fit="contain"
+                  // height="100vh"
+                  // width="90vw"
+                  alt="Enlarged wildlife image"
+                />
+                {showAIBoxes &&
+                  currentImage.aiResults?.[0]?.animalDetections?.map(
+                    (detection, index) => {
+                      const [xmin, ymin, width, height] = detection.bbox;
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            position: "absolute",
+                            left: `${xmin * 100}%`,
+                            top: `${ymin * 100}%`,
+                            width: `${width * 100}%`,
+                            height: `${height * 100}%`,
+                            border: "2px solid #00ff00",
+                            pointerEvents: "none",
+                            boxSizing: "border-box",
+                            zIndex: 10,
+                          }}
+                        >
+                          <Badge
+                            variant="filled"
+                            color="green"
+                            size="xs"
+                            style={{
+                              position: "absolute",
+                              top: -20,
+                              left: 0,
+                              pointerEvents: "none",
+                            }}
+                          >
+                            {Math.round(detection.conf * 100)}%
+                          </Badge>
+                        </div>
+                      );
+                    }
+                  )}
+              </div>
             </TransformComponent>
           </TransformWrapper>
         </div>
