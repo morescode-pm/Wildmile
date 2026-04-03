@@ -146,8 +146,9 @@ export async function GET(request) {
 
   try {
     let image;
-
-    if (direction === "oldest") {
+    if (selectedImageId) {
+      image = await CameratrapMedia.findById(selectedImageId);
+    } else if (direction === "oldest") {
       image = await CameratrapMedia.findOne(query)
         .sort({ timestamp: 1 })
         .lean();
@@ -167,8 +168,6 @@ export async function GET(request) {
         query.timestamp = { ...query.timestamp, ...timeCondition };
         image = await CameratrapMedia.findOne(query).sort(sort).lean();
       }
-    } else if (selectedImageId) {
-      image = await CameratrapMedia.findById(selectedImageId);
     } else {
       image = await CameratrapMedia.findOneRandom(query);
     }
