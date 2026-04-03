@@ -81,7 +81,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       setAppliedFilters(currentInitialFilters); // Set state after fetching
 
       if (initialImageId) {
-        fetchCamtrapImage({ ...currentInitialFilters, selectedImageId: initialImageId });
+        fetchCamtrapImage({ selectedImageId: initialImageId });
       } else {
         fetchCamtrapImage(currentInitialFilters);
       }

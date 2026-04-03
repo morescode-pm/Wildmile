@@ -35,14 +35,32 @@ export async function GET(request) {
     }
   }
 
+  if (selectedImageId) {
+    try {
+      const image = await CameratrapMedia.findOne({
+        mediaID: selectedImageId,
+      }).lean();
+      if (image) {
+        return NextResponse.json(image);
+      }
+      return NextResponse.json(
+        { message: "No images found matching the criteria" },
+        { status: 404 },
+      );
+    } catch (error) {
+      console.error("Error fetching selected image:", error);
+      return NextResponse.json(
+        { message: "Error fetching camera trap image", error: error.message },
+        { status: 500 },
+      );
+    }
+  }
+
   let query = {};
   let timeQuery = [];
 
   query.flagged = { $ne: true };
 
-  if (selectedImageId) {
-    query.mediaID = selectedImageId;
-  }
   if (deploymentId) {
     query.deploymentId = deploymentId;
   }
@@ -146,9 +164,7 @@ export async function GET(request) {
 
   try {
     let image;
-    if (selectedImageId) {
-      image = await CameratrapMedia.findById(selectedImageId);
-    } else if (direction === "oldest") {
+    if (direction === "oldest") {
       image = await CameratrapMedia.findOne(query)
         .sort({ timestamp: 1 })
         .lean();
