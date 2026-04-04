@@ -18,6 +18,10 @@ const MediaSchema = new mongoose.Schema(
       required: true,
     },
     publicURL: String,
+    videoUrl: {
+      type: String,
+      default: null,
+    },
     relativePath: [String],
     filePath: String,
     filePublic: Boolean,
