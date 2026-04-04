@@ -88,8 +88,10 @@ UserProgressSchema.methods.checkAchievements = async function () {
   // First validate existing achievements
   await this.validateAchievements();
 
-  // Get all active achievements
-  const achievements = await Achievement.find({ isActive: true });
+  // Get all active achievements and sort by level to ensure correct rank progression
+  const achievements = await Achievement.find({ isActive: true }).sort({
+    level: 1,
+  });
   console.log(`Found ${achievements.length} active achievements`);
 
   // Remove any unearned achievements to prevent duplicates
@@ -170,6 +172,14 @@ UserProgressSchema.methods.checkAchievements = async function () {
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
         }
+
+        // Update domain rank if eligible (even if previously earned)
+        // Since achievements are sorted by level, the highest eligible rank will be set last
+        if (eligible) {
+          const domainRank = this.domainRanks.get(achievement.domain) || {};
+          domainRank.currentRank = achievement._id;
+          this.domainRanks.set(achievement.domain, domainRank);
+        }
       } else {
         // Add new achievement
         console.log(`Adding new achievement: ${achievement.name}`);
@@ -249,12 +259,15 @@ UserProgressSchema.methods.checkAchievements = async function () {
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
 
-          // Update domain rank
+          newAchievements.push(achievement);
+        }
+
+        // Always update domain rank if eligible (even if previously earned)
+        // Since achievements are sorted by level, the highest eligible rank will be set last
+        if (eligible) {
           const domainRank = this.domainRanks.get(achievement.domain) || {};
           domainRank.currentRank = achievement._id;
           this.domainRanks.set(achievement.domain, domainRank);
-
-          newAchievements.push(achievement);
         }
       }
     } catch (error) {
