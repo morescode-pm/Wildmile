@@ -33,6 +33,7 @@ import {
   IconZoomQuestion,
   IconMoodWrrr,
   IconFocus2,
+  IconPlayerPlay,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useImage, useSelection, useRecentSpecies } from "./ContextCamera";
@@ -57,6 +58,7 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
   const [needsReview, setNeedsReview] = useState(false);
   const [flagged, setFlagged] = useState(false);
   const [showAIBoxes, setShowAIBoxes] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (currentImage) {
@@ -397,6 +399,16 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
                   <IconFocus2 />
                 </ActionIcon>
               </Tooltip>
+              <Tooltip label="Play Video">
+                <ActionIcon
+                  onClick={() => setShowVideo(true)}
+                  variant="outline"
+                  color="teal"
+                  disabled={!currentImage?.videoUrl}
+                >
+                  <IconPlayerPlay />
+                </ActionIcon>
+              </Tooltip>
               <Tooltip label="Need Help with ID">
                 <ActionIcon
                   onClick={handleNeedsReview}
@@ -630,6 +642,23 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
             </TransformComponent>
           </TransformWrapper>
         </div>
+      </Modal>
+      <Modal
+        opened={showVideo}
+        onClose={() => setShowVideo(false)}
+        title="Attached Video"
+        size="lg"
+      >
+        {currentImage?.videoUrl && (
+          <video
+            src={currentImage.videoUrl}
+            controls
+            autoPlay
+            style={{ width: "100%", maxHeight: "80vh" }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        )}
       </Modal>
     </>
   );
