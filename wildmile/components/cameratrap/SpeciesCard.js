@@ -25,7 +25,7 @@ import { useSelection } from "components/cameratrap/ContextCamera";
 
 export function SpeciesCards(results) {
   const result_values = results.map((result) => ({
-    id: result.id,
+    id: result.taxonId || result.id,
     title: result.preferred_common_name || result.name || "",
     subtitle: result.name || "",
     image:
@@ -45,7 +45,9 @@ export function SpeciesCards(results) {
 // only have a name property). The name fallback is a single string
 // comparison so there's no meaningful performance cost.
 function isSelectedSpecies(item, inatResult) {
-  if (item.id != null && inatResult.id != null && item.id === inatResult.id) {
+  const itemId = item.taxonId || item.id;
+  const inatId = inatResult.taxonId || inatResult.id;
+  if (itemId != null && inatId != null && itemId === inatId) {
     return true;
   }
   if (item.name && inatResult.name && item.name === inatResult.name) {
