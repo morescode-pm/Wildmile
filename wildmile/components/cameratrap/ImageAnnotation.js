@@ -399,16 +399,17 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
                   <IconFocus2 />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Play Video">
-                <ActionIcon
-                  onClick={() => setShowVideo(true)}
-                  variant="outline"
-                  color="teal"
-                  disabled={!currentImage?.videoUrl}
-                >
-                  <IconPlayerPlay />
-                </ActionIcon>
-              </Tooltip>
+              {currentImage?.videoUrl && (
+                <Tooltip label="Play Video">
+                  <ActionIcon
+                    onClick={() => setShowVideo(true)}
+                    variant="outline"
+                    color="teal"
+                  >
+                    <IconPlayerPlay />
+                  </ActionIcon>
+                </Tooltip>
+              )}
               <Tooltip label="Need Help with ID">
                 <ActionIcon
                   onClick={handleNeedsReview}

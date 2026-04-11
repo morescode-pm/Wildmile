@@ -196,17 +196,18 @@ function ImageInfo({ image, onVideoClick }) {
           })}
         </Text>
         <Group gap={4} wrap="nowrap">
-          <Tooltip label="Play Video">
-            <ActionIcon
-              onClick={onVideoClick}
-              variant="subtle"
-              size="xs"
-              color="teal"
-              disabled={!image?.videoUrl}
-            >
-              <IconPlayerPlay size={14} />
-            </ActionIcon>
-          </Tooltip>
+          {image?.videoUrl && (
+            <Tooltip label="Play Video">
+              <ActionIcon
+                onClick={onVideoClick}
+                variant="subtle"
+                size="xs"
+                color="teal"
+              >
+                <IconPlayerPlay size={14} />
+              </ActionIcon>
+            </Tooltip>
+          )}
           <Tooltip label="Go to image">
             <ActionIcon
               component={Link}
