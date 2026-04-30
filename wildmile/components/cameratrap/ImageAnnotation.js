@@ -111,10 +111,10 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
             md5: currentImage.mediaID,
             imageHash: currentImage.imageHash,
           },
-          taxonId: animal.id,
+          taxonId: animal.taxonId || animal.id,
           scientificName: animal.name,
           commonName: animal.preferred_common_name || animal.name,
-          count: animalCounts[animal.id] || 1,
+          count: animalCounts[animal.taxonId || animal.id] || 1,
           eventStart: currentImage.timestamp,
           eventEnd: currentImage.timestamp,
           observationLevel: "media",
@@ -282,7 +282,9 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
   };
 
   const handleRemoveAnimal = (animalId) => {
-    setSelection((prev) => prev.filter((animal) => animal.id !== animalId));
+    setSelection((prev) =>
+      prev.filter((animal) => (animal.taxonId || animal.id) !== animalId)
+    );
     setAnimalCounts((prev) => {
       const newCounts = { ...prev };
       delete newCounts[animalId];
@@ -468,34 +470,37 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
           <GridCol span={{ base: 12, md: 12, lg: 6 }}>
             {!noAnimalsVisible && (
               <Flex direction="column" gap="xs" mt="md">
-                {selection.map((animal) => (
-                  <div key={animal.id} className={styles.selectionContainer}>
-                    <div className={styles.selectionContent}>
-                      <Text className={styles.speciesName}>
-                        {animal.preferred_common_name || animal.name}
-                      </Text>
-                      <div className={styles.controls}>
-                        <NumberInput
-                          value={animalCounts[animal.id] || 1}
-                          onChange={(value) =>
-                            handleCountChange(animal.id, value)
-                          }
-                          min={1}
-                          max={100}
-                          style={{ width: 80 }}
-                        />
-                        <ActionIcon
-                          color="red"
-                          variant="subtle"
-                          onClick={() => handleRemoveAnimal(animal.id)}
-                          className={styles.removeButton}
-                        >
-                          <IconX size={16} />
-                        </ActionIcon>
+                {selection.map((animal) => {
+                  const animalId = animal.taxonId || animal.id;
+                  return (
+                    <div key={animalId} className={styles.selectionContainer}>
+                      <div className={styles.selectionContent}>
+                        <Text className={styles.speciesName}>
+                          {animal.preferred_common_name || animal.name}
+                        </Text>
+                        <div className={styles.controls}>
+                          <NumberInput
+                            value={animalCounts[animalId] || 1}
+                            onChange={(value) =>
+                              handleCountChange(animalId, value)
+                            }
+                            min={1}
+                            max={100}
+                            style={{ width: 80 }}
+                          />
+                          <ActionIcon
+                            color="red"
+                            variant="subtle"
+                            onClick={() => handleRemoveAnimal(animalId)}
+                            className={styles.removeButton}
+                          >
+                            <IconX size={16} />
+                          </ActionIcon>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </Flex>
             )}
             <Group mt="xs" grow wrap="nowrap">
