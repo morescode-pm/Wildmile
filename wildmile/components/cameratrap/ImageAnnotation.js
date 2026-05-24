@@ -20,6 +20,7 @@ import {
 import {
   IconHeartPlus,
   IconHeart,
+  IconHeartFilled,
   IconSend,
   IconMaximize,
   IconLink,
@@ -124,7 +125,7 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
 
   return (
     <>
-      <Card shadow="sm" radius="md" withBorder>
+      <Card shadow="sm" radius="md" withBorder h="100%">
         <Box
           style={{
             position: "relative",
@@ -268,12 +269,15 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
                 size={16}
               >
                 <ActionIcon
-                  onClick={handleToggleFavorite}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleFavorite();
+                  }}
                   color="red"
                   variant={isFavorite ? "filled" : "outline"}
                 >
                   {isFavorite ? (
-                    <IconHeart size={24} />
+                    <IconHeartFilled size={24} />
                   ) : (
                     <IconHeartPlus size={24} />
                   )}

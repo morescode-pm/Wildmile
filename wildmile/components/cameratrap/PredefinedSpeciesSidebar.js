@@ -38,7 +38,7 @@ function iconicTaxonNameToCategory(iconic_taxon_name) {
   }
 }
 
-export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
+export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchControl }) {
   const {
     data: predefinedData,
     error: predefinedError,
@@ -171,32 +171,38 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
   }
 
   return (
-    <Stack spacing="md">
-      <Group position="apart">
-        <Text size="lg" fw={500}>
-          Common Species
-        </Text>
-        {selectedCategory === "recent" && (
-          <ActionIcon variant="subtle" onClick={handleRefresh}>
-            <IconRefresh size={20} />
-          </ActionIcon>
-        )}
+    <Stack gap="md" h="100%">
+      <Group justify="space-between" align="center">
+        <Group gap="xs">
+          <Text size="lg" fw={700}>
+            Species
+          </Text>
+          {selectedCategory === "recent" && (
+            <ActionIcon variant="subtle" onClick={handleRefresh} size="sm">
+              <IconRefresh size={16} />
+            </ActionIcon>
+          )}
+        </Group>
+        {searchControl}
       </Group>
 
       <SegmentedControl
         value={selectedCategory}
         onChange={handleCategoryChange}
         data={categoryData}
-        size="md"
+        size="xs"
+        fullWidth
       />
 
       {selectedCategory && filteredResults?.length > 0 && (
-        <SimpleGrid cols={3} spacing="md">
-          <Species
-            results={filteredResults}
-            onSpeciesSelect={onSpeciesSelect}
-          />
-        </SimpleGrid>
+        <ScrollArea h={600} offsetScrollbars>
+          <SimpleGrid cols={2} spacing="xs">
+            <Species
+              results={filteredResults}
+              onSpeciesSelect={onSpeciesSelect}
+            />
+          </SimpleGrid>
+        </ScrollArea>
       )}
     </Stack>
   );

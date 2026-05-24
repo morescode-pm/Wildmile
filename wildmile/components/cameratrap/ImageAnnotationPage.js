@@ -179,8 +179,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <>
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
-      <Grid>
-        <GridCol span={12}>
+      <Grid align="stretch">
+        <GridCol span={{ base: 12, md: 5, lg: 5 }}>
           <Group gap="xs" justify="center" mb="md">
             <ButtonGroup>
               <Tooltip label="Previous Image">
@@ -210,9 +210,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
               deployments={deployments}
             />
           </Group>
-        </GridCol>
-
-        <GridCol span={{ base: 12, md: 5, lg: 5 }}>
           <ImageAnnotation
             fetchNextImage={fetchNextImage}
             filters={appliedFilters}
@@ -224,9 +221,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         </GridCol>
 
         <GridCol span={{ base: 12, md: 4, lg: 4 }}>
-          <ScrollArea style={{ height: "85vh" }} offsetScrollbars>
-            <WildlifeSearch />
-          </ScrollArea>
+          <WildlifeSearch />
         </GridCol>
       </Grid>
     </>

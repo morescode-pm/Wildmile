@@ -44,6 +44,7 @@ export function ObservationTally({ fetchNextImage }) {
       setComments(currentImage.mediaComments || []);
       // Reset local states for new image
       setAnimalCounts({});
+      setSelection([]); // Reset animal selection for new image
       setObsState({
         humanPresent: false,
         vehiclePresent: false,
@@ -51,7 +52,7 @@ export function ObservationTally({ fetchNextImage }) {
         comment: "",
       });
     }
-  }, [currentImage, setAnimalCounts, setObsState]);
+  }, [currentImage, setAnimalCounts, setObsState, setSelection]);
 
   const handleCountChange = (id, value) => {
     setAnimalCounts((prev) => ({ ...prev, [id]: value }));
@@ -218,15 +219,15 @@ export function ObservationTally({ fetchNextImage }) {
   if (!currentImage) return null;
 
   return (
-    <Paper shadow="xs" p="md" withBorder radius="md">
-      <Stack gap="md">
+    <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
+      <Stack gap="md" h="100%">
         <Text fw={700}>Observations</Text>
 
         {!noAnimalsVisible && (
-          <ScrollArea h={300} offsetScrollbars scrollbarSize={4}>
+          <ScrollArea h={350} offsetScrollbars scrollbarSize={4}>
             <Flex direction="column" gap="xs">
               {selection.map((animal) => (
-                <div key={animal.id} className={styles.selectionContainer}>
+                <div key={animal.taxonId || animal.id || animal.name} className={styles.selectionContainer}>
                   <div className={styles.selectionContent}>
                     <Text className={styles.speciesName}>
                       {animal.preferred_common_name || animal.name}
@@ -291,7 +292,7 @@ export function ObservationTally({ fetchNextImage }) {
           </Button>
         )}
 
-        <Stack gap="xs">
+        <Stack gap="xs" style={{ flex: 1 }}>
           <Group mt="xs">
             <TextInput
               placeholder="Add a comment..."
@@ -303,7 +304,7 @@ export function ObservationTally({ fetchNextImage }) {
               <IconSend size={24} />
             </ActionIcon>
           </Group>
-          <ScrollArea h={150} offsetScrollbars>
+          <ScrollArea h={200} offsetScrollbars>
             <Stack gap="xs">
               {comments.map((comment, index) => (
                 <Text key={index} size="sm">
