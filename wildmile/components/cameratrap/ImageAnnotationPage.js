@@ -16,6 +16,7 @@ import {
 } from "@mantine/core";
 import { useImage } from "./ContextCamera";
 import { ImageAnnotation } from "./ImageAnnotation";
+import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
@@ -176,32 +177,17 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   return (
-    // <Grid style={{ height: "calc(100vh - 60px)" }}>
     <>
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
       <Grid>
-        <GridCol
-          span={{ base: 12, md: 6, lg: 7, xl: 6 }}
-          style={{ height: "100%" }}
-        >
-          {/* <Paper
-            shadow="xs"
-            p="md"
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              // overflow: "hidden",
-            }}
-          > */}
-          <Group spacing="xs" position="center" mb="md">
+        <GridCol span={12}>
+          <Group gap="xs" justify="center" mb="md">
             <ButtonGroup>
               <Tooltip label="Previous Image">
                 <Button
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
-                  color="blue"
                 >
                   <IconArrowLeft />
                 </Button>
@@ -212,7 +198,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"
-                  color="blue"
                 >
                   <IconArrowRight />
                 </Button>
@@ -225,24 +210,22 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
               deployments={deployments}
             />
           </Group>
-
-          {/* <ScrollArea style={{ flex: 1 }} offsetScrollbars> */}
-          <ImageAnnotation
-            fetchNextImage={fetchNextImage}
-            filters={appliedFilters} // This remains the source of truth for annotations/API calls
-          />
-          {/* </ScrollArea> */}
-          {/* </Paper> */}
         </GridCol>
 
-        <GridCol
-          span={{ base: 12, md: 6, lg: 5, xl: 6 }}
-          style={{ height: "100%" }}
-        >
-          <ScrollArea style={{ height: "100%" }} offsetScrollbars>
-            {/* <Stack spacing="md"> */}
+        <GridCol span={{ base: 12, md: 5, lg: 5 }}>
+          <ImageAnnotation
+            fetchNextImage={fetchNextImage}
+            filters={appliedFilters}
+          />
+        </GridCol>
+
+        <GridCol span={{ base: 12, md: 3, lg: 3 }}>
+          <ObservationTally fetchNextImage={fetchNextImage} />
+        </GridCol>
+
+        <GridCol span={{ base: 12, md: 4, lg: 4 }}>
+          <ScrollArea style={{ height: "85vh" }} offsetScrollbars>
             <WildlifeSearch />
-            {/* </Stack> */}
           </ScrollArea>
         </GridCol>
       </Grid>
