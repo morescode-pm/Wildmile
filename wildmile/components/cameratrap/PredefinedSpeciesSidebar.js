@@ -10,6 +10,7 @@ import {
   Tooltip,
   Group,
   ActionIcon,
+  ScrollArea,
 } from "@mantine/core";
 import { IconClock, IconRefresh } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit } from "lucide-react";
