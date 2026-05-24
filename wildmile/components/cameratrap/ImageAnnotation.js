@@ -20,6 +20,8 @@ import {
   Indicator,
   Flex,
   Tooltip,
+  ScrollArea,
+  Box,
 } from "@mantine/core";
 import {
   IconHeartPlus,
@@ -297,19 +299,39 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
   return (
     <>
       <Card shadow="sm" radius="md" withBorder style={{ height: "100%" }}>
-        <div style={{ position: "relative" }}>
+        <Box
+          style={{
+            position: "relative",
+            height: "500px",
+            backgroundColor: "black",
+            borderRadius: "var(--mantine-radius-md)",
+            overflow: "hidden",
+          }}
+        >
           <TransformWrapper
             defaultScale={1}
             wheel={{ step: 0.4 }} // how fast you zoom with the mouse wheel
             pinch={{ step: 0.2 }} // how fast you zoom with pinch gesture
             // doubleClick={{ disabled: true }} // optional: disable double-click zoom
           >
-            <TransformComponent>
-              <div style={{ position: "relative", width: "100%" }}>
+            <TransformComponent
+              wrapperStyle={{
+                width: "100%",
+                height: "100%",
+              }}
+              contentStyle={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ position: "relative", width: "100%", height: "100%" }}>
                 <Image
                   src={currentImage.publicURL}
                   fit="contain"
-                  // maxHeight={700}
+                  h="100%"
                   width="100%"
                   alt="Wildlife image"
                 />
@@ -353,24 +375,26 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
             </TransformComponent>
           </TransformWrapper>
           <ActionIcon
-            style={{ position: "absolute", top: 10, right: 10 }}
+            style={{ position: "absolute", top: 10, right: 10, zIndex: 20 }}
             onClick={toggleEnlargedImage}
           >
             <IconMaximize size={24} />
           </ActionIcon>
-        </div>
+        </Box>
         <Grid>
-          {/* <Group grow wrap="nowrap"> */}
-          <Text mt="xs" size="xs" style={{ fontFamily: "monospace" }}>
-            Image Timestamp:{" "}
-            {new Date(currentImage.timestamp).toLocaleString("en-US", {
-              timeZone: "UTC",
-            })}
-          </Text>
-          <Text mt="xs" size="xs" style={{ fontFamily: "monospace" }}>
-            Media ID: {currentImage.mediaID}
-          </Text>
-          {/* </Group> */}
+          <GridCol span={12}>
+            <Group gap="xl">
+              <Text mt="xs" size="xs" style={{ fontFamily: "monospace" }}>
+                Image Timestamp:{" "}
+                {new Date(currentImage.timestamp).toLocaleString("en-US", {
+                  timeZone: "UTC",
+                })}
+              </Text>
+              <Text mt="xs" size="xs" style={{ fontFamily: "monospace" }}>
+                Media ID: {currentImage.mediaID}
+              </Text>
+            </Group>
+          </GridCol>
           <GridCol span={{ base: 12, md: 12, lg: 6 }}>
             <Group position="apart" mt="md">
               <ActionIcon
@@ -457,46 +481,55 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
                 <IconSend size={24} />
               </ActionIcon>
             </Group>
-            <Stack spacing="xs" mt="md">
-              {comments.map((comment, index) => (
-                <Text key={index} size="sm">
-                  <strong>{comment.author.name}:</strong> {comment.text}
-                </Text>
-              ))}
-            </Stack>
+            <ScrollArea h={100} offsetScrollbars mt="md">
+              <Stack gap="xs">
+                {comments.map((comment, index) => (
+                  <Text key={index} size="sm">
+                    <strong>{comment.author.name}:</strong> {comment.text}
+                  </Text>
+                ))}
+              </Stack>
+            </ScrollArea>
           </GridCol>
           <GridCol span={{ base: 12, md: 12, lg: 6 }}>
             {!noAnimalsVisible && (
-              <Flex direction="column" gap="xs" mt="md">
-                {selection.map((animal) => (
-                  <div key={animal.id} className={styles.selectionContainer}>
-                    <div className={styles.selectionContent}>
-                      <Text className={styles.speciesName}>
-                        {animal.preferred_common_name || animal.name}
-                      </Text>
-                      <div className={styles.controls}>
-                        <NumberInput
-                          value={animalCounts[animal.id] || 1}
-                          onChange={(value) =>
-                            handleCountChange(animal.id, value)
-                          }
-                          min={1}
-                          max={100}
-                          style={{ width: 80 }}
-                        />
-                        <ActionIcon
-                          color="red"
-                          variant="subtle"
-                          onClick={() => handleRemoveAnimal(animal.id)}
-                          className={styles.removeButton}
-                        >
-                          <IconX size={16} />
-                        </ActionIcon>
+              <ScrollArea
+                h={200}
+                offsetScrollbars
+                scrollbarSize={4}
+                mt="md"
+              >
+                <Flex direction="column" gap="xs">
+                  {selection.map((animal) => (
+                    <div key={animal.id} className={styles.selectionContainer}>
+                      <div className={styles.selectionContent}>
+                        <Text className={styles.speciesName}>
+                          {animal.preferred_common_name || animal.name}
+                        </Text>
+                        <div className={styles.controls}>
+                          <NumberInput
+                            value={animalCounts[animal.id] || 1}
+                            onChange={(value) =>
+                              handleCountChange(animal.id, value)
+                            }
+                            min={1}
+                            max={100}
+                            style={{ width: 80 }}
+                          />
+                          <ActionIcon
+                            color="red"
+                            variant="subtle"
+                            onClick={() => handleRemoveAnimal(animal.id)}
+                            className={styles.removeButton}
+                          >
+                            <IconX size={16} />
+                          </ActionIcon>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </Flex>
+                  ))}
+                </Flex>
+              </ScrollArea>
             )}
             <Group mt="xs" grow wrap="nowrap">
               <Checkbox
@@ -523,48 +556,53 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
               />
             </Group>
           </GridCol>
-          {noAnimalsVisible ||
-          selection.length > 0 ||
-          humanPresent ||
-          vehiclePresent ? (
-            <Button
-              color="blue"
-              fullWidth
-              mt="md"
-              radius="md"
-              onClick={handleSaveObservations}
-              loading={isSaving}
-            >
-              {isSaving ? "Saving..." : "Save Observations"}
-            </Button>
-          ) : (
-            <Button
-              color="blue"
-              variant="outline"
-              fullWidth
-              mt="md"
-              radius="md"
-              onClick={handleNoAnimalsClick}
-              loading={isSaving}
-            >
-              No Animals Visible
-            </Button>
-          )}
-          {selection.length === 0 &&
-            !noAnimalsVisible &&
-            !humanPresent &&
-            !vehiclePresent && (
-              <Text color="dimmed" align="center" mt="md">
-                Select animals from the search results to add observations, mark
-                as "No Animals Visible", or indicate human/vehicle presence
-              </Text>
+          <GridCol span={12}>
+            {noAnimalsVisible ||
+            selection.length > 0 ||
+            humanPresent ||
+            vehiclePresent ? (
+              <Button
+                color="blue"
+                fullWidth
+                mt="md"
+                radius="md"
+                onClick={handleSaveObservations}
+                loading={isSaving}
+              >
+                {isSaving ? "Saving..." : "Save Observations"}
+              </Button>
+            ) : (
+              <Button
+                color="blue"
+                variant="outline"
+                fullWidth
+                mt="md"
+                radius="md"
+                onClick={handleNoAnimalsClick}
+                loading={isSaving}
+              >
+                No Animals Visible
+              </Button>
             )}
-          <Group mt="md">
-            <SpeciesConsensusBadges
-              speciesConsensus={currentImage.speciesConsensus}
-            />
-            <ObservationHistoryPopover mediaID={currentImage.mediaID} />
-          </Group>
+            {selection.length === 0 &&
+              !noAnimalsVisible &&
+              !humanPresent &&
+              !vehiclePresent && (
+                <Text color="dimmed" ta="center" mt="md">
+                  Select animals from the search results to add observations,
+                  mark as "No Animals Visible", or indicate human/vehicle
+                  presence
+                </Text>
+              )}
+          </GridCol>
+          <GridCol span={12}>
+            <Group mt="md">
+              <SpeciesConsensusBadges
+                speciesConsensus={currentImage.speciesConsensus}
+              />
+              <ObservationHistoryPopover mediaID={currentImage.mediaID} />
+            </Group>
+          </GridCol>
         </Grid>
       </Card>
       <Modal
