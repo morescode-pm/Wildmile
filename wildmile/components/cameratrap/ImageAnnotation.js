@@ -7,6 +7,7 @@ import {
   Text,
   Button,
   Group,
+  Stack,
   Badge,
   ActionIcon,
   Modal,
