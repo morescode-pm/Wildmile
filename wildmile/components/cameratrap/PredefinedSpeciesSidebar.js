@@ -12,11 +12,11 @@ import {
   ActionIcon,
   ScrollArea,
 } from "@mantine/core";
-import { IconClock, IconRefresh } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconUser } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
-import { useRecentSpecies } from "./ContextCamera";
+import { useRecentSpecies, useUserLabeledSpecies } from "./ContextCamera";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -39,7 +39,10 @@ function iconicTaxonNameToCategory(iconic_taxon_name) {
   }
 }
 
-export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchControl }) {
+export default function PredefinedSpeciesSidebar({
+  onSpeciesSelect,
+  searchControl,
+}) {
   const {
     data: predefinedData,
     error: predefinedError,
@@ -49,7 +52,9 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
   });
 
   const [recentSpecies, setRecentSpecies] = useRecentSpecies();
+  const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
   const [recentLoading, setRecentLoading] = useState(true);
+  const [userLabeledLoading, setUserLabeledLoading] = useState(true);
 
   const loadRecent = useCallback(async () => {
     try {
@@ -62,23 +67,43 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
     }
   }, [setRecentSpecies]);
 
+  const loadUserLabeled = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cameratrap/user-labeled-species");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setUserLabeledSpecies(data);
+    } catch (error) {
+      console.error("Error fetching user labeled species:", error);
+    }
+  }, [setUserLabeledSpecies]);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
-      await loadRecent();
-      if (mounted) setRecentLoading(false);
+      await Promise.all([loadRecent(), loadUserLabeled()]);
+      if (mounted) {
+        setRecentLoading(false);
+        setUserLabeledLoading(false);
+      }
     })();
     return () => {
       mounted = false;
     };
-  }, [loadRecent]);
+  }, [loadRecent, loadUserLabeled]);
 
   const [selectedCategory, setSelectedCategory] = useState("recent");
 
   const handleRefresh = async () => {
-    setRecentLoading(true);
-    await loadRecent();
-    setRecentLoading(false);
+    if (selectedCategory === "recent") {
+      setRecentLoading(true);
+      await loadRecent();
+      setRecentLoading(false);
+    } else if (selectedCategory === "user") {
+      setUserLabeledLoading(true);
+      await loadUserLabeled();
+      setUserLabeledLoading(false);
+    }
   };
 
   const categoryData = [
@@ -88,6 +113,16 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
         <Tooltip label="Recently Used">
           <Center>
             <IconClock size={20} stroke={1.5} />
+          </Center>
+        </Tooltip>
+      ),
+    },
+    {
+      value: "user",
+      label: (
+        <Tooltip label="My Animals">
+          <Center>
+            <IconUser size={20} stroke={1.5} />
           </Center>
         </Tooltip>
       ),
@@ -153,14 +188,20 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
   }
 
   const isLoading =
-    predefinedLoading || (selectedCategory === "recent" && recentLoading);
+    predefinedLoading ||
+    (selectedCategory === "recent" && recentLoading) ||
+    (selectedCategory === "user" && userLabeledLoading);
 
   if (isLoading) {
     return <Loader />;
   }
 
   let filteredResults = [];
-  if (selectedCategory && selectedCategory !== "recent") {
+  if (
+    selectedCategory &&
+    selectedCategory !== "recent" &&
+    selectedCategory !== "user"
+  ) {
     filteredResults = predefinedData
       ?.filter((spec) => spec)
       .filter(
@@ -169,6 +210,8 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
       );
   } else if (selectedCategory === "recent") {
     filteredResults = recentSpecies;
+  } else if (selectedCategory === "user") {
+    filteredResults = userLabeledSpecies;
   }
 
   return (
@@ -178,7 +221,7 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect, searchContro
           <Text size="lg" fw={700}>
             Species
           </Text>
-          {selectedCategory === "recent" && (
+          {(selectedCategory === "recent" || selectedCategory === "user") && (
             <ActionIcon variant="subtle" onClick={handleRefresh} size="sm">
               <IconRefresh size={16} />
             </ActionIcon>

@@ -211,7 +211,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             />
           </Group>
           <ImageAnnotation
-            fetchNextImage={fetchNextImage}
             filters={appliedFilters}
           />
         </GridCol>

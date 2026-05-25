@@ -21,7 +21,6 @@ import {
   IconHeartPlus,
   IconHeart,
   IconHeartFilled,
-  IconSend,
   IconMaximize,
   IconLink,
   IconPhotoSearch,
@@ -34,7 +33,7 @@ import { useImage, useSelection, useRecentSpecies } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
-export function ImageAnnotation({ fetchNextImage, filters }) {
+export function ImageAnnotation({ filters }) {
   const [currentImage, setCurrentImage] = useImage();
   const [selection, setSelection] = useSelection();
   const [recentSpecies, setRecentSpecies] = useRecentSpecies();
@@ -206,7 +205,7 @@ export function ImageAnnotation({ fetchNextImage, filters }) {
         </Box>
 
         <Stack gap="xs" mt="md">
-          <Group position="apart">
+          <Group justify="space-between">
             <Group gap="xs">
               <ActionIcon
                 variant="outline"

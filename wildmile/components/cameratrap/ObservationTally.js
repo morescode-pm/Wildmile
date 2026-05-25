@@ -22,6 +22,7 @@ import {
   useImage,
   useSelection,
   useRecentSpecies,
+  useUserLabeledSpecies,
   useAnimalCounts,
   useObservationState
 } from "./ContextCamera";
@@ -32,6 +33,7 @@ export function ObservationTally({ fetchNextImage }) {
   const [currentImage] = useImage();
   const [selection, setSelection] = useSelection();
   const [recentSpecies, setRecentSpecies] = useRecentSpecies();
+  const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [obsState, setObsState] = useObservationState();
   const [isSaving, setIsSaving] = useState(false);
@@ -57,6 +59,17 @@ export function ObservationTally({ fetchNextImage }) {
   const handleCountChange = (id, value) => {
     setAnimalCounts((prev) => ({ ...prev, [id]: value }));
   };
+
+  const loadUserLabeled = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cameratrap/user-labeled-species");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setUserLabeledSpecies(data);
+    } catch (error) {
+      console.error("Error fetching user labeled species:", error);
+    }
+  }, [setUserLabeledSpecies]);
 
   const handleSaveObservations = useCallback(async ({ forceNoAnimals = false } = {}) => {
     if (!currentImage) return;
@@ -176,6 +189,7 @@ export function ObservationTally({ fetchNextImage }) {
             return [...newEntries, ...prev].slice(0, 12);
           });
         }
+        await loadUserLabeled();
         fetchNextImage();
       } else {
         alert("Failed to save observations.");
