@@ -35,8 +35,6 @@ import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
 export function ImageAnnotation({ filters }) {
   const [currentImage, setCurrentImage] = useImage();
-  const [selection, setSelection] = useSelection();
-  const [recentSpecies, setRecentSpecies] = useRecentSpecies();
   const [isSaving, setIsSaving] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(false);

@@ -199,7 +199,19 @@ export function ObservationTally({ fetchNextImage }) {
     } finally {
       setIsSaving(false);
     }
-  }, [currentImage, comment, noAnimalsVisible, humanPresent, vehiclePresent, selection, animalCounts, fetchNextImage, setObsState]);
+  }, [
+    currentImage,
+    comment,
+    noAnimalsVisible,
+    humanPresent,
+    vehiclePresent,
+    selection,
+    animalCounts,
+    fetchNextImage,
+    setObsState,
+    setRecentSpecies,
+    loadUserLabeled,
+  ]);
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
@@ -275,13 +287,23 @@ export function ObservationTally({ fetchNextImage }) {
             classNames={checkboxClasses}
             label="Human"
             checked={humanPresent}
-            onChange={(event) => setObsState(prev => ({ ...prev, humanPresent: event.currentTarget.checked }))}
+            onChange={(event) =>
+              setObsState((prev) => ({
+                ...prev,
+                humanPresent: event.currentTarget.checked,
+              }))
+            }
           />
           <Checkbox
             classNames={checkboxClasses}
             label="Vehicle"
             checked={vehiclePresent}
-            onChange={(event) => setObsState(prev => ({ ...prev, vehiclePresent: event.currentTarget.checked }))}
+            onChange={(event) =>
+              setObsState((prev) => ({
+                ...prev,
+                vehiclePresent: event.currentTarget.checked,
+              }))
+            }
           />
         </Group>
 
