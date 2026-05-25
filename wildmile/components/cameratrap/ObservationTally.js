@@ -114,21 +114,24 @@ export function ObservationTally({ fetchNextImage }) {
       });
     } else {
       if (selection.length > 0) {
-        observations = selection.map((animal) => ({
-          mediaId: currentImage.mediaID,
-          mediaInfo: {
-            md5: currentImage.mediaID,
-            imageHash: currentImage.imageHash,
-          },
-          taxonId: animal.id,
-          scientificName: animal.name,
-          commonName: animal.preferred_common_name || animal.name,
-          count: animalCounts[animal.id] || 1,
-          eventStart: currentImage.timestamp,
-          eventEnd: currentImage.timestamp,
-          observationLevel: "media",
-          observationType: "animal",
-        }));
+        observations = selection.map((animal) => {
+          const animalId = animal.taxonId || animal.id;
+          return {
+            mediaId: currentImage.mediaID,
+            mediaInfo: {
+              md5: currentImage.mediaID,
+              imageHash: currentImage.imageHash,
+            },
+            taxonId: animalId,
+            scientificName: animal.name,
+            commonName: animal.preferred_common_name || animal.name,
+            count: animalCounts[animalId] || 1,
+            eventStart: currentImage.timestamp,
+            eventEnd: currentImage.timestamp,
+            observationLevel: "media",
+            observationType: "animal",
+          };
+        });
       }
 
       if (humanPresent) {
@@ -233,11 +236,13 @@ export function ObservationTally({ fetchNextImage }) {
     }
   };
 
-  const handleRemoveAnimal = (animalId) => {
-    setSelection((prev) => prev.filter((animal) => animal.id !== animalId));
+  const handleRemoveAnimal = (idToRemove) => {
+    setSelection((prev) =>
+      prev.filter((animal) => (animal.taxonId || animal.id) !== idToRemove)
+    );
     setAnimalCounts((prev) => {
       const newCounts = { ...prev };
-      delete newCounts[animalId];
+      delete newCounts[idToRemove];
       return newCounts;
     });
   };
@@ -252,32 +257,37 @@ export function ObservationTally({ fetchNextImage }) {
         {!noAnimalsVisible && (
           <ScrollArea h={350} offsetScrollbars scrollbarSize={4}>
             <Flex direction="column" gap="xs">
-              {selection.map((animal) => (
-                <div key={animal.taxonId || animal.id || animal.name} className={styles.selectionContainer}>
-                  <div className={styles.selectionContent}>
-                    <Text className={styles.speciesName}>
-                      {animal.preferred_common_name || animal.name}
-                    </Text>
-                    <div className={styles.controls}>
-                      <NumberInput
-                        value={animalCounts[animal.id] || 1}
-                        onChange={(value) => handleCountChange(animal.id, value)}
-                        min={1}
-                        max={100}
-                        style={{ width: 80 }}
-                      />
-                      <ActionIcon
-                        color="red"
-                        variant="subtle"
-                        onClick={() => handleRemoveAnimal(animal.id)}
-                        className={styles.removeButton}
-                      >
-                        <IconX size={16} />
-                      </ActionIcon>
+              {selection.map((animal) => {
+                const animalId = animal.taxonId || animal.id;
+                return (
+                  <div key={animalId} className={styles.selectionContainer}>
+                    <div className={styles.selectionContent}>
+                      <Text className={styles.speciesName}>
+                        {animal.preferred_common_name || animal.name}
+                      </Text>
+                      <div className={styles.controls}>
+                        <NumberInput
+                          value={animalCounts[animalId] || 1}
+                          onChange={(value) =>
+                            handleCountChange(animalId, value)
+                          }
+                          min={1}
+                          max={100}
+                          style={{ width: 80 }}
+                        />
+                        <ActionIcon
+                          color="red"
+                          variant="subtle"
+                          onClick={() => handleRemoveAnimal(animalId)}
+                          className={styles.removeButton}
+                        >
+                          <IconX size={16} />
+                        </ActionIcon>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Flex>
           </ScrollArea>
         )}
@@ -287,23 +297,27 @@ export function ObservationTally({ fetchNextImage }) {
             classNames={checkboxClasses}
             label="Human"
             checked={humanPresent}
-            onChange={(event) =>
-              setObsState((prev) => ({
-                ...prev,
-                humanPresent: event.currentTarget.checked,
-              }))
-            }
+            readOnly
+            wrapperProps={{
+              onClick: () =>
+                setObsState((prev) => ({
+                  ...prev,
+                  humanPresent: !prev.humanPresent,
+                })),
+            }}
           />
           <Checkbox
             classNames={checkboxClasses}
             label="Vehicle"
             checked={vehiclePresent}
-            onChange={(event) =>
-              setObsState((prev) => ({
-                ...prev,
-                vehiclePresent: event.currentTarget.checked,
-              }))
-            }
+            readOnly
+            wrapperProps={{
+              onClick: () =>
+                setObsState((prev) => ({
+                  ...prev,
+                  vehiclePresent: !prev.vehiclePresent,
+                })),
+            }}
           />
         </Group>
 

@@ -29,7 +29,7 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useImage, useSelection, useRecentSpecies } from "./ContextCamera";
+import { useImage } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
