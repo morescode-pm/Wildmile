@@ -186,7 +186,7 @@ export function ObservationTally({ fetchNextImage }) {
                 preferred_common_name: s.preferred_common_name,
               }));
             if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 12);
+            return [...newEntries, ...prev].slice(0, 6);
           });
         }
         await loadUserLabeled();
