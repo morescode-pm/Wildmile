@@ -44,17 +44,13 @@ export function ObservationTally({ fetchNextImage }) {
   useEffect(() => {
     if (currentImage) {
       setComments(currentImage.mediaComments || []);
-      // Reset local states for new image
-      setAnimalCounts({});
-      setSelection([]); // Reset animal selection for new image
-      setObsState({
-        humanPresent: false,
-        vehiclePresent: false,
-        noAnimalsVisible: false,
+      // Clear comment for new image, but keep animal selection and other toggles
+      setObsState((prev) => ({
+        ...prev,
         comment: "",
-      });
+      }));
     }
-  }, [currentImage, setAnimalCounts, setObsState, setSelection]);
+  }, [currentImage, setObsState]);
 
   const handleCountChange = (id, value) => {
     setAnimalCounts((prev) => ({ ...prev, [id]: value }));
