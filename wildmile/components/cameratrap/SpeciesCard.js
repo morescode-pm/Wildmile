@@ -25,7 +25,7 @@ import { useSelection } from "components/cameratrap/ContextCamera";
 
 export function SpeciesCards(results) {
   const result_values = results.map((result) => ({
-    id: result.id,
+    id: result.taxonId || result.id,
     title: result.preferred_common_name || result.name || "",
     subtitle: result.name || "",
     image:
