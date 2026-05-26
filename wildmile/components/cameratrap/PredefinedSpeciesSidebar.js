@@ -214,6 +214,15 @@ export default function PredefinedSpeciesSidebar({
     filteredResults = userLabeledSpecies;
   }
 
+  // Sort alphabetically unless it's the "recent" or "user" category
+  if (selectedCategory !== "recent" && selectedCategory !== "user") {
+    filteredResults = [...filteredResults].sort((a, b) => {
+      const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
+      const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   return (
     <Stack gap="md" h="100%">
       <Group justify="space-between" align="center">
