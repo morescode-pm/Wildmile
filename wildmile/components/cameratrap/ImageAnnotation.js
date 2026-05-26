@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Image,
   Text,
   Group,
   Stack,
@@ -144,12 +143,22 @@ export function ImageAnnotation({ filters }) {
                 alignItems: "center",
               }}
             >
-              <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                <Image
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  maxHeight: "100%",
+                  maxWidth: "100%",
+                }}
+              >
+                <img
                   src={currentImage.publicURL}
-                  fit="contain"
-                  h="100%"
-                  width="100%"
+                  style={{
+                    display: "block",
+                    maxHeight: "500px",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                  }}
                   alt="Wildlife image"
                 />
                 {showAIBoxes &&
@@ -308,13 +317,46 @@ export function ImageAnnotation({ filters }) {
           modal: { maxWidth: "100%" },
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", backgroundColor: "black" }}>
-          <TransformWrapper defaultScale={1} wheel={{ step: 0.4 }} pinch={{ step: 0.2 }}>
-            <TransformComponent>
-              <div style={{ position: "relative", width: "100%" }}>
-                <Image
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "black",
+            minHeight: "100vh",
+          }}
+        >
+          <TransformWrapper
+            defaultScale={1}
+            wheel={{ step: 0.4 }}
+            pinch={{ step: 0.2 }}
+          >
+            <TransformComponent
+              wrapperStyle={{ width: "100vw", height: "100vh" }}
+              contentStyle={{
+                width: "100vw",
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  maxHeight: "100vh",
+                  maxWidth: "100vw",
+                }}
+              >
+                <img
                   src={currentImage.publicURL}
-                  fit="contain"
+                  style={{
+                    display: "block",
+                    maxHeight: "100vh",
+                    maxWidth: "100vw",
+                    objectFit: "contain",
+                  }}
                   alt="Enlarged wildlife image"
                 />
                 {showAIBoxes &&

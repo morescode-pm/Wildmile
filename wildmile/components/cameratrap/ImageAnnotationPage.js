@@ -9,7 +9,6 @@ import {
   ActionIcon,
   ActionIconGroup,
   Tooltip,
-  ButtonGroup,
   Grid,
   GridCol,
   ScrollArea,
@@ -182,7 +181,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       <Grid align="stretch">
         <GridCol span={{ base: 12, md: 5, lg: 5 }}>
           <Group gap="xs" justify="center" mb="md">
-            <ButtonGroup>
+            <Button.Group>
               <Tooltip label="Previous Image">
                 <Button
                   onClick={() => handleNavigateImage("previous")}
@@ -202,7 +201,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   <IconArrowRight />
                 </Button>
               </Tooltip>
-            </ButtonGroup>
+            </Button.Group>
             <ImageFilterControls
               initialFilters={appliedFilters}
               onApplyFilters={handleApplyFilters}

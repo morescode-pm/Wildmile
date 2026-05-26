@@ -217,7 +217,7 @@ function SpeciesInfoModal({ result, opened, onClose }) {
   );
 }
 
-export default function Species({ results }) {
+export default function Species({ results, onSpeciesSelect }) {
   const [selection, setSelection] = useSelection();
   const [infoTarget, setInfoTarget] = useState(null);
 
@@ -227,6 +227,9 @@ export default function Species({ results }) {
   const result_values = SpeciesCards(results);
 
   const toggleSelection = (result) => {
+    if (onSpeciesSelect) {
+      onSpeciesSelect(result.inat_result);
+    }
     setSelection((prev) => {
       const isSelected = prev.some((item) =>
         isSelectedSpecies(item, result.inat_result),
