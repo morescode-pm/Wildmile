@@ -251,7 +251,7 @@ export function ObservationTally({ fetchNextImage }) {
         <Text fw={700}>Observations</Text>
 
         {!noAnimalsVisible && (
-          <ScrollArea h={350} offsetScrollbars scrollbarSize={4}>
+          <ScrollArea style={{ flex: 1 }} offsetScrollbars>
             <Flex direction="column" gap="xs">
               {selection.map((animal) => {
                 const animalId = animal.taxonId || animal.id;
