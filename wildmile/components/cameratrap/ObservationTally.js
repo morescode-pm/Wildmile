@@ -17,6 +17,8 @@ import {
 import {
   IconSend,
   IconX,
+  IconPlus,
+  IconMinus,
 } from "@tabler/icons-react";
 import {
   useImage,
@@ -28,6 +30,18 @@ import {
 } from "./ContextCamera";
 import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
+
+const SELECTION_COLORS = [
+  "rgba(255, 99, 132, 0.15)", // Pink
+  "rgba(54, 162, 235, 0.15)", // Blue
+  "rgba(255, 206, 86, 0.15)", // Yellow
+  "rgba(75, 192, 192, 0.15)", // Teal
+  "rgba(153, 102, 255, 0.15)", // Purple
+  "rgba(255, 159, 64, 0.15)", // Orange
+  "rgba(40, 167, 69, 0.15)", // Green
+  "rgba(23, 162, 184, 0.15)", // Cyan
+  "rgba(102, 102, 102, 0.15)", // Gray
+];
 
 export function ObservationTally({ fetchNextImage }) {
   const [currentImage] = useImage();
@@ -185,7 +199,7 @@ export function ObservationTally({ fetchNextImage }) {
                 preferred_common_name: s.preferred_common_name,
               }));
             if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 6);
+            return [...newEntries, ...prev].slice(0, 12);
           });
         }
         await loadUserLabeled();
@@ -254,31 +268,79 @@ export function ObservationTally({ fetchNextImage }) {
           <Stack gap="md">
             {!noAnimalsVisible && selection.length > 0 && (
               <Flex direction="column" gap="xs">
-                {selection.map((animal) => {
+                {selection.map((animal, index) => {
                   const animalId = animal.taxonId || animal.id;
+                  const backgroundColor =
+                    SELECTION_COLORS[index % SELECTION_COLORS.length];
                   return (
-                    <div key={animalId} className={styles.selectionContainer}>
+                    <div
+                      key={animalId}
+                      className={styles.selectionContainer}
+                      style={{ backgroundColor }}
+                    >
                       <div className={styles.selectionContent}>
-                        <Text className={styles.speciesName}>
+                        <Text size="sm" className={styles.speciesName}>
                           {animal.preferred_common_name || animal.name}
                         </Text>
                         <div className={styles.controls}>
-                          <NumberInput
-                            value={animalCounts[animalId] || 1}
-                            onChange={(value) =>
-                              handleCountChange(animalId, value)
-                            }
-                            min={1}
-                            max={100}
-                            style={{ width: 80 }}
-                          />
+                          <Group gap={2}>
+                            <ActionIcon
+                              size="lg"
+                              variant="subtle"
+                              onClick={() =>
+                                handleCountChange(
+                                  animalId,
+                                  Math.max(1, (animalCounts[animalId] || 1) - 1)
+                                )
+                              }
+                              disabled={(animalCounts[animalId] || 1) <= 1}
+                            >
+                              <IconMinus size={22} />
+                            </ActionIcon>
+                            <NumberInput
+                              size="xs"
+                              value={animalCounts[animalId] ?? 1}
+                              onChange={(value) => {
+                                // Allow the input to be empty while typing
+                                if (value === "" || value === undefined) {
+                                  handleCountChange(animalId, "");
+                                } else {
+                                  handleCountChange(animalId, value);
+                                }
+                              }}
+                              hideControls
+                              min={1}
+                              max={99}
+                              style={{ width: 50 }}
+                              styles={{
+                                input: {
+                                  textAlign: "center",
+                                  fontWeight: 600,
+                                  fontSize: 14,
+                                },
+                              }}
+                            />
+                            <ActionIcon
+                              size="lg"
+                              variant="subtle"
+                              onClick={() =>
+                                handleCountChange(
+                                  animalId,
+                                  (animalCounts[animalId] || 1) + 1
+                                )
+                              }
+                            >
+                              <IconPlus size={22} />
+                            </ActionIcon>
+                          </Group>
                           <ActionIcon
+                            size="sm"
                             color="red"
                             variant="subtle"
                             onClick={() => handleRemoveAnimal(animalId)}
                             className={styles.removeButton}
                           >
-                            <IconX size={16} />
+                            <IconX size={22} />
                           </ActionIcon>
                         </div>
                       </div>
@@ -355,6 +417,7 @@ export function ObservationTally({ fetchNextImage }) {
           humanPresent ||
           vehiclePresent ? (
             <Button
+              size="md"
               color="blue"
               fullWidth
               onClick={() => handleSaveObservations()}
@@ -364,6 +427,7 @@ export function ObservationTally({ fetchNextImage }) {
             </Button>
           ) : (
             <Button
+              size="md"
               color="blue"
               variant="outline"
               fullWidth

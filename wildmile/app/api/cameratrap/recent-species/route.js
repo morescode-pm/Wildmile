@@ -56,7 +56,7 @@ async function getUserRecentSpecies(userId) {
       },
     },
     { $sort: { lastUsed: -1 } },
-    { $limit: 6 },
+    { $limit: 12 },
   ]);
 
   return results.map((r) => r._id);
@@ -77,7 +77,7 @@ async function getGlobalCommonSpecies() {
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 6 },
+    { $limit: 12 },
   ]);
 
   return results.map((r) => r._id);

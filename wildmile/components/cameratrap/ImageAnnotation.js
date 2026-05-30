@@ -123,7 +123,8 @@ export function ImageAnnotation({ filters }) {
         <Box
           style={{
             position: "relative",
-            height: "500px",
+            flex: 1,
+            minHeight: 0,
             backgroundColor: "black",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
@@ -156,7 +157,7 @@ export function ImageAnnotation({ filters }) {
                   src={currentImage.publicURL}
                   style={{
                     display: "block",
-                    maxHeight: "500px",
+                    maxHeight: "100%",
                     maxWidth: "100%",
                     objectFit: "contain",
                   }}

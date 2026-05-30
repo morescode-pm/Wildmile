@@ -186,7 +186,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       >
         <GridCol
           span={{ base: 12, md: 5, lg: 5 }}
-          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+          style={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
           <Group gap="xs" justify="center" mb="xs">
             <Button.Group>
@@ -222,11 +226,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           </div>
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "calc(100vh - 45px)" }}>
+        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "calc(100vh - 100px)" }}>
           <ObservationTally fetchNextImage={fetchNextImage} />
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 45px)" }}>
+        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 100px)" }}>
           <WildlifeSearch />
         </GridCol>
       </Grid>
