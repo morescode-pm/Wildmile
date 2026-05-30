@@ -119,10 +119,11 @@ export function ImageAnnotation({ filters }) {
   return (
     <>
       <Card shadow="sm" radius="md" withBorder h="100%">
+        <Stack gap="xs" h="100%">
         <Box
           style={{
             position: "relative",
-            height: "500px",
+            flex: 1,
             backgroundColor: "black",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
@@ -155,7 +156,7 @@ export function ImageAnnotation({ filters }) {
                   src={currentImage.publicURL}
                   style={{
                     display: "block",
-                    maxHeight: "500px",
+                    maxHeight: "100%",
                     maxWidth: "100%",
                     objectFit: "contain",
                   }}
@@ -208,7 +209,7 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="md">
+        <Stack gap="xs" mt="0">
           <Group justify="space-between">
             <Group gap="xs">
               <ActionIcon
@@ -304,6 +305,7 @@ export function ImageAnnotation({ filters }) {
             />
             <ObservationHistoryPopover mediaID={currentImage.mediaID} />
           </Group>
+        </Stack>
         </Stack>
       </Card>
 

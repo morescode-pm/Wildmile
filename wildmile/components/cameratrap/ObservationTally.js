@@ -251,7 +251,7 @@ export function ObservationTally({ fetchNextImage }) {
         <Text fw={700}>Observations</Text>
 
         {!noAnimalsVisible && (
-          <ScrollArea h={350} offsetScrollbars scrollbarSize={4}>
+          <ScrollArea style={{ flex: 1 }} offsetScrollbars scrollbarSize={4}>
             <Flex direction="column" gap="xs">
               {selection.map((animal) => {
                 const animalId = animal.taxonId || animal.id;
@@ -288,77 +288,79 @@ export function ObservationTally({ fetchNextImage }) {
           </ScrollArea>
         )}
 
-        <Group grow wrap="nowrap">
-          <Checkbox
-            classNames={checkboxClasses}
-            label="Human"
-            checked={humanPresent}
-            readOnly
-            wrapperProps={{
-              onClick: () =>
-                setObsState((prev) => ({
-                  ...prev,
-                  humanPresent: !prev.humanPresent,
-                })),
-            }}
-          />
-          <Checkbox
-            classNames={checkboxClasses}
-            label="Vehicle"
-            checked={vehiclePresent}
-            readOnly
-            wrapperProps={{
-              onClick: () =>
-                setObsState((prev) => ({
-                  ...prev,
-                  vehiclePresent: !prev.vehiclePresent,
-                })),
-            }}
-          />
-        </Group>
-
-        {noAnimalsVisible || selection.length > 0 || humanPresent || vehiclePresent ? (
-          <Button
-            color="blue"
-            fullWidth
-            onClick={() => handleSaveObservations()}
-            loading={isSaving}
-          >
-            {isSaving ? "Saving..." : "Save Observations"}
-          </Button>
-        ) : (
-          <Button
-            color="blue"
-            variant="outline"
-            fullWidth
-            onClick={() => handleSaveObservations({ forceNoAnimals: true })}
-            loading={isSaving}
-          >
-            No Animals Visible
-          </Button>
-        )}
-
-        <Stack gap="xs" style={{ flex: 1 }}>
-          <Group mt="xs">
-            <TextInput
-              placeholder="Add a comment..."
-              value={comment}
-              onChange={(event) => setObsState(prev => ({ ...prev, comment: event.currentTarget.value }))}
-              style={{ flex: 1 }}
+        <Stack gap="md" mt="auto">
+          <Group grow wrap="nowrap">
+            <Checkbox
+              classNames={checkboxClasses}
+              label="Human"
+              checked={humanPresent}
+              readOnly
+              wrapperProps={{
+                onClick: () =>
+                  setObsState((prev) => ({
+                    ...prev,
+                    humanPresent: !prev.humanPresent,
+                  })),
+              }}
             />
-            <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>
-              <IconSend size={24} />
-            </ActionIcon>
+            <Checkbox
+              classNames={checkboxClasses}
+              label="Vehicle"
+              checked={vehiclePresent}
+              readOnly
+              wrapperProps={{
+                onClick: () =>
+                  setObsState((prev) => ({
+                    ...prev,
+                    vehiclePresent: !prev.vehiclePresent,
+                  })),
+              }}
+            />
           </Group>
-          <ScrollArea h={200} offsetScrollbars>
-            <Stack gap="xs">
-              {comments.map((comment, index) => (
-                <Text key={index} size="sm">
-                  <strong>{comment.author.name}:</strong> {comment.text}
-                </Text>
-              ))}
-            </Stack>
-          </ScrollArea>
+
+          {noAnimalsVisible || selection.length > 0 || humanPresent || vehiclePresent ? (
+            <Button
+              color="blue"
+              fullWidth
+              onClick={() => handleSaveObservations()}
+              loading={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Observations"}
+            </Button>
+          ) : (
+            <Button
+              color="blue"
+              variant="outline"
+              fullWidth
+              onClick={() => handleSaveObservations({ forceNoAnimals: true })}
+              loading={isSaving}
+            >
+              No Animals Visible
+            </Button>
+          )}
+
+          <Stack gap="xs">
+            <Group mt="xs">
+              <TextInput
+                placeholder="Add a comment..."
+                value={comment}
+                onChange={(event) => setObsState(prev => ({ ...prev, comment: event.currentTarget.value }))}
+                style={{ flex: 1 }}
+              />
+              <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>
+                <IconSend size={24} />
+              </ActionIcon>
+            </Group>
+            <ScrollArea h={200} offsetScrollbars>
+              <Stack gap="xs">
+                {comments.map((comment, index) => (
+                  <Text key={index} size="sm">
+                    <strong>{comment.author.name}:</strong> {comment.text}
+                  </Text>
+                ))}
+              </Stack>
+            </ScrollArea>
+          </Stack>
         </Stack>
       </Stack>
     </Paper>
