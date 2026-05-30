@@ -339,7 +339,7 @@ export function ObservationTally({ fetchNextImage }) {
                             onClick={() => handleRemoveAnimal(animalId)}
                             className={styles.removeButton}
                           >
-                            <IconX size={16} />
+                            <IconX size={22} />
                           </ActionIcon>
                         </div>
                       </div>
