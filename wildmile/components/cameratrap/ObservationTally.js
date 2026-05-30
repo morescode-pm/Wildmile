@@ -283,9 +283,9 @@ export function ObservationTally({ fetchNextImage }) {
                           {animal.preferred_common_name || animal.name}
                         </Text>
                         <div className={styles.controls}>
-                          <Group gap={4}>
+                          <Group gap={2}>
                             <ActionIcon
-                              size="sm"
+                              size="md"
                               variant="subtle"
                               onClick={() =>
                                 handleCountChange(
@@ -295,13 +295,28 @@ export function ObservationTally({ fetchNextImage }) {
                               }
                               disabled={(animalCounts[animalId] || 1) <= 1}
                             >
-                              <IconMinus size={14} />
+                              <IconMinus size={18} />
                             </ActionIcon>
-                            <Text size="sm" w={20} ta="center" fw={600}>
-                              {animalCounts[animalId] || 1}
-                            </Text>
+                            <NumberInput
+                              size="xs"
+                              value={animalCounts[animalId] || 1}
+                              onChange={(value) =>
+                                handleCountChange(animalId, value)
+                              }
+                              hideControls
+                              min={1}
+                              max={100}
+                              style={{ width: 45 }}
+                              styles={{
+                                input: {
+                                  textAlign: "center",
+                                  padding: 0,
+                                  fontWeight: 600,
+                                },
+                              }}
+                            />
                             <ActionIcon
-                              size="sm"
+                              size="md"
                               variant="subtle"
                               onClick={() =>
                                 handleCountChange(
@@ -310,7 +325,7 @@ export function ObservationTally({ fetchNextImage }) {
                                 )
                               }
                             >
-                              <IconPlus size={14} />
+                              <IconPlus size={18} />
                             </ActionIcon>
                           </Group>
                           <ActionIcon
