@@ -285,7 +285,7 @@ export function ObservationTally({ fetchNextImage }) {
                         <div className={styles.controls}>
                           <Group gap={2}>
                             <ActionIcon
-                              size="md"
+                              size="lg"
                               variant="subtle"
                               onClick={() =>
                                 handleCountChange(
@@ -295,7 +295,7 @@ export function ObservationTally({ fetchNextImage }) {
                               }
                               disabled={(animalCounts[animalId] || 1) <= 1}
                             >
-                              <IconMinus size={18} />
+                              <IconMinus size={22} />
                             </ActionIcon>
                             <NumberInput
                               size="xs"
@@ -320,7 +320,7 @@ export function ObservationTally({ fetchNextImage }) {
                               }}
                             />
                             <ActionIcon
-                              size="md"
+                              size="lg"
                               variant="subtle"
                               onClick={() =>
                                 handleCountChange(
@@ -329,7 +329,7 @@ export function ObservationTally({ fetchNextImage }) {
                                 )
                               }
                             >
-                              <IconPlus size={18} />
+                              <IconPlus size={22} />
                             </ActionIcon>
                           </Group>
                           <ActionIcon
