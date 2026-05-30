@@ -417,7 +417,7 @@ export function ObservationTally({ fetchNextImage }) {
           humanPresent ||
           vehiclePresent ? (
             <Button
-              size="lg"
+              size="md"
               color="blue"
               fullWidth
               onClick={() => handleSaveObservations()}
@@ -427,7 +427,7 @@ export function ObservationTally({ fetchNextImage }) {
             </Button>
           ) : (
             <Button
-              size="lg"
+              size="md"
               color="blue"
               variant="outline"
               fullWidth
