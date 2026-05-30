@@ -311,11 +311,10 @@ export function ObservationTally({ fetchNextImage }) {
                               hideControls
                               min={1}
                               max={100}
-                              style={{ width: 45 }}
+                              style={{ width: 50 }}
                               styles={{
                                 input: {
                                   textAlign: "center",
-                                  padding: 0,
                                   fontWeight: 600,
                                 },
                               }}
