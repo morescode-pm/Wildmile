@@ -254,9 +254,11 @@ export default function PredefinedSpeciesSidebar({
             <Stack gap="md">
               {["Mammals", "Birds", "Reptiles", "Amphibians", "Fish", "Other"].map(
                 (category) => {
-                  const speciesInCategory = userLabeledSpecies
+                  const speciesInCategory = (filteredResults || [])
                     .filter(
-                      (s) => iconicTaxonNameToCategory(s.iconic_taxon_name) === category
+                      (s) =>
+                        iconicTaxonNameToCategory(s.iconic_taxon_name) ===
+                        category
                     )
                     .sort((a, b) => {
                       const nameA = (
