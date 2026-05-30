@@ -10,20 +10,28 @@ import {
   Collapse,
   Button,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useClickOutside } from "@mantine/hooks";
 import TaxaSearch from "./TaxaSearch";
 import PredefinedSpeciesSidebar from "./PredefinedSpeciesSidebar";
 import { IconSearch } from "@tabler/icons-react";
 const WildlifeSearch = () => {
   const [selectedSpecies, setSelectedSpecies] = useState("");
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const clickOutsideRef = useClickOutside(() => close());
 
   const handleSpeciesSelect = (species) => {
     setSelectedSpecies(species.name || species);
   };
 
   return (
-    <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
+    <Paper
+      ref={clickOutsideRef}
+      shadow="xs"
+      p="md"
+      withBorder
+      radius="md"
+      h="100%"
+    >
       <Stack gap="md" h="100%">
         <Box
           style={{

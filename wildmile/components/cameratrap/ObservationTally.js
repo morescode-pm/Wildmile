@@ -29,6 +29,18 @@ import {
 import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
 
+const SELECTION_COLORS = [
+  "rgba(255, 99, 132, 0.15)", // Pink
+  "rgba(54, 162, 235, 0.15)", // Blue
+  "rgba(255, 206, 86, 0.15)", // Yellow
+  "rgba(75, 192, 192, 0.15)", // Teal
+  "rgba(153, 102, 255, 0.15)", // Purple
+  "rgba(255, 159, 64, 0.15)", // Orange
+  "rgba(40, 167, 69, 0.15)", // Green
+  "rgba(23, 162, 184, 0.15)", // Cyan
+  "rgba(102, 102, 102, 0.15)", // Gray
+];
+
 export function ObservationTally({ fetchNextImage }) {
   const [currentImage] = useImage();
   const [selection, setSelection] = useSelection();
@@ -254,10 +266,16 @@ export function ObservationTally({ fetchNextImage }) {
           <Stack gap="md">
             {!noAnimalsVisible && selection.length > 0 && (
               <Flex direction="column" gap="xs">
-                {selection.map((animal) => {
+                {selection.map((animal, index) => {
                   const animalId = animal.taxonId || animal.id;
+                  const backgroundColor =
+                    SELECTION_COLORS[index % SELECTION_COLORS.length];
                   return (
-                    <div key={animalId} className={styles.selectionContainer}>
+                    <div
+                      key={animalId}
+                      className={styles.selectionContainer}
+                      style={{ backgroundColor }}
+                    >
                       <div className={styles.selectionContent}>
                         <Text size="sm" className={styles.speciesName}>
                           {animal.preferred_common_name || animal.name}

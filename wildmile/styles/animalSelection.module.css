@@ -3,13 +3,12 @@
   border-radius: var(--mantine-radius-md);
   padding: 4px var(--mantine-spacing-xs);
   margin-bottom: 4px;
-  background-color: var(--mantine-color-white);
   transition: all 0.2s ease;
 }
 
 .selectionContainer:hover {
   border-color: var(--mantine-color-blue-5);
-  background-color: var(--mantine-color-gray-0);
+  filter: brightness(0.95);
 }
 
 .selectionContent {
