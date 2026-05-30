@@ -176,11 +176,25 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   return (
-    <>
+    <div
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
-      <Grid align="stretch" style={{ height: "calc(100vh - 40px)", margin: 0 }}>
-        <GridCol span={{ base: 12, md: 5, lg: 5 }} style={{ height: "100%" }}>
-          <Group gap="xs" justify="center" mb="md">
+      <Grid
+        align="stretch"
+        style={{ flex: 1, margin: 0, padding: "10px" }}
+        gutter="md"
+      >
+        <GridCol
+          span={{ base: 12, md: 5, lg: 5 }}
+          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        >
+          <Group gap="xs" justify="center" mb="xs">
             <Button.Group>
               <Tooltip label="Previous Image">
                 <Button
@@ -209,9 +223,9 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
               deployments={deployments}
             />
           </Group>
-          <ImageAnnotation
-            filters={appliedFilters}
-          />
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <ImageAnnotation filters={appliedFilters} />
+          </div>
         </GridCol>
 
         <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "100%" }}>
@@ -222,7 +236,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           <WildlifeSearch />
         </GridCol>
       </Grid>
-    </>
+    </div>
   );
 };
 

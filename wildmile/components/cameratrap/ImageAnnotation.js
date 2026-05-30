@@ -118,8 +118,8 @@ export function ImageAnnotation({ filters }) {
 
   return (
     <>
-      <Card shadow="sm" radius="md" withBorder h="100%">
-        <Stack gap="xs" h="100%">
+      <Card shadow="sm" radius="md" withBorder h="100%" p="xs">
+        <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{
             position: "relative",
