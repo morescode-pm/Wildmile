@@ -186,7 +186,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       >
         <GridCol
           span={{ base: 12, md: 5, lg: 5 }}
-          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+          style={{
+            height: "calc(100vh - 100px)",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
           <Group gap="xs" justify="center" mb="xs">
             <Button.Group>
