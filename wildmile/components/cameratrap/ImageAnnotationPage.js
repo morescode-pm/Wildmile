@@ -19,6 +19,7 @@ import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
 
@@ -176,11 +177,18 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   return (
-    <>
+    <div className={classes.fullViewport}>
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
-      <Grid align="stretch">
-        <GridCol span={{ base: 12, md: 5, lg: 5 }}>
-          <Group gap="xs" justify="center" mb="md">
+      <Grid
+        align="stretch"
+        style={{ flex: 1, margin: 0, padding: "10px" }}
+        gutter="md"
+      >
+        <GridCol
+          span={{ base: 12, md: 5, lg: 5 }}
+          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        >
+          <Group gap="xs" justify="center" mb="xs">
             <Button.Group>
               <Tooltip label="Previous Image">
                 <Button
@@ -209,20 +217,20 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
               deployments={deployments}
             />
           </Group>
-          <ImageAnnotation
-            filters={appliedFilters}
-          />
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <ImageAnnotation filters={appliedFilters} />
+          </div>
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 3, lg: 3 }}>
+        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "calc(100vh - 45px)" }}>
           <ObservationTally fetchNextImage={fetchNextImage} />
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 4, lg: 4 }}>
+        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 45px)" }}>
           <WildlifeSearch />
         </GridCol>
       </Grid>
-    </>
+    </div>
   );
 };
 

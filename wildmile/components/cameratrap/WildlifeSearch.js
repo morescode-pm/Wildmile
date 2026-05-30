@@ -25,14 +25,23 @@ const WildlifeSearch = () => {
   return (
     <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
       <Stack gap="md" h="100%">
-        <PredefinedSpeciesSidebar
-          onSpeciesSelect={handleSpeciesSelect}
-          searchControl={
-            <Button variant="default" leftSection={<IconSearch />} onClick={toggle} size="xs">
-              Search
-            </Button>
-          }
-        />
+        <Box
+          style={{
+            flex: 1,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <PredefinedSpeciesSidebar
+            onSpeciesSelect={handleSpeciesSelect}
+            searchControl={
+              <Button variant="default" leftSection={<IconSearch />} onClick={toggle} size="xs">
+                Search
+              </Button>
+            }
+          />
+        </Box>
         <Collapse in={opened}>
           <TaxaSearch initialQuery={selectedSpecies} />
         </Collapse>

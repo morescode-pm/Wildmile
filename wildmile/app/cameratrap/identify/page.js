@@ -1,14 +1,10 @@
 import { ImageAnnotationPage } from "components/cameratrap/ImageAnnotationPage";
 import { Container } from "@mantine/core";
+import classes from "styles/cameraTrapLayout.module.css";
 export default function Page() {
   return (
-    <>
-      <Container maw="95%">
-        {/* <div className="prose prose-sm prose-invert max-w-none"> */}
-        {/* <h1 className="text-xl font-bold">Image Annotation</h1> */}
-        <ImageAnnotationPage initialImageId={null} />
-        {/* </div> */}
-      </Container>
-    </>
+    <div className={classes.fullViewport}>
+      <ImageAnnotationPage initialImageId={null} />
+    </div>
   );
 }
