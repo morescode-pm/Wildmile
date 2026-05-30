@@ -79,7 +79,7 @@ const RecentSpecies = () => {
               { maxWidth: "48rem", cols: 1, spacing: "sm" },
             ]}
           >
-            {[...Array(6)].map((_, index) => (
+            {[...Array(9)].map((_, index) => (
               <Skeleton key={index} height={200} radius="md" />
             ))}
           </SimpleGrid>

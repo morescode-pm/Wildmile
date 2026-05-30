@@ -1,8 +1,8 @@
 .selectionContainer {
   border: 1px solid var(--mantine-color-gray-3);
   border-radius: var(--mantine-radius-md);
-  padding: var(--mantine-spacing-xs);
-  margin-bottom: var(--mantine-spacing-xs);
+  padding: 4px var(--mantine-spacing-xs);
+  margin-bottom: 4px;
   background-color: var(--mantine-color-white);
   transition: all 0.2s ease;
 }

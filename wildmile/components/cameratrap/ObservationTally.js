@@ -185,7 +185,7 @@ export function ObservationTally({ fetchNextImage }) {
                 preferred_common_name: s.preferred_common_name,
               }));
             if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 6);
+            return [...newEntries, ...prev].slice(0, 9);
           });
         }
         await loadUserLabeled();
@@ -259,11 +259,12 @@ export function ObservationTally({ fetchNextImage }) {
                   return (
                     <div key={animalId} className={styles.selectionContainer}>
                       <div className={styles.selectionContent}>
-                        <Text className={styles.speciesName}>
+                        <Text size="sm" className={styles.speciesName}>
                           {animal.preferred_common_name || animal.name}
                         </Text>
                         <div className={styles.controls}>
                           <NumberInput
+                            size="xs"
                             value={animalCounts[animalId] || 1}
                             onChange={(value) =>
                               handleCountChange(animalId, value)
@@ -273,6 +274,7 @@ export function ObservationTally({ fetchNextImage }) {
                             style={{ width: 80 }}
                           />
                           <ActionIcon
+                            size="sm"
                             color="red"
                             variant="subtle"
                             onClick={() => handleRemoveAnimal(animalId)}
