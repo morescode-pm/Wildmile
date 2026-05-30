@@ -41,13 +41,12 @@ export function SpeciesCards(results) {
 }
 
 // Check if a selection item matches an iNaturalist result.
-// Matches by id (normal clicks) OR by name (URL-seeded stubs that
-// only have a name property). The name fallback is a single string
-// comparison so there's no meaningful performance cost.
+// Matches by taxonId or id.
 function isSelectedSpecies(item, inatResult) {
   const itemId = item.taxonId || item.id;
-  const inatId = inatResult.taxonId || inatResult.id;
-  if (itemId != null && inatId != null && itemId === inatId) {
+  const resultId = inatResult.taxonId || inatResult.id;
+
+  if (itemId != null && resultId != null && itemId === resultId) {
     return true;
   }
   if (item.name && inatResult.name && item.name === inatResult.name) {
@@ -219,7 +218,7 @@ function SpeciesInfoModal({ result, opened, onClose }) {
   );
 }
 
-export default function Species({ results }) {
+export default function Species({ results, onSpeciesSelect }) {
   const [selection, setSelection] = useSelection();
   const [infoTarget, setInfoTarget] = useState(null);
 
@@ -229,6 +228,9 @@ export default function Species({ results }) {
   const result_values = SpeciesCards(results);
 
   const toggleSelection = (result) => {
+    if (onSpeciesSelect) {
+      onSpeciesSelect(result.inat_result);
+    }
     setSelection((prev) => {
       const isSelected = prev.some((item) =>
         isSelectedSpecies(item, result.inat_result),

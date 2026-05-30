@@ -11,61 +11,32 @@ export async function GET(request) {
     await dbConnect();
     const session = await getSession();
 
-    let speciesNames;
-
-    if (session?._id) {
-      speciesNames = await getUserRecentSpecies(session._id);
+    if (!session?._id) {
+      return NextResponse.json([]);
     }
 
-    if (!speciesNames || speciesNames.length === 0) {
-      speciesNames = await getGlobalCommonSpecies();
-    }
-
+    const speciesNames = await getUserLabeledSpecies(session._id);
     const speciesDocs = await resolveSpeciesDocs(speciesNames);
 
     return NextResponse.json(speciesDocs, {
       headers: {
-        "Cache-Control": session?._id
-          ? "private, no-cache"
-          : "public, s-maxage=600, stale-while-revalidate=120",
+        "Cache-Control": "private, no-cache",
       },
     });
   } catch (error) {
-    console.error("Error fetching recent species:", error);
+    console.error("Error fetching user labeled species:", error);
     return NextResponse.json(
-      { error: "Error fetching recent species" },
+      { error: "Error fetching user labeled species" },
       { status: 500 }
     );
   }
 }
 
-async function getUserRecentSpecies(userId) {
+async function getUserLabeledSpecies(userId) {
   const results = await Observation.aggregate([
     {
       $match: {
         creator: userId,
-        observationType: "animal",
-        scientificName: { $exists: true, $ne: "" },
-      },
-    },
-    { $sort: { createdAt: -1 } },
-    {
-      $group: {
-        _id: "$scientificName",
-        lastUsed: { $first: "$createdAt" },
-      },
-    },
-    { $sort: { lastUsed: -1 } },
-    { $limit: 6 },
-  ]);
-
-  return results.map((r) => r._id);
-}
-
-async function getGlobalCommonSpecies() {
-  const results = await Observation.aggregate([
-    {
-      $match: {
         observationType: "animal",
         scientificName: { $exists: true, $ne: "" },
       },
@@ -77,7 +48,6 @@ async function getGlobalCommonSpecies() {
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 6 },
   ]);
 
   return results.map((r) => r._id);

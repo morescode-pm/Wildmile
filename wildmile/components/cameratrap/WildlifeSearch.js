@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import {
   Group,
+  Stack,
   Paper,
   Accordion,
   Box,
@@ -18,21 +19,24 @@ const WildlifeSearch = () => {
   const [opened, { toggle }] = useDisclosure(false);
 
   const handleSpeciesSelect = (species) => {
-    setSelectedSpecies(species);
+    setSelectedSpecies(species.name || species);
   };
 
   return (
-    <Paper shadow="xs" p="md" style={{ maxWidth: "800px", width: "100%" }}>
-      <Button variant="default" leftSection={<IconSearch />} onClick={toggle}>
-        Search All Species
-      </Button>
-
-      <Collapse in={opened}>
-        <TaxaSearch initialQuery={selectedSpecies} />
-      </Collapse>
-      <Box mt="md" style={{ height: "80vh", overflowY: "auto" }}>
-        <PredefinedSpeciesSidebar onSpeciesSelect={handleSpeciesSelect} />
-      </Box>
+    <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
+      <Stack gap="md" h="100%">
+        <PredefinedSpeciesSidebar
+          onSpeciesSelect={handleSpeciesSelect}
+          searchControl={
+            <Button variant="default" leftSection={<IconSearch />} onClick={toggle} size="xs">
+              Search
+            </Button>
+          }
+        />
+        <Collapse in={opened}>
+          <TaxaSearch initialQuery={selectedSpecies} />
+        </Collapse>
+      </Stack>
     </Paper>
   );
 };
