@@ -249,7 +249,7 @@ export default function PredefinedSpeciesSidebar({
 
       {selectedCategory && filteredResults?.length > 0 && (
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
-          <SimpleGrid cols={2} spacing="xs">
+          <SimpleGrid cols={3} spacing="xs">
             <Species
               results={filteredResults}
               onSpeciesSelect={onSpeciesSelect}

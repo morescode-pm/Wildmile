@@ -25,7 +25,14 @@ const WildlifeSearch = () => {
   return (
     <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
       <Stack gap="md" h="100%">
-        <Box style={{ flex: 1, overflow: "hidden" }}>
+        <Box
+          style={{
+            flex: 1,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <PredefinedSpeciesSidebar
             onSpeciesSelect={handleSpeciesSelect}
             searchControl={

@@ -84,7 +84,7 @@ const TaxaSearch = ({ initialQuery = "" }) => {
         <SimpleGrid
           mt={40}
           type="container"
-          cols={{ base: 2, sm: 2, lg: 3, xl: 4 }}
+          cols={{ base: 2, sm: 3, lg: 3, xl: 4 }}
           // breakpoints={[
           //   { maxWidth: "62rem", cols: 3, spacing: "md" },
           //   { maxWidth: "48rem", cols: 2, spacing: "sm" },

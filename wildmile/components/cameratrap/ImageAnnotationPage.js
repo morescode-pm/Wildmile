@@ -19,6 +19,7 @@ import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
 
@@ -176,14 +177,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className={classes.fullViewport}>
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
