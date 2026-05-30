@@ -199,7 +199,7 @@ export function ObservationTally({ fetchNextImage }) {
                 preferred_common_name: s.preferred_common_name,
               }));
             if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 9);
+            return [...newEntries, ...prev].slice(0, 12);
           });
         }
         await loadUserLabeled();
