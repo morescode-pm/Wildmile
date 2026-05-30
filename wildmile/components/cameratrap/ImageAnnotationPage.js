@@ -222,11 +222,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           </div>
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "100%" }}>
+        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "calc(100vh - 45px)" }}>
           <ObservationTally fetchNextImage={fetchNextImage} />
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "100%" }}>
+        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 45px)" }}>
           <WildlifeSearch />
         </GridCol>
       </Grid>
