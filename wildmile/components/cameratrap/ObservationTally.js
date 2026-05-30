@@ -310,12 +310,13 @@ export function ObservationTally({ fetchNextImage }) {
                               }}
                               hideControls
                               min={1}
-                              max={100}
+                              max={99}
                               style={{ width: 50 }}
                               styles={{
                                 input: {
                                   textAlign: "center",
                                   fontWeight: 600,
+                                  fontSize: 14,
                                 },
                               }}
                             />
@@ -416,6 +417,7 @@ export function ObservationTally({ fetchNextImage }) {
           humanPresent ||
           vehiclePresent ? (
             <Button
+              size="lg"
               color="blue"
               fullWidth
               onClick={() => handleSaveObservations()}
@@ -425,6 +427,7 @@ export function ObservationTally({ fetchNextImage }) {
             </Button>
           ) : (
             <Button
+              size="lg"
               color="blue"
               variant="outline"
               fullWidth
