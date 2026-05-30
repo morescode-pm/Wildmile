@@ -123,7 +123,7 @@ export function ImageAnnotation({ filters }) {
         <Box
           style={{
             position: "relative",
-            flex: 1,
+            height: "500px",
             backgroundColor: "black",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
@@ -156,7 +156,7 @@ export function ImageAnnotation({ filters }) {
                   src={currentImage.publicURL}
                   style={{
                     display: "block",
-                    maxHeight: "100%",
+                    maxHeight: "500px",
                     maxWidth: "100%",
                     objectFit: "contain",
                   }}
@@ -209,7 +209,7 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="0">
+        <Stack gap="xs" mt="auto">
           <Group justify="space-between">
             <Group gap="xs">
               <ActionIcon

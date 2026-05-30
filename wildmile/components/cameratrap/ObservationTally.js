@@ -251,7 +251,7 @@ export function ObservationTally({ fetchNextImage }) {
         <Text fw={700}>Observations</Text>
 
         {!noAnimalsVisible && (
-          <ScrollArea style={{ flex: 1 }} offsetScrollbars scrollbarSize={4}>
+          <ScrollArea h={350} offsetScrollbars scrollbarSize={4}>
             <Flex direction="column" gap="xs">
               {selection.map((animal) => {
                 const animalId = animal.taxonId || animal.id;
@@ -288,6 +288,16 @@ export function ObservationTally({ fetchNextImage }) {
           </ScrollArea>
         )}
 
+        <ScrollArea h={200} offsetScrollbars>
+          <Stack gap="xs">
+            {comments.map((comment, index) => (
+              <Text key={index} size="sm">
+                <strong>{comment.author.name}:</strong> {comment.text}
+              </Text>
+            ))}
+          </Stack>
+        </ScrollArea>
+
         <Stack gap="md" mt="auto">
           <Group grow wrap="nowrap">
             <Checkbox
@@ -318,7 +328,27 @@ export function ObservationTally({ fetchNextImage }) {
             />
           </Group>
 
-          {noAnimalsVisible || selection.length > 0 || humanPresent || vehiclePresent ? (
+          <Group>
+            <TextInput
+              placeholder="Add a comment..."
+              value={comment}
+              onChange={(event) =>
+                setObsState((prev) => ({
+                  ...prev,
+                  comment: event.currentTarget.value,
+                }))
+              }
+              style={{ flex: 1 }}
+            />
+            <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>
+              <IconSend size={24} />
+            </ActionIcon>
+          </Group>
+
+          {noAnimalsVisible ||
+          selection.length > 0 ||
+          humanPresent ||
+          vehiclePresent ? (
             <Button
               color="blue"
               fullWidth
@@ -338,29 +368,6 @@ export function ObservationTally({ fetchNextImage }) {
               No Animals Visible
             </Button>
           )}
-
-          <Stack gap="xs">
-            <Group mt="xs">
-              <TextInput
-                placeholder="Add a comment..."
-                value={comment}
-                onChange={(event) => setObsState(prev => ({ ...prev, comment: event.currentTarget.value }))}
-                style={{ flex: 1 }}
-              />
-              <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>
-                <IconSend size={24} />
-              </ActionIcon>
-            </Group>
-            <ScrollArea h={200} offsetScrollbars>
-              <Stack gap="xs">
-                {comments.map((comment, index) => (
-                  <Text key={index} size="sm">
-                    <strong>{comment.author.name}:</strong> {comment.text}
-                  </Text>
-                ))}
-              </Stack>
-            </ScrollArea>
-          </Stack>
         </Stack>
       </Stack>
     </Paper>
