@@ -32,10 +32,10 @@ import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
 
 const SELECTION_COLORS = [
-  "rgba(255, 99, 132, 0.15)", // Pink
   "rgba(54, 162, 235, 0.15)", // Blue
   "rgba(255, 206, 86, 0.15)", // Yellow
   "rgba(75, 192, 192, 0.15)", // Teal
+  "rgba(255, 99, 132, 0.15)", // Pink
   "rgba(153, 102, 255, 0.15)", // Purple
   "rgba(255, 159, 64, 0.15)", // Orange
   "rgba(40, 167, 69, 0.15)", // Green
@@ -199,7 +199,7 @@ export function ObservationTally({ fetchNextImage }) {
                 preferred_common_name: s.preferred_common_name,
               }));
             if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 9);
+            return [...newEntries, ...prev].slice(0, 12);
           });
         }
         await loadUserLabeled();
