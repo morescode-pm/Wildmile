@@ -11,6 +11,7 @@ import {
   Group,
   ActionIcon,
   ScrollArea,
+  Divider,
 } from "@mantine/core";
 import { IconClock, IconRefresh, IconUser } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit } from "lucide-react";
@@ -20,7 +21,7 @@ import { useRecentSpecies, useUserLabeledSpecies } from "./ContextCamera";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-import Species from "./SpeciesCard";
+import Species, { SpeciesList } from "./SpeciesCard";
 
 function iconicTaxonNameToCategory(iconic_taxon_name) {
   switch (iconic_taxon_name) {
@@ -247,14 +248,58 @@ export default function PredefinedSpeciesSidebar({
         fullWidth
       />
 
-      {selectedCategory && filteredResults?.length > 0 && (
+      {selectedCategory && (
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
-          <SimpleGrid cols={3} spacing="xs">
-            <Species
-              results={filteredResults}
-              onSpeciesSelect={onSpeciesSelect}
-            />
-          </SimpleGrid>
+          {selectedCategory === "user" ? (
+            <Stack gap="md">
+              {["Mammals", "Birds", "Reptiles", "Amphibians", "Fish", "Other"].map(
+                (category) => {
+                  const speciesInCategory = userLabeledSpecies
+                    .filter(
+                      (s) => iconicTaxonNameToCategory(s.iconic_taxon_name) === category
+                    )
+                    .sort((a, b) => {
+                      const nameA = (
+                        a.preferred_common_name ||
+                        a.name ||
+                        ""
+                      ).toLowerCase();
+                      const nameB = (
+                        b.preferred_common_name ||
+                        b.name ||
+                        ""
+                      ).toLowerCase();
+                      return nameA.localeCompare(nameB);
+                    });
+
+                  if (speciesInCategory.length === 0) return null;
+
+                  return (
+                    <Stack key={category} gap="xs">
+                      <Divider
+                        label={category}
+                        labelPosition="left"
+                        labelProps={{ fw: 700, size: "sm" }}
+                      />
+                      <SpeciesList
+                        results={speciesInCategory}
+                        onSpeciesSelect={onSpeciesSelect}
+                      />
+                    </Stack>
+                  );
+                }
+              )}
+            </Stack>
+          ) : (
+            filteredResults?.length > 0 && (
+              <SimpleGrid cols={3} spacing="xs">
+                <Species
+                  results={filteredResults}
+                  onSpeciesSelect={onSpeciesSelect}
+                />
+              </SimpleGrid>
+            )
+          )}
         </ScrollArea>
       )}
     </Stack>
