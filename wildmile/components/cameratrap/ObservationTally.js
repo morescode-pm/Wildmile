@@ -17,6 +17,8 @@ import {
 import {
   IconSend,
   IconX,
+  IconPlus,
+  IconMinus,
 } from "@tabler/icons-react";
 import {
   useImage,
@@ -281,16 +283,36 @@ export function ObservationTally({ fetchNextImage }) {
                           {animal.preferred_common_name || animal.name}
                         </Text>
                         <div className={styles.controls}>
-                          <NumberInput
-                            size="xs"
-                            value={animalCounts[animalId] || 1}
-                            onChange={(value) =>
-                              handleCountChange(animalId, value)
-                            }
-                            min={1}
-                            max={100}
-                            style={{ width: 80 }}
-                          />
+                          <Group gap={4}>
+                            <ActionIcon
+                              size="sm"
+                              variant="subtle"
+                              onClick={() =>
+                                handleCountChange(
+                                  animalId,
+                                  Math.max(1, (animalCounts[animalId] || 1) - 1)
+                                )
+                              }
+                              disabled={(animalCounts[animalId] || 1) <= 1}
+                            >
+                              <IconMinus size={14} />
+                            </ActionIcon>
+                            <Text size="sm" w={20} ta="center" fw={600}>
+                              {animalCounts[animalId] || 1}
+                            </Text>
+                            <ActionIcon
+                              size="sm"
+                              variant="subtle"
+                              onClick={() =>
+                                handleCountChange(
+                                  animalId,
+                                  (animalCounts[animalId] || 1) + 1
+                                )
+                              }
+                            >
+                              <IconPlus size={14} />
+                            </ActionIcon>
+                          </Group>
                           <ActionIcon
                             size="sm"
                             color="red"
