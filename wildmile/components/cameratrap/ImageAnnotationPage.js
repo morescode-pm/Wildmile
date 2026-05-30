@@ -179,7 +179,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
     <>
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
       <Grid align="stretch" style={{ height: "calc(100vh - 40px)", margin: 0 }}>
-        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "100%" }}>
+        <GridCol span={{ base: 12, md: 5, lg: 5 }} style={{ height: "100%" }}>
           <Group gap="xs" justify="center" mb="md">
             <Button.Group>
               <Tooltip label="Previous Image">
@@ -214,7 +214,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           />
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "100%" }}>
+        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "100%" }}>
           <ObservationTally fetchNextImage={fetchNextImage} />
         </GridCol>
 
