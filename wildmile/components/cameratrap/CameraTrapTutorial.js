@@ -73,7 +73,7 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#save-observations-button',
-      content: 'Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
+      content: 'Finally, click "Save Observations". Your selections are kept between images to help with photo bursts, so remember to remove any animals that aren\'t in the next photo!',
       placement: 'top',
     },
   ];
