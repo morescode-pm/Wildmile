@@ -1,10 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
 import { useSelection, useAnimalCounts } from './ContextCamera';
 
 export const CameraTrapTutorial = ({ run, setRun }) => {
   const [selection, setSelection] = useSelection();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
+  const [tourKey, setTourKey] = useState(0);
+
+  // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
+  useEffect(() => {
+    if (run) {
+      setTourKey(prev => prev + 1);
+    }
+  }, [run]);
 
   const exampleAnimal = {
     id: 'example-squirrel',
@@ -80,6 +88,7 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
 
   return (
     <Joyride
+      key={tourKey}
       steps={steps}
       run={run}
       continuous
@@ -92,18 +101,24 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
         options: {
           primaryColor: '#40c057', // Green
           zIndex: 10000,
+          overlayColor: 'rgba(0, 0, 0, 0.5)',
         },
         tooltip: {
           fontSize: '16px',
         },
-        buttonNext: {
+        buttonPrimary: {
+          backgroundColor: '#40c057',
+          color: '#ffffff',
+        },
+        // Force beacon colors manually to avoid black indicators
+        beaconInner: {
           backgroundColor: '#40c057',
         },
-        beacon: {
-          color: '#40c057',
+        beaconOuter: {
+          border: '2px solid #40c057',
         },
         spotlight: {
-          backgroundColor: 'rgba(64, 192, 87, 0.2)',
+          // Explicitly empty to avoid spreading backgroundColor to SVG path
         }
       }}
     />
