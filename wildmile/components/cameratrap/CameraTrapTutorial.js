@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Joyride, STATUS } from 'react-joyride';
+import { Joyride, STATUS, ACTIONS, EVENTS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
 
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
   const [tourKey, setTourKey] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
 
-  // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
+  // Increment key and reset index whenever run becomes true to force a clean restart
   useEffect(() => {
     if (run) {
       setTourKey(prev => prev + 1);
+      setStepIndex(0);
     }
   }, [run]);
 
@@ -58,10 +60,13 @@ export const CameraTrapTutorial = () => {
   ];
 
   const handleJoyrideCallback = (data) => {
-    const { status } = data;
+    const { status, type, index, action } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
+      setStepIndex(0);
+    } else if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
+      setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
     }
   };
 
@@ -70,6 +75,7 @@ export const CameraTrapTutorial = () => {
       key={tourKey}
       steps={steps}
       run={run}
+      stepIndex={stepIndex}
       continuous
       showProgress
       showSkipButton
@@ -90,10 +96,10 @@ export const CameraTrapTutorial = () => {
           color: '#ffffff',
         },
         beaconInner: {
-          backgroundColor: '#ff0000',
+          backgroundColor: '#40c057',
         },
         beaconOuter: {
-          border: '2px solid #ff0000',
+          border: '2px solid #40c057',
         },
         spotlight: {
           // Keep empty
