@@ -90,10 +90,10 @@ export const CameraTrapTutorial = () => {
           color: '#ffffff',
         },
         beaconInner: {
-          backgroundColor: '#40c057',
+          backgroundColor: '#ff0000',
         },
         beaconOuter: {
-          border: '2px solid #40c057',
+          border: '2px solid #ff0000',
         },
         spotlight: {
           // Keep empty
