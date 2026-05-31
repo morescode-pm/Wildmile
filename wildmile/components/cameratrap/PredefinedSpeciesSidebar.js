@@ -282,7 +282,7 @@ export default function PredefinedSpeciesSidebar({
                       <Divider
                         label={category}
                         labelPosition="left"
-                        labelProps={{ fw: 700, size: "sm" }}
+                        styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
                       />
                       <SpeciesList
                         results={speciesInCategory}
