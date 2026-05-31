@@ -6,20 +6,27 @@ export const CameraTrapTutorial = () => {
   const [selection, setSelection] = useSelection();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [run, setRun] = useTutorial();
-  const [tourKey, setTourKey] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
 
-  // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
+  // Reset step index whenever the tutorial starts
   useEffect(() => {
     if (run) {
-      setTourKey(prev => prev + 1);
+      setStepIndex(0);
     }
   }, [run]);
 
-  const exampleAnimal = {
+  const exampleSquirrel = {
     id: 'example-squirrel',
     taxonId: 'example-squirrel',
     name: 'Sciurus carolinensis',
     preferred_common_name: 'Eastern Gray Squirrel',
+  };
+
+  const exampleRaccoon = {
+    id: 'example-raccoon',
+    taxonId: 'example-raccoon',
+    name: 'Procyon lotor',
+    preferred_common_name: 'Northern Raccoon',
   };
 
   const steps = [
@@ -76,27 +83,37 @@ export const CameraTrapTutorial = () => {
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
-      // Clean up example animal
-      setSelection(prev => prev.filter(a => a.id !== 'example-squirrel'));
+      setStepIndex(0);
+      // Clean up example animals
+      setSelection(prev => prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id)));
+    } else if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
+      setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
     }
 
-    // Inject example animal when we reach the tally steps (indices 6 and 7)
-    if (type === EVENTS.STEP_BEFORE && (index === 6 || index === 7)) {
+    // Step 7 logic (index 6): Show one example animal
+    if (type === EVENTS.STEP_BEFORE && index === 6) {
       setSelection(prev => {
-        if (!prev.find(a => a.id === 'example-squirrel')) {
-          return [...prev, exampleAnimal];
-        }
-        return prev;
+        const base = prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id));
+        return [...base, exampleSquirrel];
       });
       setAnimalCounts(prev => ({ ...prev, 'example-squirrel': 2 }));
+    }
+
+    // Step 8 logic (index 7): Show two example animals
+    if (type === EVENTS.STEP_BEFORE && index === 7) {
+      setSelection(prev => {
+        const base = prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id));
+        return [...base, exampleSquirrel, exampleRaccoon];
+      });
+      setAnimalCounts(prev => ({ ...prev, 'example-squirrel': 2, 'example-raccoon': 1 }));
     }
   };
 
   return (
     <Joyride
-      key={tourKey}
       steps={steps}
       run={run}
+      stepIndex={stepIndex}
       continuous
       showProgress
       showSkipButton
@@ -123,7 +140,7 @@ export const CameraTrapTutorial = () => {
           border: '2px solid #40c057',
         },
         spotlight: {
-          // Explicitly empty
+          // Keep empty
         }
       }}
     />
