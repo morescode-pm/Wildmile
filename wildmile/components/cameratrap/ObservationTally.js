@@ -291,13 +291,13 @@ export function ObservationTally({ fetchNextImage }) {
               <Flex direction="column" gap="xs">
                 {selection.map((animal, index) => {
                   const animalId = animal.taxonId || animal.id;
-                  const backgroundColor =
+                  const bgColor =
                     SELECTION_COLORS[index % SELECTION_COLORS.length];
                   return (
                     <div
                       key={animalId}
                       className={styles.selectionContainer}
-                      style={{ backgroundColor }}
+                      style={{ backgroundColor: bgColor }}
                     >
                       <div className={styles.selectionContent}>
                         <Text size="sm" className={styles.speciesName}>

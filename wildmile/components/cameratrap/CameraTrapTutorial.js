@@ -64,14 +64,10 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
       setRun(false);
       // Clean up example animal
       setSelection(prev => prev.filter(a => a.id !== 'example-squirrel'));
-    } else if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-      if (index === 5 && action === ACTIONS.NEXT) {
-        // We are moving past the tally step
-      }
     }
 
     // Inject example animal when we reach the tally steps
-    if (type === EVENTS.STEP_BEFORE && index === 5) {
+    if (type === EVENTS.STEP_BEFORE && (index === 5 || index === 6)) {
       setSelection(prev => {
         if (!prev.find(a => a.id === 'example-squirrel')) {
           return [...prev, exampleAnimal];
@@ -102,6 +98,9 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
         },
         buttonNext: {
           backgroundColor: '#40c057',
+        },
+        beacon: {
+          color: '#40c057',
         },
         spotlight: {
           backgroundColor: 'rgba(64, 192, 87, 0.2)',
