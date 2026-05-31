@@ -199,6 +199,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             <Button.Group>
               <Tooltip label="Previous Image">
                 <Button
+                  id="prev-image-button"
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
@@ -209,6 +210,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
               <Tooltip label="Next Image">
                 <Button
+                  id="next-image-button"
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"

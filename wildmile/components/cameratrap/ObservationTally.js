@@ -420,12 +420,13 @@ export function ObservationTally({ fetchNextImage }) {
             <TextInput
               placeholder="Add a comment..."
               value={comment}
-              onChange={(event) =>
+              onChange={(event) => {
+                const val = event.currentTarget.value;
                 setObsState((prev) => ({
                   ...prev,
-                  comment: event.currentTarget.value,
-                }))
-              }
+                  comment: val,
+                }));
+              }}
               style={{ flex: 1 }}
             />
             <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>

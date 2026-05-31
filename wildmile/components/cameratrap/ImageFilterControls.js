@@ -120,8 +120,9 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group position="apart">
+      <Group position="apart" id="filter-controls-group">
         <Button
+          id="get-images-button"
           size="md"
           onClick={handleApplyFilters}
           leftSection={<IconRefresh />}
@@ -130,6 +131,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
         </Button>
         {onJumpToEarliest && (
           <Button
+            id="earliest-button"
             size="md"
             onClick={() => {
               onApplyFilters(filters);
@@ -143,6 +145,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
           </Button>
         )}
         <Button
+          id="filters-button"
           onClick={open}
           leftSection={<IconAdjustmentsHorizontal size={16} />}
           variant={hasActiveFilters ? "filled" : "outline"}
