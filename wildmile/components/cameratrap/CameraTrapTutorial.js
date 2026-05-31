@@ -6,12 +6,12 @@ export const CameraTrapTutorial = () => {
   const [selection, setSelection] = useSelection();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [run, setRun] = useTutorial();
-  const [stepIndex, setStepIndex] = useState(0);
+  const [tourKey, setTourKey] = useState(0);
 
-  // Reset step index whenever the tutorial starts
+  // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
   useEffect(() => {
     if (run) {
-      setStepIndex(0);
+      setTourKey(prev => prev + 1);
     }
   }, [run]);
 
@@ -83,11 +83,8 @@ export const CameraTrapTutorial = () => {
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
-      setStepIndex(0);
       // Clean up example animals
       setSelection(prev => prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id)));
-    } else if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
-      setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
     }
 
     // Step 7 logic (index 6): Show one example animal
@@ -111,9 +108,9 @@ export const CameraTrapTutorial = () => {
 
   return (
     <Joyride
+      key={tourKey}
       steps={steps}
       run={run}
-      stepIndex={stepIndex}
       continuous
       showProgress
       showSkipButton
