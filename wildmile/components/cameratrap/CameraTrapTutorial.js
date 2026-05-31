@@ -1,61 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
+
+const steps = [
+  {
+    target: '#main-navigation-bar',
+    content: '1. Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
+    placement: 'bottom',
+    disableBeacon: true,
+  },
+  {
+    target: '#image-annotation-card',
+    content: '2. You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
+    placement: 'right',
+  },
+  {
+    target: '#image-action-buttons',
+    content: '3. Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
+    placement: 'top',
+  },
+  {
+    target: '#save-observations-button',
+    content: '4. If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
+    placement: 'left',
+  },
+  {
+    target: '#wildlife-search-container',
+    content: '5. If animals are present, select them from the available species in this sidebar.',
+    placement: 'left',
+  },
+  {
+    target: '#species-tabs',
+    content: '6. Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
+    placement: 'left',
+  },
+  {
+    target: '#observation-tally-container',
+    content: '7. Once you select animals, they will appear here. Use the plus and minus buttons to set the count for each type visible in the photo.',
+    placement: 'left',
+  },
+  {
+    target: '#save-observations-button',
+    content: '8. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
+    placement: 'top',
+  },
+];
 
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
   const [tourKey, setTourKey] = useState(0);
 
-  // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
+  // Force a hard reset by incrementing the key whenever the tour starts
   useEffect(() => {
     if (run) {
       setTourKey(prev => prev + 1);
     }
   }, [run]);
-
-  const steps = [
-    {
-      target: '#main-navigation-bar',
-      content: '1. Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
-      placement: 'bottom',
-      disableBeacon: true,
-    },
-    {
-      target: '#image-annotation-card',
-      content: '2. You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
-      placement: 'right',
-    },
-    {
-      target: '#image-action-buttons',
-      content: '3. Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
-      placement: 'top',
-    },
-    {
-      target: '#save-observations-button',
-      content: '4. If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
-      placement: 'left',
-    },
-    {
-      target: '#wildlife-search-container',
-      content: '5. If animals are present, select them from the available species in this sidebar.',
-      placement: 'left',
-    },
-    {
-      target: '#species-tabs',
-      content: '6. Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
-      placement: 'left',
-    },
-    {
-      target: '#observation-tally-container',
-      content: '7. Once you select animals, they will appear here. Use the plus and minus buttons to set the count for each type visible in the photo.',
-      placement: 'left',
-    },
-    {
-      target: '#save-observations-button',
-      content: '8. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
-      placement: 'top',
-    },
-  ];
 
   const handleJoyrideCallback = (data) => {
     const { status } = data;

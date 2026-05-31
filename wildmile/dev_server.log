@@ -1,0 +1,21 @@
+
+> wildmile@1.0.0 dev
+> cross-env NODE_OPTIONS=--inspect next dev
+
+Debugger listening on ws://127.0.0.1:9229/98694326-0382-4818-858e-888389bf0794
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:9230/22cff23f-0def-404c-9bf5-77e821ba9908
+For help, see: https://nodejs.org/en/docs/inspector
+   the --inspect option was detected, the Next.js router server should be inspected at 9230.
+   ▲ Next.js 15.1.11
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 2.3s
+[?25h
