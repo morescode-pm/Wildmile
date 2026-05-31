@@ -19,6 +19,7 @@ import {
   IconX,
   IconPlus,
   IconMinus,
+  IconHelp,
 } from "@tabler/icons-react";
 import {
   useImage,
@@ -26,7 +27,8 @@ import {
   useRecentSpecies,
   useUserLabeledSpecies,
   useAnimalCounts,
-  useObservationState
+  useObservationState,
+  useTutorial
 } from "./ContextCamera";
 import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
@@ -50,6 +52,7 @@ export function ObservationTally({ fetchNextImage }) {
   const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [obsState, setObsState] = useObservationState();
+  const [runTutorial, setRunTutorial] = useTutorial();
   const [isSaving, setIsSaving] = useState(false);
   const [comments, setComments] = useState([]);
 
@@ -257,7 +260,7 @@ export function ObservationTally({ fetchNextImage }) {
     });
   };
 
-  if (!currentImage) return null;
+  if (!currentImage && !runTutorial) return null;
 
   return (
     <Paper
@@ -269,7 +272,18 @@ export function ObservationTally({ fetchNextImage }) {
       id="observation-tally-container"
     >
       <Stack gap="md" h="100%">
-        <Text fw={700}>Observations</Text>
+        <Group justify="space-between" align="center">
+          <Text fw={700}>Observations</Text>
+          <Button
+            size="xs"
+            color="green"
+            variant="outline"
+            onClick={() => setRunTutorial(true)}
+            leftSection={<IconHelp size={16} />}
+          >
+            Help
+          </Button>
+        </Group>
 
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
           <Stack gap="md">

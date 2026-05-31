@@ -1,7 +1,18 @@
-import React from 'react';
-import { Joyride } from 'react-joyride';
+import React, { useEffect } from 'react';
+import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
+import { useSelection, useAnimalCounts } from './ContextCamera';
 
 export const CameraTrapTutorial = ({ run, setRun }) => {
+  const [selection, setSelection] = useSelection();
+  const [animalCounts, setAnimalCounts] = useAnimalCounts();
+
+  const exampleAnimal = {
+    id: 'example-squirrel',
+    taxonId: 'example-squirrel',
+    name: 'Sciurus carolinensis',
+    preferred_common_name: 'Eastern Gray Squirrel',
+  };
+
   const steps = [
     {
       target: '#login-button',
@@ -31,7 +42,7 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
     },
     {
       target: '#observation-tally-container',
-      content: '6. When you pick an animal, indicate how many are present using the plus and minus buttons.',
+      content: '6. When you pick an animal, it appears here. Indicate how many are present using the plus and minus buttons.',
       placement: 'left',
     },
     {
@@ -46,6 +57,31 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
     },
   ];
 
+  const handleJoyrideCallback = (data) => {
+    const { action, index, status, type } = data;
+
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRun(false);
+      // Clean up example animal
+      setSelection(prev => prev.filter(a => a.id !== 'example-squirrel'));
+    } else if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+      if (index === 5 && action === ACTIONS.NEXT) {
+        // We are moving past the tally step
+      }
+    }
+
+    // Inject example animal when we reach the tally steps
+    if (type === EVENTS.STEP_BEFORE && index === 5) {
+      setSelection(prev => {
+        if (!prev.find(a => a.id === 'example-squirrel')) {
+          return [...prev, exampleAnimal];
+        }
+        return prev;
+      });
+      setAnimalCounts(prev => ({ ...prev, 'example-squirrel': 2 }));
+    }
+  };
+
   return (
     <Joyride
       steps={steps}
@@ -54,17 +90,22 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
       showProgress
       showSkipButton
       scrollOffset={100}
-      callback={(data) => {
-        const { status } = data;
-        if (['finished', 'skipped'].includes(status)) {
-          setRun(false);
-        }
-      }}
+      disableScrolling={false}
+      callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#228be6',
+          primaryColor: '#40c057', // Green
           zIndex: 10000,
         },
+        tooltip: {
+          fontSize: '16px',
+        },
+        buttonNext: {
+          backgroundColor: '#40c057',
+        },
+        spotlight: {
+          backgroundColor: 'rgba(64, 192, 87, 0.2)',
+        }
       }}
     />
   );

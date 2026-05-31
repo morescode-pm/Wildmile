@@ -13,7 +13,7 @@ import {
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage } from "./ContextCamera";
+import { useImage, useTutorial } from "./ContextCamera";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
@@ -44,7 +44,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   // Initialize with client-side defaults, will be overwritten by fetched defaults
   const [appliedFilters, setAppliedFilters] = useState(clientSideDefaultFilters);
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
-  const [runTutorial, setRunTutorial] = useState(false);
+  const [runTutorial, setRunTutorial] = useTutorial();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -181,7 +181,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <div className={classes.fullViewport}>
       <CameraTrapTutorial run={runTutorial} setRun={setRunTutorial} />
-      <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
+      <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
         style={{ flex: 1, margin: 0, padding: "10px" }}
@@ -217,16 +217,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                 </Button>
               </Tooltip>
             </Button.Group>
-            <Tooltip label="Tutorial">
-              <ActionIcon
-                onClick={() => setRunTutorial(true)}
-                variant="outline"
-                size="lg"
-                radius="md"
-              >
-                <IconHelp />
-              </ActionIcon>
-            </Tooltip>
             <ImageFilterControls
               initialFilters={appliedFilters}
               onApplyFilters={handleApplyFilters}
