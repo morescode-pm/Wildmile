@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
-import { useSelection, useAnimalCounts, useTutorial } from './ContextCamera';
+import { Joyride, STATUS } from 'react-joyride';
+import { useTutorial } from './ContextCamera';
 
 export const CameraTrapTutorial = () => {
-  const [selection, setSelection] = useSelection();
-  const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [run, setRun] = useTutorial();
   const [tourKey, setTourKey] = useState(0);
 
@@ -14,20 +12,6 @@ export const CameraTrapTutorial = () => {
       setTourKey(prev => prev + 1);
     }
   }, [run]);
-
-  const exampleSquirrel = {
-    id: 'example-squirrel',
-    taxonId: 'example-squirrel',
-    name: 'Sciurus carolinensis',
-    preferred_common_name: 'Eastern Gray Squirrel',
-  };
-
-  const exampleRaccoon = {
-    id: 'example-raccoon',
-    taxonId: 'example-raccoon',
-    name: 'Procyon lotor',
-    preferred_common_name: 'Northern Raccoon',
-  };
 
   const steps = [
     {
@@ -63,46 +47,21 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#observation-tally-container',
-      content: '7. Once you select an animal, it will appear here. Use the plus and minus buttons to indicate the count.',
-      placement: 'left',
-    },
-    {
-      target: '#observation-tally-container',
-      content: '8. If there are multiple types of animals, pick each one and set their counts accordingly.',
+      content: '7. Once you select animals, they will appear here. Use the plus and minus buttons to set the count for each type visible in the photo.',
       placement: 'left',
     },
     {
       target: '#save-observations-button',
-      content: '9. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
+      content: '8. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
       placement: 'top',
     },
   ];
 
   const handleJoyrideCallback = (data) => {
-    const { action, index, status, type } = data;
+    const { status } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
-      // Clean up example animals
-      setSelection(prev => prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id)));
-    }
-
-    // Step 7 logic (index 6): Show one example animal
-    if (type === EVENTS.STEP_BEFORE && index === 6) {
-      setSelection(prev => {
-        const base = prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id));
-        return [...base, exampleSquirrel];
-      });
-      setAnimalCounts(prev => ({ ...prev, 'example-squirrel': 2 }));
-    }
-
-    // Step 8 logic (index 7): Show two example animals
-    if (type === EVENTS.STEP_BEFORE && index === 7) {
-      setSelection(prev => {
-        const base = prev.filter(a => !['example-squirrel', 'example-raccoon'].includes(a.id));
-        return [...base, exampleSquirrel, exampleRaccoon];
-      });
-      setAnimalCounts(prev => ({ ...prev, 'example-squirrel': 2, 'example-raccoon': 1 }));
     }
   };
 
