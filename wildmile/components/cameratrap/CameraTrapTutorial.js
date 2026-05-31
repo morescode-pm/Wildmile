@@ -32,48 +32,48 @@ export const CameraTrapTutorial = () => {
   const steps = [
     {
       target: '#main-navigation-bar',
-      content: '1. Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
+      content: 'Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
       placement: 'bottom',
       disableBeacon: true,
     },
     {
       target: '#image-annotation-card',
-      content: '2. You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
+      content: 'You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
       placement: 'right',
     },
     {
       target: '#image-action-buttons',
-      content: '3. Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
+      content: 'Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
       placement: 'top',
     },
     {
       target: '#save-observations-button',
-      content: '4. If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
+      content: 'If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
       placement: 'left',
     },
     {
       target: '#wildlife-search-container',
-      content: '5. If animals are present, select them from the available species in this sidebar.',
+      content: 'If animals are present, select them from the available species in this sidebar.',
       placement: 'left',
     },
     {
       target: '#species-tabs',
-      content: '6. Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
+      content: 'Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
       placement: 'left',
     },
     {
       target: '#observation-tally-container',
-      content: '7. Once you select an animal, it will appear here. Use the plus and minus buttons to indicate the count.',
+      content: 'Once you select an animal, it will appear here. Use the plus and minus buttons to indicate the count.',
       placement: 'left',
     },
     {
       target: '#observation-tally-container',
-      content: '8. If there are multiple types of animals, pick each one and set their counts accordingly.',
+      content: 'If there are multiple types of animals, pick each one and set their counts accordingly.',
       placement: 'left',
     },
     {
       target: '#save-observations-button',
-      content: '9. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
+      content: 'Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
       placement: 'top',
     },
   ];
@@ -131,10 +131,10 @@ export const CameraTrapTutorial = () => {
           color: '#ffffff',
         },
         beaconInner: {
-          backgroundColor: '#40c057',
+          backgroundColor: '#ff2020',
         },
         beaconOuter: {
-          border: '2px solid #40c057',
+          border: '2px solid #ff2020',
         },
         spotlight: {
           // Keep empty
