@@ -228,7 +228,7 @@ export default function PredefinedSpeciesSidebar({
     <Stack gap="md" h="100%">
       <Group justify="space-between" align="center">
         <Group gap="xs">
-          <Text size="lg" fw={700}>
+          <Text size="lg" fw={700} id="species-title">
             Species
           </Text>
           {(selectedCategory === "recent" || selectedCategory === "user") && (
@@ -241,6 +241,7 @@ export default function PredefinedSpeciesSidebar({
       </Group>
 
       <SegmentedControl
+        id="species-tabs"
         value={selectedCategory}
         onChange={handleCategoryChange}
         data={categoryData}

@@ -260,7 +260,14 @@ export function ObservationTally({ fetchNextImage }) {
   if (!currentImage) return null;
 
   return (
-    <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
+    <Paper
+      shadow="xs"
+      p="md"
+      withBorder
+      radius="md"
+      h="100%"
+      id="observation-tally-container"
+    >
       <Stack gap="md" h="100%">
         <Text fw={700}>Observations</Text>
 
@@ -366,7 +373,7 @@ export function ObservationTally({ fetchNextImage }) {
         </ScrollArea>
 
         <Stack gap="md" mt="auto">
-          <Group grow wrap="nowrap">
+          <Group grow wrap="nowrap" id="human-vehicle-checkboxes">
             <Checkbox
               classNames={checkboxClasses}
               label="Human"
@@ -395,7 +402,7 @@ export function ObservationTally({ fetchNextImage }) {
             />
           </Group>
 
-          <Group>
+          <Group id="comment-input">
             <TextInput
               placeholder="Add a comment..."
               value={comment}
@@ -417,6 +424,7 @@ export function ObservationTally({ fetchNextImage }) {
           humanPresent ||
           vehiclePresent ? (
             <Button
+              id="save-observations-button"
               size="md"
               color="blue"
               fullWidth
@@ -427,6 +435,7 @@ export function ObservationTally({ fetchNextImage }) {
             </Button>
           ) : (
             <Button
+              id="save-observations-button"
               size="md"
               color="blue"
               variant="outline"

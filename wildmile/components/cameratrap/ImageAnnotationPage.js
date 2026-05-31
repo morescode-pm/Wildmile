@@ -18,7 +18,8 @@ import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { CameraTrapTutorial } from "./CameraTrapTutorial";
+import { IconArrowLeft, IconArrowRight, IconHelp } from "@tabler/icons-react";
 import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
@@ -43,6 +44,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   // Initialize with client-side defaults, will be overwritten by fetched defaults
   const [appliedFilters, setAppliedFilters] = useState(clientSideDefaultFilters);
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
+  const [runTutorial, setRunTutorial] = useState(false);
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -178,6 +180,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
   return (
     <div className={classes.fullViewport}>
+      <CameraTrapTutorial run={runTutorial} setRun={setRunTutorial} />
       <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
@@ -214,6 +217,16 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                 </Button>
               </Tooltip>
             </Button.Group>
+            <Tooltip label="Tutorial">
+              <ActionIcon
+                onClick={() => setRunTutorial(true)}
+                variant="outline"
+                size="lg"
+                radius="md"
+              >
+                <IconHelp />
+              </ActionIcon>
+            </Tooltip>
             <ImageFilterControls
               initialFilters={appliedFilters}
               onApplyFilters={handleApplyFilters}

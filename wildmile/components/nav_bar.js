@@ -189,6 +189,7 @@ export function HeaderNav({ children }) {
                     >
                       <Group spacing={7}>
                         <Avatar
+                          id="user-avatar"
                           src={photoSrc}
                           alt={
                             user.profile
@@ -235,7 +236,9 @@ export function HeaderNav({ children }) {
               ) : (
                 <>
                   <Link href={getLoginUrl()}>
-                    <Button variant="default">Log in</Button>
+                    <Button variant="default" id="login-button">
+                      Log in
+                    </Button>
                   </Link>
                   <Link href="/signup">
                     <Button>Sign up</Button>

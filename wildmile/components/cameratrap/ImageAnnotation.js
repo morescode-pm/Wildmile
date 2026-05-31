@@ -212,7 +212,7 @@ export function ImageAnnotation({ filters }) {
 
         <Stack gap="xs" mt="auto">
           <Group justify="space-between">
-            <Group gap="xs">
+            <Group gap="xs" id="image-action-buttons">
               <ActionIcon
                 variant="outline"
                 onClick={() => {
