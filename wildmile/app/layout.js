@@ -24,6 +24,7 @@ import {
 import { Notifications } from "@mantine/notifications";
 
 import { HeaderNav } from "/components/nav_bar";
+import TelemetryTracker from "/components/TelemetryTracker";
 // import Footer from "../components/footer";
 
 export const metadata = {
@@ -57,6 +58,7 @@ export default function RootLayout({ children }) {
 
         <MantineProvider theme={theme}>
           <Notifications />
+          <TelemetryTracker />
           {/* <HeaderNav /> */}
           {children}
           <SpeedInsights />
