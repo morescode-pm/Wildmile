@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Joyride, ACTIONS, EVENTS, STATUS } from 'react-joyride';
-import { useSelection, useAnimalCounts } from './ContextCamera';
+import { useSelection, useAnimalCounts, useTutorial } from './ContextCamera';
 
-export const CameraTrapTutorial = ({ run, setRun }) => {
+export const CameraTrapTutorial = () => {
   const [selection, setSelection] = useSelection();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
+  const [run, setRun] = useTutorial();
   const [tourKey, setTourKey] = useState(0);
 
   // Increment key whenever run becomes true to reset Joyride state and allow multiple restarts
@@ -23,8 +24,8 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
 
   const steps = [
     {
-      target: '#filter-controls-group',
-      content: '1. Use these controls to navigate through images. You can go to the next/previous photo, jump to the earliest image, or use "Get Images" to refresh with current filters.',
+      target: '#main-navigation-bar',
+      content: '1. Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
       placement: 'bottom',
       disableBeacon: true,
     },
@@ -35,37 +36,37 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
     },
     {
       target: '#image-action-buttons',
-      content: '3. Use the picture action buttons to copy a share link, view AI detection boxes, play associated video, request help with ID, flag inappropriate content, or favorite the image.',
+      content: '3. Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
       placement: 'top',
     },
     {
       target: '#save-observations-button',
-      content: '4. If there are no animals visible, click the "No Animals Visible" button. Make sure to check the Human or Vehicle boxes if you see them in the photo.',
+      content: '4. If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
       placement: 'left',
     },
     {
       target: '#wildlife-search-container',
-      content: '5. If there are animals - pick the animals from the species available in the sidebar.',
+      content: '5. If animals are present, select them from the available species in this sidebar.',
       placement: 'left',
     },
     {
       target: '#species-tabs',
-      content: '6. The "Recently Used" list keeps track of what you\'ve labeled recently, and "My Animals" tracks everything you\'ve ever labeled. Use the search tool if you can\'t find the animal. Post to our WhatsApp channel if you need help with an ID!',
+      content: '6. Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
       placement: 'left',
     },
     {
       target: '#observation-tally-container',
-      content: '7. When you pick an animal, it appears here. Indicate how many are present using the plus and minus buttons.',
+      content: '7. Once you select an animal, it will appear here. Use the plus and minus buttons to indicate the count.',
       placement: 'left',
     },
     {
       target: '#observation-tally-container',
-      content: '8. If there are more than one type of animal, pick all the types visible and set their counts.',
+      content: '8. If there are multiple types of animals, pick each one and set their counts accordingly.',
       placement: 'left',
     },
     {
       target: '#save-observations-button',
-      content: '9. Save your observations. Note: the selections you made are kept between images to help with bursts. Make sure to remove the animal if it\'s not in the new picture!',
+      content: '9. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
       placement: 'top',
     },
   ];
@@ -79,8 +80,7 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
       setSelection(prev => prev.filter(a => a.id !== 'example-squirrel'));
     }
 
-    // Inject example animal when we reach the tally steps
-    // Tally steps are now 6 and 7 (indices) because I added the zoom step
+    // Inject example animal when we reach the tally steps (indices 6 and 7)
     if (type === EVENTS.STEP_BEFORE && (index === 6 || index === 7)) {
       setSelection(prev => {
         if (!prev.find(a => a.id === 'example-squirrel')) {
@@ -123,7 +123,7 @@ export const CameraTrapTutorial = ({ run, setRun }) => {
           border: '2px solid #40c057',
         },
         spotlight: {
-          // Explicitly empty to avoid spreading backgroundColor to SVG path
+          // Explicitly empty
         }
       }}
     />

@@ -180,7 +180,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
   return (
     <div className={classes.fullViewport}>
-      <CameraTrapTutorial run={runTutorial} setRun={setRunTutorial} />
+      <CameraTrapTutorial />
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
@@ -195,8 +195,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             flexDirection: "column",
           }}
         >
-          <Group gap="xs" justify="center" mb="xs">
-            <Button.Group>
+          <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
+            <Button.Group id="image-navigation-controls">
               <Tooltip label="Previous Image">
                 <Button
                   id="prev-image-button"
