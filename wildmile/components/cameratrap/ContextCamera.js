@@ -32,7 +32,7 @@ const [ObservationStateProvider, useObservationState] = createCtx({
   noAnimalsVisible: false,
   comment: "",
 });
-const [TutorialProvider, useTutorial] = createCtx(false);
+const [TutorialProvider, useTutorial] = createCtx(0);
 
 // Combined provider
 function IdentificationProvider({ children }) {

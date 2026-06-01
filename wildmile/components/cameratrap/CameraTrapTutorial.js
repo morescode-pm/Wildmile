@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
 
@@ -48,28 +48,20 @@ const steps = [
 
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
-  const [tourKey, setTourKey] = useState(0);
-
-  // Force a hard reset by incrementing the key whenever the tour starts
-  useEffect(() => {
-    if (run) {
-      setTourKey(prev => prev + 1);
-    }
-  }, [run]);
 
   const handleJoyrideCallback = (data) => {
     const { status } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRun(false);
+      setRun(0);
     }
   };
 
   return (
     <Joyride
-      key={tourKey}
+      key={run}
       steps={steps}
-      run={run}
+      run={run > 0}
       continuous
       showProgress
       showSkipButton
