@@ -26,7 +26,7 @@ const steps = [
   },
   {
     target: '#wildlife-search-container',
-    content: '5. If animals are present, select them from the available species in this sidebar.',
+    content: '5. If animals are present, select them from the available species in this sidebar. Tip: Select one now for step 7 to make sense',
     placement: 'left',
   },
   {
@@ -41,7 +41,7 @@ const steps = [
   },
   {
     target: '#save-observations-button',
-    content: '8. Finally, click "Save Observations". Your selections are kept between images to help with bursts, so remember to remove any animals that aren\'t in the next photo!',
+    content: '8. Finally, click "Save Observations". Your selections are kept between images to help with photo bursts, so remember to remove any animals that aren\'t in the next photo!',
     placement: 'top',
   },
 ];
