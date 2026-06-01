@@ -50,7 +50,7 @@ export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
 
   const handleJoyrideCallback = (data) => {
-    const { status } = data;
+    const { status, type, index, action } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(0);
@@ -82,10 +82,10 @@ export const CameraTrapTutorial = () => {
           color: '#ffffff',
         },
         beaconInner: {
-          backgroundColor: '#ff0000',
+          backgroundColor: '#40c057',
         },
         beaconOuter: {
-          border: '2px solid #ff0000',
+          border: '2px solid #40c057',
         },
         spotlight: {
           // Keep empty
