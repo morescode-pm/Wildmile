@@ -10,6 +10,7 @@ import {
   Group,
   Text,
   Switch,
+  ScrollArea,
 } from "@mantine/core";
 import classes from "/styles/WildlifeSidebar.module.css";
 import SpeciesCard from "./SpeciesCard";
@@ -81,18 +82,19 @@ const TaxaSearch = ({ initialQuery = "" }) => {
         <Button onClick={handleSearch}>Search</Button>
       </Group>
       {results.length > 0 ? (
-        <SimpleGrid
-          mt={40}
-          type="container"
-          cols={{ base: 2, sm: 3, lg: 3, xl: 4 }}
-          // breakpoints={[
-          //   { maxWidth: "62rem", cols: 3, spacing: "md" },
-          //   { maxWidth: "48rem", cols: 2, spacing: "sm" },
-          //   { maxWidth: "36rem", cols: 1, spacing: "sm" },
-          // ]}
-        >
-          <SpeciesCard results={results} />
-        </SimpleGrid>
+        <ScrollArea h={400} mt={40} offsetScrollbars>
+          <SimpleGrid
+            type="container"
+            cols={{ base: 2, sm: 3, lg: 3, xl: 4 }}
+            // breakpoints={[
+            //   { maxWidth: "62rem", cols: 3, spacing: "md" },
+            //   { maxWidth: "48rem", cols: 2, spacing: "sm" },
+            //   { maxWidth: "36rem", cols: 1, spacing: "sm" },
+            // ]}
+          >
+            <SpeciesCard results={results} />
+          </SimpleGrid>
+        </ScrollArea>
       ) : (
         <Text mt={20}>
           No results found. Try a different search term or taxonomy class.

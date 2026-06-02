@@ -19,6 +19,7 @@ import {
   IconX,
   IconPlus,
   IconMinus,
+  IconHelp,
 } from "@tabler/icons-react";
 import {
   useImage,
@@ -26,7 +27,8 @@ import {
   useRecentSpecies,
   useUserLabeledSpecies,
   useAnimalCounts,
-  useObservationState
+  useObservationState,
+  useTutorial
 } from "./ContextCamera";
 import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
@@ -50,6 +52,7 @@ export function ObservationTally({ fetchNextImage }) {
   const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [obsState, setObsState] = useObservationState();
+  const [runTutorial, setRunTutorial] = useTutorial();
   const [isSaving, setIsSaving] = useState(false);
   const [comments, setComments] = useState([]);
 
@@ -257,12 +260,31 @@ export function ObservationTally({ fetchNextImage }) {
     });
   };
 
-  if (!currentImage) return null;
+  if (!currentImage && !runTutorial) return null;
 
   return (
-    <Paper shadow="xs" p="md" withBorder radius="md" h="100%">
+    <Paper
+      shadow="xs"
+      p="md"
+      withBorder
+      radius="md"
+      h="100%"
+      id="observation-tally-container"
+    >
       <Stack gap="md" h="100%">
-        <Text fw={700}>Observations</Text>
+        <Group justify="space-between" align="center">
+          <Text fw={700}>Observations</Text>
+          <Button
+            id="help-button"
+            size="xs"
+            color="green"
+            variant="outline"
+            onClick={() => setRunTutorial((prev) => prev + 1)}
+            leftSection={<IconHelp size={16} />}
+          >
+            Help
+          </Button>
+        </Group>
 
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
           <Stack gap="md">
@@ -270,13 +292,13 @@ export function ObservationTally({ fetchNextImage }) {
               <Flex direction="column" gap="xs">
                 {selection.map((animal, index) => {
                   const animalId = animal.taxonId || animal.id;
-                  const backgroundColor =
+                  const bgColor =
                     SELECTION_COLORS[index % SELECTION_COLORS.length];
                   return (
                     <div
                       key={animalId}
                       className={styles.selectionContainer}
-                      style={{ backgroundColor }}
+                      style={{ backgroundColor: bgColor }}
                     >
                       <div className={styles.selectionContent}>
                         <Text size="sm" className={styles.speciesName}>
@@ -366,7 +388,7 @@ export function ObservationTally({ fetchNextImage }) {
         </ScrollArea>
 
         <Stack gap="md" mt="auto">
-          <Group grow wrap="nowrap">
+          <Group grow wrap="nowrap" id="human-vehicle-checkboxes">
             <Checkbox
               classNames={checkboxClasses}
               label="Human"
@@ -395,16 +417,17 @@ export function ObservationTally({ fetchNextImage }) {
             />
           </Group>
 
-          <Group>
+          <Group id="comment-input">
             <TextInput
               placeholder="Add a comment..."
               value={comment}
-              onChange={(event) =>
+              onChange={(event) => {
+                const val = event.currentTarget.value;
                 setObsState((prev) => ({
                   ...prev,
-                  comment: event.currentTarget.value,
-                }))
-              }
+                  comment: val,
+                }));
+              }}
               style={{ flex: 1 }}
             />
             <ActionIcon onClick={handleAddComment} disabled={!comment.trim()}>
@@ -417,6 +440,7 @@ export function ObservationTally({ fetchNextImage }) {
           humanPresent ||
           vehiclePresent ? (
             <Button
+              id="save-observations-button"
               size="md"
               color="blue"
               fullWidth
@@ -427,6 +451,7 @@ export function ObservationTally({ fetchNextImage }) {
             </Button>
           ) : (
             <Button
+              id="save-observations-button"
               size="md"
               color="blue"
               variant="outline"

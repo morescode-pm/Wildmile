@@ -13,12 +13,13 @@ import {
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage } from "./ContextCamera";
+import { useImage, useTutorial } from "./ContextCamera";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { CameraTrapTutorial } from "./CameraTrapTutorial";
+import { IconArrowLeft, IconArrowRight, IconHelp } from "@tabler/icons-react";
 import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
@@ -43,6 +44,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   // Initialize with client-side defaults, will be overwritten by fetched defaults
   const [appliedFilters, setAppliedFilters] = useState(clientSideDefaultFilters);
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
+  const [runTutorial, setRunTutorial] = useTutorial();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -178,7 +180,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
   return (
     <div className={classes.fullViewport}>
-      <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
+      <CameraTrapTutorial />
+      <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
         style={{ flex: 1, margin: 0, padding: "10px" }}
@@ -192,10 +195,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             flexDirection: "column",
           }}
         >
-          <Group gap="xs" justify="center" mb="xs">
-            <Button.Group>
+          <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
+            <Button.Group id="image-navigation-controls">
               <Tooltip label="Previous Image">
                 <Button
+                  id="prev-image-button"
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
@@ -206,6 +210,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
               <Tooltip label="Next Image">
                 <Button
+                  id="next-image-button"
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"

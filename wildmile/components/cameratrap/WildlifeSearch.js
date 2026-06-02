@@ -31,6 +31,7 @@ const WildlifeSearch = () => {
       withBorder
       radius="md"
       h="100%"
+      id="wildlife-search-container"
     >
       <Stack gap="md" h="100%">
         <Box
@@ -44,7 +45,13 @@ const WildlifeSearch = () => {
           <PredefinedSpeciesSidebar
             onSpeciesSelect={handleSpeciesSelect}
             searchControl={
-              <Button variant="default" leftSection={<IconSearch />} onClick={toggle} size="xs">
+              <Button
+                id="species-search-button"
+                variant="default"
+                leftSection={<IconSearch />}
+                onClick={toggle}
+                size="xs"
+              >
                 Search
               </Button>
             }

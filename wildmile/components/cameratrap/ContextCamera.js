@@ -32,6 +32,7 @@ const [ObservationStateProvider, useObservationState] = createCtx({
   noAnimalsVisible: false,
   comment: "",
 });
+const [TutorialProvider, useTutorial] = createCtx(0);
 
 // Combined provider
 function IdentificationProvider({ children }) {
@@ -42,7 +43,9 @@ function IdentificationProvider({ children }) {
           <RecentSpeciesProvider>
             <UserLabeledSpeciesProvider>
               <AnimalCountsProvider>
-                <ObservationStateProvider>{children}</ObservationStateProvider>
+                <ObservationStateProvider>
+                  <TutorialProvider>{children}</TutorialProvider>
+                </ObservationStateProvider>
               </AnimalCountsProvider>
             </UserLabeledSpeciesProvider>
           </RecentSpeciesProvider>
@@ -61,4 +64,5 @@ export {
   useUserLabeledSpecies,
   useAnimalCounts,
   useObservationState,
+  useTutorial,
 };

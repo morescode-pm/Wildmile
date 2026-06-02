@@ -228,7 +228,7 @@ export default function PredefinedSpeciesSidebar({
     <Stack gap="md" h="100%">
       <Group justify="space-between" align="center">
         <Group gap="xs">
-          <Text size="lg" fw={700}>
+          <Text size="lg" fw={700} id="species-title">
             Species
           </Text>
           {(selectedCategory === "recent" || selectedCategory === "user") && (
@@ -241,6 +241,7 @@ export default function PredefinedSpeciesSidebar({
       </Group>
 
       <SegmentedControl
+        id="species-tabs"
         value={selectedCategory}
         onChange={handleCategoryChange}
         data={categoryData}
@@ -281,7 +282,7 @@ export default function PredefinedSpeciesSidebar({
                       <Divider
                         label={category}
                         labelPosition="left"
-                        labelProps={{ fw: 700, size: "sm" }}
+                        styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
                       />
                       <SpeciesList
                         results={speciesInCategory}
