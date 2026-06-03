@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import {
   Group,
+  Stack,
   Paper,
   Accordion,
   Box,
@@ -9,30 +10,57 @@ import {
   Collapse,
   Button,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useClickOutside } from "@mantine/hooks";
 import TaxaSearch from "./TaxaSearch";
 import PredefinedSpeciesSidebar from "./PredefinedSpeciesSidebar";
 import { IconSearch } from "@tabler/icons-react";
 const WildlifeSearch = () => {
   const [selectedSpecies, setSelectedSpecies] = useState("");
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const clickOutsideRef = useClickOutside(() => close());
 
   const handleSpeciesSelect = (species) => {
-    setSelectedSpecies(species);
+    setSelectedSpecies(species.name || species);
   };
 
   return (
-    <Paper shadow="xs" p="md" style={{ maxWidth: "800px", width: "100%" }}>
-      <Button variant="default" leftSection={<IconSearch />} onClick={toggle}>
-        Search All Species
-      </Button>
-
-      <Collapse in={opened}>
-        <TaxaSearch initialQuery={selectedSpecies} />
-      </Collapse>
-      <Box mt="md" style={{ height: "80vh", overflowY: "auto" }}>
-        <PredefinedSpeciesSidebar onSpeciesSelect={handleSpeciesSelect} />
-      </Box>
+    <Paper
+      ref={clickOutsideRef}
+      shadow="xs"
+      p="md"
+      withBorder
+      radius="md"
+      h="100%"
+      id="wildlife-search-container"
+    >
+      <Stack gap="md" h="100%">
+        <Box
+          style={{
+            flex: 1,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <PredefinedSpeciesSidebar
+            onSpeciesSelect={handleSpeciesSelect}
+            searchControl={
+              <Button
+                id="species-search-button"
+                variant="default"
+                leftSection={<IconSearch />}
+                onClick={toggle}
+                size="xs"
+              >
+                Search
+              </Button>
+            }
+          />
+        </Box>
+        <Collapse in={opened}>
+          <TaxaSearch initialQuery={selectedSpecies} />
+        </Collapse>
+      </Stack>
     </Paper>
   );
 };

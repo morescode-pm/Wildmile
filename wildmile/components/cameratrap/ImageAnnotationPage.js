@@ -9,16 +9,18 @@ import {
   ActionIcon,
   ActionIconGroup,
   Tooltip,
-  ButtonGroup,
   Grid,
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage } from "./ContextCamera";
+import { useImage, useTutorial } from "./ContextCamera";
 import { ImageAnnotation } from "./ImageAnnotation";
+import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { CameraTrapTutorial } from "./CameraTrapTutorial";
+import { IconArrowLeft, IconArrowRight, IconHelp } from "@tabler/icons-react";
+import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
 
@@ -42,6 +44,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   // Initialize with client-side defaults, will be overwritten by fetched defaults
   const [appliedFilters, setAppliedFilters] = useState(clientSideDefaultFilters);
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
+  const [runTutorial, setRunTutorial] = useTutorial();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -176,32 +179,30 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   return (
-    // <Grid style={{ height: "calc(100vh - 60px)" }}>
-    <>
-      <LoadingOverlay visible={pageLoading} overlayProps={{ blur: 2 }} />
-      <Grid>
+    <div className={classes.fullViewport}>
+      <CameraTrapTutorial />
+      <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
+      <Grid
+        align="stretch"
+        style={{ flex: 1, margin: 0, padding: "10px" }}
+        gutter="md"
+      >
         <GridCol
-          span={{ base: 12, md: 6, lg: 7, xl: 6 }}
-          style={{ height: "100%" }}
+          span={{ base: 12, md: 5, lg: 5 }}
+          style={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
-          {/* <Paper
-            shadow="xs"
-            p="md"
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              // overflow: "hidden",
-            }}
-          > */}
-          <Group spacing="xs" position="center" mb="md">
-            <ButtonGroup>
+          <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
+            <Button.Group id="image-navigation-controls">
               <Tooltip label="Previous Image">
                 <Button
+                  id="prev-image-button"
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
-                  color="blue"
                 >
                   <IconArrowLeft />
                 </Button>
@@ -209,15 +210,15 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
               <Tooltip label="Next Image">
                 <Button
+                  id="next-image-button"
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"
-                  color="blue"
                 >
                   <IconArrowRight />
                 </Button>
               </Tooltip>
-            </ButtonGroup>
+            </Button.Group>
             <ImageFilterControls
               initialFilters={appliedFilters}
               onApplyFilters={handleApplyFilters}
@@ -225,28 +226,20 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
               deployments={deployments}
             />
           </Group>
-
-          {/* <ScrollArea style={{ flex: 1 }} offsetScrollbars> */}
-          <ImageAnnotation
-            fetchNextImage={fetchNextImage}
-            filters={appliedFilters} // This remains the source of truth for annotations/API calls
-          />
-          {/* </ScrollArea> */}
-          {/* </Paper> */}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <ImageAnnotation filters={appliedFilters} />
+          </div>
         </GridCol>
 
-        <GridCol
-          span={{ base: 12, md: 6, lg: 5, xl: 6 }}
-          style={{ height: "100%" }}
-        >
-          <ScrollArea style={{ height: "100%" }} offsetScrollbars>
-            {/* <Stack spacing="md"> */}
-            <WildlifeSearch />
-            {/* </Stack> */}
-          </ScrollArea>
+        <GridCol span={{ base: 12, md: 3, lg: 3 }} style={{ height: "calc(100vh - 100px)" }}>
+          <ObservationTally fetchNextImage={fetchNextImage} />
+        </GridCol>
+
+        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 100px)" }}>
+          <WildlifeSearch />
         </GridCol>
       </Grid>
-    </>
+    </div>
   );
 };
 

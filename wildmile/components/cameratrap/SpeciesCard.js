@@ -41,13 +41,12 @@ export function SpeciesCards(results) {
 }
 
 // Check if a selection item matches an iNaturalist result.
-// Matches by id (normal clicks) OR by name (URL-seeded stubs that
-// only have a name property). The name fallback is a single string
-// comparison so there's no meaningful performance cost.
+// Matches by taxonId or id.
 function isSelectedSpecies(item, inatResult) {
   const itemId = item.taxonId || item.id;
-  const inatId = inatResult.taxonId || inatResult.id;
-  if (itemId != null && inatId != null && itemId === inatId) {
+  const resultId = inatResult.taxonId || inatResult.id;
+
+  if (itemId != null && resultId != null && itemId === resultId) {
     return true;
   }
   if (item.name && inatResult.name && item.name === inatResult.name) {
@@ -219,16 +218,97 @@ function SpeciesInfoModal({ result, opened, onClose }) {
   );
 }
 
-export default function Species({ results }) {
+export function SpeciesList({ results, onSpeciesSelect }) {
   const [selection, setSelection] = useSelection();
   const [infoTarget, setInfoTarget] = useState(null);
 
-  if (results.length < 0) {
-    return;
+  if (!results || results.length === 0) {
+    return null;
   }
   const result_values = SpeciesCards(results);
 
   const toggleSelection = (result) => {
+    if (onSpeciesSelect) {
+      onSpeciesSelect(result.inat_result);
+    }
+    setSelection((prev) => {
+      const isSelected = prev.some((item) =>
+        isSelectedSpecies(item, result.inat_result),
+      );
+      if (isSelected) {
+        return prev.filter(
+          (item) => !isSelectedSpecies(item, result.inat_result),
+        );
+      } else {
+        return [...prev, result.inat_result];
+      }
+    });
+  };
+
+  const handleInfoClick = (e, result) => {
+    e.stopPropagation();
+    setInfoTarget(result);
+  };
+
+  return (
+    <>
+      <Stack gap={4}>
+        {result_values.map((result, index) => (
+          <Paper
+            key={index}
+            onClick={() => toggleSelection(result)}
+            className={classes.listItem}
+            data-selected={
+              selection.some((item) =>
+                isSelectedSpecies(item, result.inat_result),
+              ) || undefined
+            }
+          >
+            <Image
+              src={result.image || "/No_plant_image.jpg"}
+              alt={result.title}
+              className={classes.listImage}
+            />
+            <div className={classes.listContent}>
+              <Text className={classes.listTitle}>{result.title}</Text>
+              <Text className={classes.listSubtitle}>{result.subtitle}</Text>
+            </div>
+            <ActionIcon
+              variant="subtle"
+              size="sm"
+              onClick={(e) => handleInfoClick(e, result)}
+              aria-label="Species info"
+              c="dimmed"
+            >
+              <IconInfoCircle size={16} stroke={1.5} />
+            </ActionIcon>
+          </Paper>
+        ))}
+      </Stack>
+      {infoTarget && (
+        <SpeciesInfoModal
+          result={infoTarget}
+          opened={!!infoTarget}
+          onClose={() => setInfoTarget(null)}
+        />
+      )}
+    </>
+  );
+}
+
+export default function Species({ results, onSpeciesSelect }) {
+  const [selection, setSelection] = useSelection();
+  const [infoTarget, setInfoTarget] = useState(null);
+
+  if (!results || results.length === 0) {
+    return null;
+  }
+  const result_values = SpeciesCards(results);
+
+  const toggleSelection = (result) => {
+    if (onSpeciesSelect) {
+      onSpeciesSelect(result.inat_result);
+    }
     setSelection((prev) => {
       const isSelected = prev.some((item) =>
         isSelectedSpecies(item, result.inat_result),

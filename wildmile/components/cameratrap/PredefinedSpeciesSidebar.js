@@ -10,16 +10,18 @@ import {
   Tooltip,
   Group,
   ActionIcon,
+  ScrollArea,
+  Divider,
 } from "@mantine/core";
-import { IconClock, IconRefresh } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconUser } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
-import { useRecentSpecies } from "./ContextCamera";
+import { useRecentSpecies, useUserLabeledSpecies } from "./ContextCamera";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-import Species from "./SpeciesCard";
+import Species, { SpeciesList } from "./SpeciesCard";
 
 function iconicTaxonNameToCategory(iconic_taxon_name) {
   switch (iconic_taxon_name) {
@@ -38,7 +40,10 @@ function iconicTaxonNameToCategory(iconic_taxon_name) {
   }
 }
 
-export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
+export default function PredefinedSpeciesSidebar({
+  onSpeciesSelect,
+  searchControl,
+}) {
   const {
     data: predefinedData,
     error: predefinedError,
@@ -48,7 +53,9 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
   });
 
   const [recentSpecies, setRecentSpecies] = useRecentSpecies();
+  const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
   const [recentLoading, setRecentLoading] = useState(true);
+  const [userLabeledLoading, setUserLabeledLoading] = useState(true);
 
   const loadRecent = useCallback(async () => {
     try {
@@ -61,23 +68,43 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
     }
   }, [setRecentSpecies]);
 
+  const loadUserLabeled = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cameratrap/user-labeled-species");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setUserLabeledSpecies(data);
+    } catch (error) {
+      console.error("Error fetching user labeled species:", error);
+    }
+  }, [setUserLabeledSpecies]);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
-      await loadRecent();
-      if (mounted) setRecentLoading(false);
+      await Promise.all([loadRecent(), loadUserLabeled()]);
+      if (mounted) {
+        setRecentLoading(false);
+        setUserLabeledLoading(false);
+      }
     })();
     return () => {
       mounted = false;
     };
-  }, [loadRecent]);
+  }, [loadRecent, loadUserLabeled]);
 
   const [selectedCategory, setSelectedCategory] = useState("recent");
 
   const handleRefresh = async () => {
-    setRecentLoading(true);
-    await loadRecent();
-    setRecentLoading(false);
+    if (selectedCategory === "recent") {
+      setRecentLoading(true);
+      await loadRecent();
+      setRecentLoading(false);
+    } else if (selectedCategory === "user") {
+      setUserLabeledLoading(true);
+      await loadUserLabeled();
+      setUserLabeledLoading(false);
+    }
   };
 
   const categoryData = [
@@ -87,6 +114,16 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
         <Tooltip label="Recently Used">
           <Center>
             <IconClock size={20} stroke={1.5} />
+          </Center>
+        </Tooltip>
+      ),
+    },
+    {
+      value: "user",
+      label: (
+        <Tooltip label="My Animals">
+          <Center>
+            <IconUser size={20} stroke={1.5} />
           </Center>
         </Tooltip>
       ),
@@ -152,14 +189,20 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
   }
 
   const isLoading =
-    predefinedLoading || (selectedCategory === "recent" && recentLoading);
+    predefinedLoading ||
+    (selectedCategory === "recent" && recentLoading) ||
+    (selectedCategory === "user" && userLabeledLoading);
 
   if (isLoading) {
     return <Loader />;
   }
 
   let filteredResults = [];
-  if (selectedCategory && selectedCategory !== "recent") {
+  if (
+    selectedCategory &&
+    selectedCategory !== "recent" &&
+    selectedCategory !== "user"
+  ) {
     filteredResults = predefinedData
       ?.filter((spec) => spec)
       .filter(
@@ -168,35 +211,99 @@ export default function PredefinedSpeciesSidebar({ onSpeciesSelect }) {
       );
   } else if (selectedCategory === "recent") {
     filteredResults = recentSpecies;
+  } else if (selectedCategory === "user") {
+    filteredResults = userLabeledSpecies;
+  }
+
+  // Sort alphabetically unless it's the "recent" or "user" category
+  if (selectedCategory !== "recent" && selectedCategory !== "user") {
+    filteredResults = [...filteredResults].sort((a, b) => {
+      const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
+      const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
   }
 
   return (
-    <Stack spacing="md">
-      <Group position="apart">
-        <Text size="lg" fw={500}>
-          Common Species
-        </Text>
-        {selectedCategory === "recent" && (
-          <ActionIcon variant="subtle" onClick={handleRefresh}>
-            <IconRefresh size={20} />
-          </ActionIcon>
-        )}
+    <Stack gap="md" h="100%">
+      <Group justify="space-between" align="center">
+        <Group gap="xs">
+          <Text size="lg" fw={700} id="species-title">
+            Species
+          </Text>
+          {(selectedCategory === "recent" || selectedCategory === "user") && (
+            <ActionIcon variant="subtle" onClick={handleRefresh} size="sm">
+              <IconRefresh size={16} />
+            </ActionIcon>
+          )}
+        </Group>
+        {searchControl}
       </Group>
 
       <SegmentedControl
+        id="species-tabs"
         value={selectedCategory}
         onChange={handleCategoryChange}
         data={categoryData}
-        size="md"
+        size="xs"
+        fullWidth
       />
 
-      {selectedCategory && filteredResults?.length > 0 && (
-        <SimpleGrid cols={3} spacing="md">
-          <Species
-            results={filteredResults}
-            onSpeciesSelect={onSpeciesSelect}
-          />
-        </SimpleGrid>
+      {selectedCategory && (
+        <ScrollArea style={{ flex: 1 }} offsetScrollbars>
+          {selectedCategory === "user" ? (
+            <Stack gap="md">
+              {["Mammals", "Birds", "Reptiles", "Amphibians", "Fish", "Other"].map(
+                (category) => {
+                  const speciesInCategory = (filteredResults || [])
+                    .filter(
+                      (s) =>
+                        iconicTaxonNameToCategory(s.iconic_taxon_name) ===
+                        category
+                    )
+                    .sort((a, b) => {
+                      const nameA = (
+                        a.preferred_common_name ||
+                        a.name ||
+                        ""
+                      ).toLowerCase();
+                      const nameB = (
+                        b.preferred_common_name ||
+                        b.name ||
+                        ""
+                      ).toLowerCase();
+                      return nameA.localeCompare(nameB);
+                    });
+
+                  if (speciesInCategory.length === 0) return null;
+
+                  return (
+                    <Stack key={category} gap="xs">
+                      <Divider
+                        label={category}
+                        labelPosition="left"
+                        styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
+                      />
+                      <SpeciesList
+                        results={speciesInCategory}
+                        onSpeciesSelect={onSpeciesSelect}
+                      />
+                    </Stack>
+                  );
+                }
+              )}
+            </Stack>
+          ) : (
+            filteredResults?.length > 0 && (
+              <SimpleGrid cols={3} spacing="xs">
+                <Species
+                  results={filteredResults}
+                  onSpeciesSelect={onSpeciesSelect}
+                />
+              </SimpleGrid>
+            )
+          )}
+        </ScrollArea>
       )}
     </Stack>
   );

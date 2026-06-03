@@ -24,6 +24,15 @@ const [CounterProvider, useCounter] = createCtx(0);
 const [ImageProvider, useImage] = createCtx(null);
 const [SelectionProvider, useSelection] = createCtx([]);
 const [RecentSpeciesProvider, useRecentSpecies] = createCtx([]);
+const [UserLabeledSpeciesProvider, useUserLabeledSpecies] = createCtx([]);
+const [AnimalCountsProvider, useAnimalCounts] = createCtx({});
+const [ObservationStateProvider, useObservationState] = createCtx({
+  humanPresent: false,
+  vehiclePresent: false,
+  noAnimalsVisible: false,
+  comment: "",
+});
+const [TutorialProvider, useTutorial] = createCtx(0);
 
 // Combined provider
 function IdentificationProvider({ children }) {
@@ -31,7 +40,15 @@ function IdentificationProvider({ children }) {
     <CounterProvider>
       <ImageProvider>
         <SelectionProvider>
-          <RecentSpeciesProvider>{children}</RecentSpeciesProvider>
+          <RecentSpeciesProvider>
+            <UserLabeledSpeciesProvider>
+              <AnimalCountsProvider>
+                <ObservationStateProvider>
+                  <TutorialProvider>{children}</TutorialProvider>
+                </ObservationStateProvider>
+              </AnimalCountsProvider>
+            </UserLabeledSpeciesProvider>
+          </RecentSpeciesProvider>
         </SelectionProvider>
       </ImageProvider>
     </CounterProvider>
@@ -44,4 +61,8 @@ export {
   useImage,
   useSelection,
   useRecentSpecies,
+  useUserLabeledSpecies,
+  useAnimalCounts,
+  useObservationState,
+  useTutorial,
 };
