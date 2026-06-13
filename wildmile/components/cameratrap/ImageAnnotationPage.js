@@ -198,8 +198,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
-        style={{ flex: 1, margin: 0, padding: "10px" }}
-        gutter="md"
+        style={{ flex: 1, margin: 0, padding: "5px" }}
+        gutter="xs"
       >
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
@@ -211,16 +211,16 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           }}
         >
           <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-            <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
+            <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
               <Tooltip label="Previous Image">
                 <Button
                   id="prev-image-button"
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
-                  size="md"
+                  size="sm"
                 >
-                  <IconArrowLeft />
+                  <IconArrowLeft size={18} />
                 </Button>
               </Tooltip>
 
@@ -230,9 +230,9 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"
-                  size="md"
+                  size="sm"
                 >
-                  <IconArrowRight />
+                  <IconArrowRight size={18} />
                 </Button>
               </Tooltip>
               <ImageFilterControls

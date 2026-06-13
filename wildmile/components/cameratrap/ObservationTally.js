@@ -267,16 +267,25 @@ export function ObservationTally({ fetchNextImage }) {
 
   if (!currentImage && !runTutorial) return null;
 
+  const summary = selection
+    .map((animal) => {
+      const animalId = animal.taxonId || animal.id;
+      const count = animalCounts[animalId] || 1;
+      const name = animal.preferred_common_name || animal.name;
+      return `${count} ${name}`;
+    })
+    .join(", ");
+
   return (
     <Paper
       shadow="xs"
-      p="md"
+      p="xs"
       withBorder
       radius="md"
       id="observation-tally-container"
       style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
     >
-      <Stack gap="md">
+      <Stack gap="xs">
         <Group justify="space-between" align="center">
           <Text fw={700}>Observations</Text>
           <Group gap="xs" id="human-vehicle-checkboxes">
@@ -309,25 +318,19 @@ export function ObservationTally({ fetchNextImage }) {
           </Group>
         </Group>
 
-        <Stack gap="md">
-          {comments.length > 0 && (
-            <Stack gap="xs">
-              <Text size="sm" fw={700}>
-                Recent Comments
-              </Text>
-              {comments.map((comment, index) => (
-                <Text key={index} size="sm">
-                  <strong>{comment.author.name}:</strong> {comment.text}
-                </Text>
-              ))}
-            </Stack>
+        <Stack gap="xs">
+          {summary && (
+            <Text size="sm" fw={600} c="dimmed" fs="italic">
+              Saving: {summary}
+            </Text>
           )}
         </Stack>
 
-        <Stack gap="md">
+        <Stack gap="xs">
           <Group id="comment-input">
             <TextInput
               placeholder="Add a comment..."
+              size="xs"
               value={comment}
               onChange={(event) => {
                 const val = event.currentTarget.value;

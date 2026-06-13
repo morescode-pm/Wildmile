@@ -121,24 +121,24 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group gap="xs" id="filter-controls-group">
+      <Group gap={4} id="filter-controls-group">
         <Button
           id="get-images-button"
-          size="md"
+          size="sm"
           onClick={handleApplyFilters}
-          leftSection={<IconRefresh />}
+          leftSection={<IconRefresh size={18} />}
         >
           Get Images
         </Button>
         {onJumpToEarliest && (
           <Button
             id="earliest-button"
-            size="md"
+            size="sm"
             onClick={() => {
               onApplyFilters(filters);
               onJumpToEarliest(filters);
             }}
-            leftSection={<IconChevronsLeft size={16} />}
+            leftSection={<IconChevronsLeft size={18} />}
             variant="light"
             color="teal"
           >
@@ -147,9 +147,9 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
         )}
         <Button
           id="filters-button"
-          size="md"
+          size="sm"
           onClick={open}
-          leftSection={<IconAdjustmentsHorizontal size={16} />}
+          leftSection={<IconAdjustmentsHorizontal size={18} />}
           variant={hasActiveFilters ? "filled" : "outline"}
           color={hasActiveFilters ? "yellow" : "grey"}
         >

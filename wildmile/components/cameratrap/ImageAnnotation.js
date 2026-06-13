@@ -210,10 +210,11 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="auto">
+        <Stack gap={4} mt="xs">
           <Group justify="space-between">
-            <Group gap="xs" id="image-action-buttons">
+            <Group gap={4} id="image-action-buttons">
               <ActionIcon
+                size="sm"
                 variant="outline"
                 onClick={() => {
                   navigator.clipboard.writeText(
@@ -222,10 +223,11 @@ export function ImageAnnotation({ filters }) {
                   alert("Image URL copied to clipboard");
                 }}
               >
-                <IconLink />
+                <IconLink size={18} />
               </ActionIcon>
               <Tooltip label="Show AI Detections">
                 <ActionIcon
+                  size="sm"
                   onClick={() => setShowAIBoxes((prev) => !prev)}
                   variant={showAIBoxes ? "filled" : "outline"}
                   color="blue"
@@ -236,44 +238,48 @@ export function ImageAnnotation({ filters }) {
                     currentImage.aiResults[0].animalDetections.length === 0
                   }
                 >
-                  <IconFocus2 />
+                  <IconFocus2 size={18} />
                 </ActionIcon>
               </Tooltip>
               <Tooltip label="Play Video">
                 <ActionIcon
+                  size="sm"
                   onClick={() => setShowVideo(true)}
                   variant="outline"
                   color="teal"
                   disabled={!currentImage?.videoUrl}
                 >
-                  <IconPlayerPlay />
+                  <IconPlayerPlay size={18} />
                 </ActionIcon>
               </Tooltip>
               <Tooltip label="Need Help with ID">
                 <ActionIcon
+                  size="sm"
                   onClick={handleNeedsReview}
                   variant={needsReview ? "filled" : "outline"}
                   color="yellow"
                 >
-                  <IconPhotoSearch />
+                  <IconPhotoSearch size={18} />
                 </ActionIcon>
               </Tooltip>
               <Tooltip label="Report Inappropriate">
                 <ActionIcon
+                  size="sm"
                   onClick={handleFlagged}
                   variant={flagged ? "filled" : "outline"}
                   color="red"
                 >
-                  <IconMoodWrrr />
+                  <IconMoodWrrr size={18} />
                 </ActionIcon>
               </Tooltip>
               <Indicator
                 inline
                 label={currentImage.favoriteCount}
                 disabled={!currentImage.favoriteCount}
-                size={16}
+                size={14}
               >
                 <ActionIcon
+                  size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleFavorite();
@@ -282,25 +288,24 @@ export function ImageAnnotation({ filters }) {
                   variant={isFavorite ? "filled" : "outline"}
                 >
                   {isFavorite ? (
-                    <IconHeartFilled size={24} />
+                    <IconHeartFilled size={18} />
                   ) : (
-                    <IconHeartPlus size={24} />
+                    <IconHeartPlus size={18} />
                   )}
                 </ActionIcon>
               </Indicator>
             </Group>
+            <Group gap="xs">
+              <Text size="8px" style={{ fontFamily: "monospace" }}>
+                {new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" })}
+              </Text>
+              <Text size="8px" style={{ fontFamily: "monospace" }}>
+                {currentImage.mediaID}
+              </Text>
+            </Group>
           </Group>
 
-          <Group gap="xl">
-            <Text size="xs" style={{ fontFamily: "monospace" }}>
-              Time: {new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" })}
-            </Text>
-            <Text size="xs" style={{ fontFamily: "monospace" }}>
-              ID: {currentImage.mediaID}
-            </Text>
-          </Group>
-
-          <Group mt="xs">
+          <Group gap="xs">
             <SpeciesConsensusBadges
               speciesConsensus={currentImage.speciesConsensus}
             />

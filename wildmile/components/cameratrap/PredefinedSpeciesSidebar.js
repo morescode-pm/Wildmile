@@ -245,7 +245,7 @@ export default function PredefinedSpeciesSidebar({
   }
 
   return (
-    <Stack gap="xs" h="100%">
+    <Stack gap={4} h="100%">
       <Group justify="space-between" align="center">
         <Group gap="xs">
           <Text size="md" fw={700} id="species-title">
@@ -269,7 +269,7 @@ export default function PredefinedSpeciesSidebar({
         </Button>
       </Group>
 
-      <Group gap="xs" wrap="nowrap">
+      <Group gap={4} wrap="nowrap">
         <TextInput
           placeholder="Filter species..."
           size="xs"
