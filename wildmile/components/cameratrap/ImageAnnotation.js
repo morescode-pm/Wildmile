@@ -118,7 +118,7 @@ export function ImageAnnotation({ filters }) {
 
   return (
     <>
-      <Card id="image-annotation-card" shadow="sm" radius="md" withBorder h="100%" p="xs">
+      <Box id="image-annotation-card" h="100%" p="xs">
         <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{
@@ -308,7 +308,7 @@ export function ImageAnnotation({ filters }) {
           </Group>
         </Stack>
         </Stack>
-      </Card>
+      </Box>
 
       <Modal
         opened={enlargedImage}

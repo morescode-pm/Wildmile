@@ -20,8 +20,14 @@ import {
   IconInfoCircle,
   IconBrandWikipedia,
   IconExternalLink,
+  IconPlus,
+  IconMinus,
+  IconX,
 } from "@tabler/icons-react";
-import { useSelection } from "components/cameratrap/ContextCamera";
+import {
+  useSelection,
+  useAnimalCounts,
+} from "components/cameratrap/ContextCamera";
 
 export function SpeciesCards(results) {
   const result_values = results.map((result) => ({
@@ -220,12 +226,17 @@ function SpeciesInfoModal({ result, opened, onClose }) {
 
 export function SpeciesList({ results, onSpeciesSelect }) {
   const [selection, setSelection] = useSelection();
+  const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [infoTarget, setInfoTarget] = useState(null);
 
   if (!results || results.length === 0) {
     return null;
   }
   const result_values = SpeciesCards(results);
+
+  const handleCountChange = (id, value) => {
+    setAnimalCounts((prev) => ({ ...prev, [id]: value }));
+  };
 
   const toggleSelection = (result) => {
     if (onSpeciesSelect) {
@@ -236,6 +247,8 @@ export function SpeciesList({ results, onSpeciesSelect }) {
         isSelectedSpecies(item, result.inat_result),
       );
       if (isSelected) {
+        // If already selected, maybe we don't want to toggle it off easily if they click the card?
+        // Or keep toggle behavior. The user said "putting a count when the animal is selected".
         return prev.filter(
           (item) => !isSelectedSpecies(item, result.inat_result),
         );
@@ -253,37 +266,73 @@ export function SpeciesList({ results, onSpeciesSelect }) {
   return (
     <>
       <Stack gap={4}>
-        {result_values.map((result, index) => (
-          <Paper
-            key={index}
-            onClick={() => toggleSelection(result)}
-            className={classes.listItem}
-            data-selected={
-              selection.some((item) =>
-                isSelectedSpecies(item, result.inat_result),
-              ) || undefined
-            }
-          >
-            <Image
-              src={result.image || "/No_plant_image.jpg"}
-              alt={result.title}
-              className={classes.listImage}
-            />
-            <div className={classes.listContent}>
-              <Text className={classes.listTitle}>{result.title}</Text>
-              <Text className={classes.listSubtitle}>{result.subtitle}</Text>
-            </div>
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              onClick={(e) => handleInfoClick(e, result)}
-              aria-label="Species info"
-              c="dimmed"
+        {result_values.map((result, index) => {
+          const isSelected = selection.some((item) =>
+            isSelectedSpecies(item, result.inat_result),
+          );
+          const animalId = result.id;
+
+          return (
+            <Paper
+              key={index}
+              onClick={() => toggleSelection(result)}
+              className={classes.listItem}
+              data-selected={isSelected || undefined}
             >
-              <IconInfoCircle size={16} stroke={1.5} />
-            </ActionIcon>
-          </Paper>
-        ))}
+              <Image
+                src={result.image || "/No_plant_image.jpg"}
+                alt={result.title}
+                className={classes.listImage}
+                style={{ width: 60, height: 60 }} // Increased size
+              />
+              <div className={classes.listContent}>
+                <Text className={classes.listTitle}>{result.title}</Text>
+                <Text className={classes.listSubtitle}>{result.subtitle}</Text>
+                {isSelected && (
+                  <Group gap={2} mt={4} onClick={(e) => e.stopPropagation()}>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      onClick={() =>
+                        handleCountChange(
+                          animalId,
+                          Math.max(1, (animalCounts[animalId] || 1) - 1),
+                        )
+                      }
+                      disabled={(animalCounts[animalId] || 1) <= 1}
+                    >
+                      <IconMinus size={16} />
+                    </ActionIcon>
+                    <Text size="sm" fw={700} style={{ width: 20, textAlign: 'center' }}>
+                      {animalCounts[animalId] || 1}
+                    </Text>
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      onClick={() =>
+                        handleCountChange(
+                          animalId,
+                          (animalCounts[animalId] || 1) + 1,
+                        )
+                      }
+                    >
+                      <IconPlus size={16} />
+                    </ActionIcon>
+                  </Group>
+                )}
+              </div>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                onClick={(e) => handleInfoClick(e, result)}
+                aria-label="Species info"
+                c="dimmed"
+              >
+                <IconInfoCircle size={16} stroke={1.5} />
+              </ActionIcon>
+            </Paper>
+          );
+        })}
       </Stack>
       {infoTarget && (
         <SpeciesInfoModal

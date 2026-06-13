@@ -12,9 +12,10 @@ import {
   ActionIcon,
   ScrollArea,
   Divider,
+  TextInput,
 } from "@mantine/core";
 import { IconClock, IconRefresh, IconUser } from "@tabler/icons-react";
-import { Fish, Turtle, Bird, Rabbit } from "lucide-react";
+import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
 import { useRecentSpecies, useUserLabeledSpecies } from "./ContextCamera";
@@ -94,6 +95,7 @@ export default function PredefinedSpeciesSidebar({
   }, [loadRecent, loadUserLabeled]);
 
   const [selectedCategory, setSelectedCategory] = useState("recent");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleRefresh = async () => {
     if (selectedCategory === "recent") {
@@ -215,8 +217,18 @@ export default function PredefinedSpeciesSidebar({
     filteredResults = userLabeledSpecies;
   }
 
-  // Sort alphabetically unless it's the "recent" or "user" category
-  if (selectedCategory !== "recent" && selectedCategory !== "user") {
+  // Apply search filter if query exists
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    filteredResults = filteredResults.filter((spec) => {
+      const commonName = (spec.preferred_common_name || "").toLowerCase();
+      const scientificName = (spec.name || "").toLowerCase();
+      return commonName.includes(query) || scientificName.includes(query);
+    });
+  }
+
+  // Sort alphabetically unless it's the "recent" or "user" category (and not searching)
+  if ((selectedCategory !== "recent" && selectedCategory !== "user") || searchQuery.trim()) {
     filteredResults = [...filteredResults].sort((a, b) => {
       const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
       const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
@@ -225,10 +237,10 @@ export default function PredefinedSpeciesSidebar({
   }
 
   return (
-    <Stack gap="md" h="100%">
+    <Stack gap="xs" h="100%">
       <Group justify="space-between" align="center">
         <Group gap="xs">
-          <Text size="lg" fw={700} id="species-title">
+          <Text size="md" fw={700} id="species-title">
             Species
           </Text>
           {(selectedCategory === "recent" || selectedCategory === "user") && (
@@ -237,8 +249,15 @@ export default function PredefinedSpeciesSidebar({
             </ActionIcon>
           )}
         </Group>
-        {searchControl}
       </Group>
+
+      <TextInput
+        placeholder="Filter species..."
+        size="xs"
+        leftSection={<Search size={14} />}
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.currentTarget.value)}
+      />
 
       <SegmentedControl
         id="species-tabs"
@@ -295,12 +314,10 @@ export default function PredefinedSpeciesSidebar({
             </Stack>
           ) : (
             filteredResults?.length > 0 && (
-              <SimpleGrid cols={3} spacing="xs">
-                <Species
-                  results={filteredResults}
-                  onSpeciesSelect={onSpeciesSelect}
-                />
-              </SimpleGrid>
+              <SpeciesList
+                results={filteredResults}
+                onSpeciesSelect={onSpeciesSelect}
+              />
             )
           )}
         </ScrollArea>
