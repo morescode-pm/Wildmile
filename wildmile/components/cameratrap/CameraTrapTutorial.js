@@ -34,7 +34,7 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#wildlife-search-container',
-      content: 'Select animals from the available species here. The "Selected" tab shows what you\'ve already labeled, while "All Species" lets you browse the full catalog.',
+      content: 'Select animals from the available species here. The "Selected" tab shows what you\'ve already picked, while "All Species" lets you browse recent selections and the full catalog.',
       placement: 'left',
       disableBeacon: true,
     },
@@ -46,7 +46,7 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#observation-tally-container',
-      content: 'Toggles for Human and Vehicle presence are in the header. Below, you can see a summary of your selections and add any necessary comments.',
+      content: 'Toggles for Human and Vehicle presence are here. Below, you can see a summary of your selections and add any necessary comments.',
       placement: 'left',
       disableBeacon: true,
     },
