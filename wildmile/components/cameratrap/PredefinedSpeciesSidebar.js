@@ -329,7 +329,7 @@ export default function PredefinedSpeciesSidebar({
             backgroundColor: 'var(--mantine-color-gray-0)',
           },
           label: {
-            '&[data-active]': {
+            '&[dataActive]': {
               color: 'var(--mantine-color-blue-7)',
             },
           },
