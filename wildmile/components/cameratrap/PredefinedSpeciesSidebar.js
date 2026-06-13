@@ -325,10 +325,20 @@ export default function PredefinedSpeciesSidebar({
         size="xs"
         fullWidth
         styles={(theme) => ({
+          root: {
+            backgroundColor: 'var(--mantine-color-gray-0)',
+          },
+          label: {
+            '&[data-active]': {
+              color: 'var(--mantine-color-blue-7)',
+            },
+          },
+          indicator: {
+            backgroundColor: 'var(--mantine-color-white)',
+          },
           control: {
             '&:first-of-type': {
-              backgroundColor: 'var(--mantine-color-blue-0)',
-              borderRadius: 'var(--mantine-radius-sm)',
+              backgroundColor: 'var(--mantine-color-blue-1) !important',
             },
           },
         })}

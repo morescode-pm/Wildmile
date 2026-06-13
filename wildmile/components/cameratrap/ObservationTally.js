@@ -192,22 +192,21 @@ export function ObservationTally({ fetchNextImage }) {
         }
         if (data.savedSpecies?.length) {
           setRecentSpecies((prev) => {
-            const existingNames = new Set(
-              prev.map((s) => s.name?.toLowerCase())
+            // Get the list of unique species that were just saved
+            const justSaved = selection.filter((s) =>
+              data.savedSpecies.includes(s.name)
             );
-            const newEntries = selection
-              .filter(
-                (s) =>
-                  data.savedSpecies.includes(s.name) &&
-                  !existingNames.has(s.name?.toLowerCase())
-              )
-              .map((s) => ({
-                ...s,
-                name: s.name,
-                preferred_common_name: s.preferred_common_name,
-              }));
-            if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 12);
+
+            // IDs of the just-saved species
+            const savedIds = new Set(justSaved.map((s) => s.taxonId || s.id));
+
+            // Remove just-saved species from the existing recent list to avoid duplicates
+            const remaining = prev.filter(
+              (s) => !savedIds.has(s.taxonId || s.id)
+            );
+
+            // Combine and limit to 10
+            return [...justSaved, ...remaining].slice(0, 10);
           });
         }
         await loadUserLabeled();
