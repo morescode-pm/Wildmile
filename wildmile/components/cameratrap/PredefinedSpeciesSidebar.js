@@ -246,7 +246,7 @@ export default function PredefinedSpeciesSidebar({
   }
 
   return (
-    <Stack gap={4} h="100%">
+    <Stack gap={2} h="100%">
       <Group justify="space-between" align="center">
         <Group gap="xs">
           <Text size="md" fw={700} id="species-title">

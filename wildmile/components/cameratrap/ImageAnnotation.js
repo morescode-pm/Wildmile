@@ -131,7 +131,7 @@ export function ImageAnnotation({ filters }) {
 
   return (
     <>
-      <Box id="image-annotation-card" h="100%" p="xs">
+      <Box id="image-annotation-card" h="100%" p={0}>
         <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{

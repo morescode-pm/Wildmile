@@ -255,7 +255,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             height: "calc(100vh - 110px)",
             display: "flex",
             flexDirection: "column",
-            gap: "var(--mantine-spacing-md)",
+            gap: "xs",
             minHeight: 0,
           }}
         >
