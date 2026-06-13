@@ -267,14 +267,17 @@ export function ObservationTally({ fetchNextImage }) {
 
   if (!currentImage && !runTutorial) return null;
 
-  const summary = selection
-    .map((animal) => {
-      const animalId = animal.taxonId || animal.id;
-      const count = animalCounts[animalId] || 1;
-      const name = animal.preferred_common_name || animal.name;
-      return `${count} ${name}`;
-    })
-    .join(", ");
+  const summaryParts = selection.map((animal) => {
+    const animalId = animal.taxonId || animal.id;
+    const count = animalCounts[animalId] || 1;
+    const name = animal.preferred_common_name || animal.name;
+    return `${count}x ${name}`;
+  });
+
+  if (humanPresent) summaryParts.push("Human");
+  if (vehiclePresent) summaryParts.push("Vehicle");
+
+  const summary = summaryParts.join(", ");
 
   return (
     <Paper

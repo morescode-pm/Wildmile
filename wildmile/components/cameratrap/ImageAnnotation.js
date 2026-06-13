@@ -29,7 +29,10 @@ import { useImage } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
+import { useElementSize } from "@mantine/hooks";
+
 export function ImageAnnotation({ filters }) {
+  const { ref: containerRef, width: containerWidth, height: containerHeight } = useElementSize();
   const [currentImage, setCurrentImage] = useImage();
   const [isSaving, setIsSaving] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -38,6 +41,16 @@ export function ImageAnnotation({ filters }) {
   const [flagged, setFlagged] = useState(false);
   const [showAIBoxes, setShowAIBoxes] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
+  const handleImageLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    const ratio = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
+    setImageSize({
+      width: naturalWidth * ratio,
+      height: naturalHeight * ratio,
+    });
+  };
 
   useEffect(() => {
     if (currentImage) {
@@ -146,15 +159,19 @@ export function ImageAnnotation({ filters }) {
               }}
             >
               <div
+                ref={containerRef}
                 style={{
                   position: "relative",
-                  display: "inline-block",
-                  maxHeight: "100%",
-                  maxWidth: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  width: "100%",
                 }}
               >
                 <img
                   src={currentImage.publicURL}
+                  onLoad={handleImageLoad}
                   style={{
                     display: "block",
                     maxHeight: "100%",
@@ -163,42 +180,52 @@ export function ImageAnnotation({ filters }) {
                   }}
                   alt="Wildlife image"
                 />
-                {showAIBoxes &&
-                  currentImage.aiResults?.[0]?.animalDetections?.map(
-                    (detection, index) => {
-                      const [xmin, ymin, width, height] = detection.bbox;
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            position: "absolute",
-                            left: `${xmin * 100}%`,
-                            top: `${ymin * 100}%`,
-                            width: `${width * 100}%`,
-                            height: `${height * 100}%`,
-                            border: "2px solid #00ff00",
-                            pointerEvents: "none",
-                            boxSizing: "border-box",
-                            zIndex: 10,
-                          }}
-                        >
-                          <Badge
-                            variant="filled"
-                            color="green"
-                            size="xs"
+                {showAIBoxes && imageSize.width > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      width: imageSize.width,
+                      height: imageSize.height,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {currentImage.aiResults?.[0]?.animalDetections?.map(
+                      (detection, index) => {
+                        const [xmin, ymin, width, height] = detection.bbox;
+                        return (
+                          <div
+                            key={index}
                             style={{
                               position: "absolute",
-                              top: -20,
-                              left: 0,
+                              left: `${xmin * 100}%`,
+                              top: `${ymin * 100}%`,
+                              width: `${width * 100}%`,
+                              height: `${height * 100}%`,
+                              border: "2px solid #00ff00",
                               pointerEvents: "none",
+                              boxSizing: "border-box",
+                              zIndex: 10,
                             }}
                           >
-                            {Math.round(detection.conf * 100)}%
-                          </Badge>
-                        </div>
-                      );
-                    }
-                  )}
+                            <Badge
+                              variant="filled"
+                              color="green"
+                              size="xs"
+                              style={{
+                                position: "absolute",
+                                top: -20,
+                                left: 0,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              {Math.round(detection.conf * 100)}%
+                            </Badge>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                )}
               </div>
             </TransformComponent>
           </TransformWrapper>
