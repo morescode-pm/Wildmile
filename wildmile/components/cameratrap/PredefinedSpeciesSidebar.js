@@ -336,11 +336,6 @@ export default function PredefinedSpeciesSidebar({
           indicator: {
             backgroundColor: 'var(--mantine-color-white)',
           },
-          control: {
-            '&:first-of-type': {
-              backgroundColor: 'var(--mantine-color-blue-1) !important',
-            },
-          },
         })}
       />
 
