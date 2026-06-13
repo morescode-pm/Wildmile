@@ -315,7 +315,7 @@ export default function PredefinedSpeciesSidebar({
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
           {selectedCategory === "all" ? (
             <Stack gap="md">
-              {!searchQuery.trim() && recentSpecies.length > 0 && (
+              {!isFilterActive && recentSpecies.length > 0 && (
                 <Stack gap={4}>
                   <Divider
                     label="Recently Saved"
@@ -323,7 +323,7 @@ export default function PredefinedSpeciesSidebar({
                     styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
                   />
                   <SpeciesList
-                    results={recentSpecies.slice(0, 4)}
+                    results={recentSpecies.slice(0, 10)}
                     onSpeciesSelect={handleSpeciesSelectWithTracking}
                   />
                 </Stack>

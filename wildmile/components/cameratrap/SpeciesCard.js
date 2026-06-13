@@ -15,6 +15,7 @@ import {
   Tabs,
   Divider,
   HoverCard,
+  NumberInput,
 } from "@mantine/core";
 import classes from "./SpeciesCard.module.css";
 import {
@@ -320,9 +321,31 @@ export function SpeciesList({ results, onSpeciesSelect }) {
                       >
                         <IconMinus size={22} />
                       </ActionIcon>
-                      <Text size="md" fw={700} style={{ width: 24, textAlign: 'center' }}>
-                        {animalCounts[animalId] || 1}
-                      </Text>
+                      <NumberInput
+                        size="xs"
+                        value={animalCounts[animalId] ?? 1}
+                        onChange={(value) => {
+                          if (value === "" || value === undefined) {
+                            handleCountChange(animalId, "");
+                          } else {
+                            handleCountChange(animalId, value);
+                          }
+                        }}
+                        hideControls
+                        min={1}
+                        max={99}
+                        style={{ width: 45 }}
+                        styles={{
+                          input: {
+                            textAlign: "center",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            padding: 0,
+                            height: 30,
+                            minHeight: 30,
+                          },
+                        }}
+                      />
                       <ActionIcon
                         size="lg"
                         variant="subtle"

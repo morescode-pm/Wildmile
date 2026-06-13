@@ -40,7 +40,7 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#species-tabs',
-      content: 'Switch between "Selected Animals" and "All Species". Your 4 most recent selections will appear at the top of the All Species list for quick access.',
+      content: 'Switch between "Selected Animals" and "All Species". Your 10 most recent selections will appear at the top of the All Species list for quick access.',
       placement: 'left',
       disableBeacon: true,
     },
