@@ -274,8 +274,8 @@ export function ObservationTally({ fetchNextImage }) {
     return `${count}x ${name}`;
   });
 
-  if (humanPresent) summaryParts.push("Human");
-  if (vehiclePresent) summaryParts.push("Vehicle");
+  if (humanPresent) summaryParts.push("+ Human");
+  if (vehiclePresent) summaryParts.push("+ Vehicle");
 
   const summary = summaryParts.join(", ");
 
