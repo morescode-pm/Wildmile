@@ -204,7 +204,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
           style={{
-            height: "calc(100vh - 80px)",
+            height: "calc(100vh - 60px)",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
@@ -252,7 +252,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         <GridCol
           span={{ base: 12, md: 4, lg: 4 }}
           style={{
-            height: "calc(100vh - 80px)",
+            height: "calc(100vh - 60px)",
             display: "flex",
             flexDirection: "column",
             gap: "var(--mantine-spacing-md)",

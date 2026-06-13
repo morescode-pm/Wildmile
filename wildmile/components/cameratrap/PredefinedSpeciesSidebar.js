@@ -15,11 +15,11 @@ import {
   TextInput,
   Button,
 } from "@mantine/core";
-import { IconClock, IconRefresh, IconSearch, IconHelp } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconSearch, IconHelp, IconListCheck } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
-import { useRecentSpecies, useUserLabeledSpecies, useTutorial } from "./ContextCamera";
+import { useRecentSpecies, useUserLabeledSpecies, useTutorial, useSelection } from "./ContextCamera";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -57,6 +57,7 @@ export default function PredefinedSpeciesSidebar({
 
   const [recentSpecies, setRecentSpecies] = useRecentSpecies();
   const [userLabeledSpecies, setUserLabeledSpecies] = useUserLabeledSpecies();
+  const [selection] = useSelection();
   const [recentLoading, setRecentLoading] = useState(true);
   const [userLabeledLoading, setUserLabeledLoading] = useState(true);
 
@@ -96,7 +97,7 @@ export default function PredefinedSpeciesSidebar({
     };
   }, [loadRecent, loadUserLabeled]);
 
-  const [selectedCategory, setSelectedCategory] = useState("recent");
+  const [selectedCategory, setSelectedCategory] = useState("selected");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -119,11 +120,11 @@ export default function PredefinedSpeciesSidebar({
 
   const categoryData = [
     {
-      value: "recent",
+      value: "selected",
       label: (
-        <Tooltip label="Recently Used">
+        <Tooltip label="Selected Animals">
           <Center>
-            <IconClock size={20} stroke={1.5} />
+            <IconListCheck size={20} stroke={1.5} />
           </Center>
         </Tooltip>
       ),
@@ -210,7 +211,7 @@ export default function PredefinedSpeciesSidebar({
   let filteredResults = [];
   if (
     selectedCategory &&
-    selectedCategory !== "recent" &&
+    selectedCategory !== "selected" &&
     selectedCategory !== "all"
   ) {
     filteredResults = predefinedData
@@ -219,8 +220,8 @@ export default function PredefinedSpeciesSidebar({
         (spec) =>
           iconicTaxonNameToCategory(spec.iconic_taxon_name) === selectedCategory
       );
-  } else if (selectedCategory === "recent") {
-    filteredResults = (recentSpecies || []).slice(0, 3);
+  } else if (selectedCategory === "selected") {
+    filteredResults = selection || [];
   } else if (selectedCategory === "all") {
     filteredResults = predefinedData || [];
   }
@@ -235,8 +236,8 @@ export default function PredefinedSpeciesSidebar({
     });
   }
 
-  // Sort alphabetically unless it's the "recent" category (and not searching)
-  if (selectedCategory !== "recent" || searchQuery.trim()) {
+  // Sort alphabetically unless it's the "selected" category (and not searching)
+  if (selectedCategory !== "selected" || searchQuery.trim()) {
     filteredResults = [...filteredResults].sort((a, b) => {
       const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
       const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
@@ -251,7 +252,7 @@ export default function PredefinedSpeciesSidebar({
           <Text size="md" fw={700} id="species-title">
             Species
           </Text>
-          {(selectedCategory === "recent" || selectedCategory === "all") && (
+          {selectedCategory === "all" && (
             <ActionIcon variant="subtle" onClick={handleRefresh} size="sm">
               <IconRefresh size={16} />
             </ActionIcon>
