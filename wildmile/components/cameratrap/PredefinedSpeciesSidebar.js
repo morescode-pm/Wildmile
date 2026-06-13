@@ -15,7 +15,7 @@ import {
   TextInput,
   Button,
 } from "@mantine/core";
-import { IconClock, IconRefresh, IconSearch, IconHelp, IconListCheck } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconSearch, IconHelp, IconListCheck, IconX } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
@@ -297,6 +297,21 @@ export default function PredefinedSpeciesSidebar({
               setSelectedCategory("all");
             }
           }}
+          rightSection={
+            searchQuery && (
+              <ActionIcon
+                size="sm"
+                variant="subtle"
+                color="gray"
+                onClick={() => {
+                  setSearchQuery("");
+                  setIsFilterActive(false);
+                }}
+              >
+                <IconX size={14} />
+              </ActionIcon>
+            )
+          }
           style={{ flex: 1 }}
         />
         {searchControl}
