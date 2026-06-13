@@ -14,11 +14,11 @@ import {
   Divider,
   TextInput,
 } from "@mantine/core";
-import { IconClock, IconRefresh, IconUser } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconUser, IconHelp } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
-import { useRecentSpecies, useUserLabeledSpecies } from "./ContextCamera";
+import { useRecentSpecies, useUserLabeledSpecies, useTutorial } from "./ContextCamera";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -45,6 +45,7 @@ export default function PredefinedSpeciesSidebar({
   onSpeciesSelect,
   searchControl,
 }) {
+  const [runTutorial, setRunTutorial] = useTutorial();
   const {
     data: predefinedData,
     error: predefinedError,
@@ -249,15 +250,28 @@ export default function PredefinedSpeciesSidebar({
             </ActionIcon>
           )}
         </Group>
+        <ActionIcon
+          id="help-button"
+          size="sm"
+          color="green"
+          variant="outline"
+          onClick={() => setRunTutorial((prev) => prev + 1)}
+        >
+          <IconHelp size={16} />
+        </ActionIcon>
       </Group>
 
-      <TextInput
-        placeholder="Filter species..."
-        size="xs"
-        leftSection={<Search size={14} />}
-        value={searchQuery}
-        onChange={(event) => setSearchQuery(event.currentTarget.value)}
-      />
+      <Group gap="xs" wrap="nowrap">
+        <TextInput
+          placeholder="Filter species..."
+          size="xs"
+          leftSection={<Search size={14} />}
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.currentTarget.value)}
+          style={{ flex: 1 }}
+        />
+        {searchControl}
+      </Group>
 
       <SegmentedControl
         id="species-tabs"
@@ -314,10 +328,20 @@ export default function PredefinedSpeciesSidebar({
             </Stack>
           ) : (
             filteredResults?.length > 0 && (
-              <SpeciesList
-                results={filteredResults}
-                onSpeciesSelect={onSpeciesSelect}
-              />
+              selectedCategory === "recent" || selectedCategory === "user" ? (
+                <SimpleGrid cols={3} spacing="xs">
+                  <Species
+                    results={filteredResults}
+                    onSpeciesSelect={onSpeciesSelect}
+                    compact
+                  />
+                </SimpleGrid>
+              ) : (
+                <SpeciesList
+                  results={filteredResults}
+                  onSpeciesSelect={onSpeciesSelect}
+                />
+              )
             )
           )}
         </ScrollArea>

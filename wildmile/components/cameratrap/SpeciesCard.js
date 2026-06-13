@@ -280,7 +280,7 @@ export function SpeciesList({ results, onSpeciesSelect }) {
               className={classes.listItem}
               data-selected={isSelected || undefined}
             >
-              <HoverCard width={280} shadow="md" withArrow>
+            <HoverCard width={280} shadow="md" withArrow position="left">
                 <HoverCard.Target>
                   <Image
                     src={result.image || "/No_plant_image.jpg"}
@@ -290,11 +290,14 @@ export function SpeciesList({ results, onSpeciesSelect }) {
                   />
                 </HoverCard.Target>
                 <HoverCard.Dropdown>
-                  <Image
-                    src={result.image || "/No_plant_image.jpg"}
-                    alt={result.title}
-                    radius="md"
-                  />
+                  <Stack gap="xs">
+                    <Text fw={700} size="sm">{result.title}</Text>
+                    <Image
+                      src={result.image || "/No_plant_image.jpg"}
+                      alt={result.title}
+                      radius="md"
+                    />
+                  </Stack>
                 </HoverCard.Dropdown>
               </HoverCard>
               <div className={classes.listContent}>
@@ -304,9 +307,9 @@ export function SpeciesList({ results, onSpeciesSelect }) {
                     <Text className={classes.listSubtitle}>{result.subtitle}</Text>
                   </Stack>
                   {isSelected && (
-                    <Group gap={2} onClick={(e) => e.stopPropagation()}>
+                    <Group gap={4} onClick={(e) => e.stopPropagation()}>
                       <ActionIcon
-                        size="sm"
+                        size="lg"
                         variant="subtle"
                         onClick={() =>
                           handleCountChange(
@@ -316,13 +319,13 @@ export function SpeciesList({ results, onSpeciesSelect }) {
                         }
                         disabled={(animalCounts[animalId] || 1) <= 1}
                       >
-                        <IconMinus size={16} />
+                        <IconMinus size={22} />
                       </ActionIcon>
-                      <Text size="sm" fw={700} style={{ width: 20, textAlign: 'center' }}>
+                      <Text size="md" fw={700} style={{ width: 24, textAlign: 'center' }}>
                         {animalCounts[animalId] || 1}
                       </Text>
                       <ActionIcon
-                        size="sm"
+                        size="lg"
                         variant="subtle"
                         onClick={() =>
                           handleCountChange(
@@ -331,7 +334,7 @@ export function SpeciesList({ results, onSpeciesSelect }) {
                           )
                         }
                       >
-                        <IconPlus size={16} />
+                        <IconPlus size={22} />
                       </ActionIcon>
                     </Group>
                   )}
@@ -361,7 +364,7 @@ export function SpeciesList({ results, onSpeciesSelect }) {
   );
 }
 
-export default function Species({ results, onSpeciesSelect }) {
+export default function Species({ results, onSpeciesSelect, compact }) {
   const [selection, setSelection] = useSelection();
   const [infoTarget, setInfoTarget] = useState(null);
 
@@ -399,7 +402,7 @@ export default function Species({ results, onSpeciesSelect }) {
         <Paper
           key={index}
           onClick={() => toggleSelection(result)}
-          className={classes.card}
+          className={compact ? classes.compactCard : classes.card}
           data-selected={
             selection.some((item) =>
               isSelectedSpecies(item, result.inat_result),

@@ -155,16 +155,6 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
         >
           {hasActiveFilters ? "Filters Active" : "Filters"}
         </Button>
-        <Button
-          id="help-button"
-          size="md"
-          color="green"
-          variant="outline"
-          onClick={() => setRunTutorial((prev) => prev + 1)}
-          leftSection={<IconHelp size={16} />}
-        >
-          Help
-        </Button>
       </Group>
 
       <Drawer
