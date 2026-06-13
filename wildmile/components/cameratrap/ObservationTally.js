@@ -279,25 +279,7 @@ export function ObservationTally({ fetchNextImage }) {
       <Stack gap="md">
         <Group justify="space-between" align="center">
           <Text fw={700}>Observations</Text>
-        </Group>
-
-        <Stack gap="md">
-          {comments.length > 0 && (
-            <Stack gap="xs">
-              <Text size="sm" fw={700}>
-                Recent Comments
-              </Text>
-              {comments.map((comment, index) => (
-                <Text key={index} size="sm">
-                  <strong>{comment.author.name}:</strong> {comment.text}
-                </Text>
-              ))}
-            </Stack>
-          )}
-        </Stack>
-
-        <Stack gap="md">
-          <Group grow wrap="nowrap" id="human-vehicle-checkboxes">
+          <Group gap="xs" id="human-vehicle-checkboxes">
             <Checkbox
               classNames={checkboxClasses}
               label="Human"
@@ -325,7 +307,24 @@ export function ObservationTally({ fetchNextImage }) {
               }}
             />
           </Group>
+        </Group>
 
+        <Stack gap="md">
+          {comments.length > 0 && (
+            <Stack gap="xs">
+              <Text size="sm" fw={700}>
+                Recent Comments
+              </Text>
+              {comments.map((comment, index) => (
+                <Text key={index} size="sm">
+                  <strong>{comment.author.name}:</strong> {comment.text}
+                </Text>
+              ))}
+            </Stack>
+          )}
+        </Stack>
+
+        <Stack gap="md">
           <Group id="comment-input">
             <TextInput
               placeholder="Add a comment..."
