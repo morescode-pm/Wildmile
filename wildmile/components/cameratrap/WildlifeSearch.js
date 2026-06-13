@@ -51,7 +51,7 @@ const WildlifeSearch = () => {
                 leftSection={<IconSearch size={16} />}
                 onClick={toggle}
                 size="xs"
-                style={{ width: 85 }}
+                style={{ width: 110 }}
               >
                 Search
               </Button>

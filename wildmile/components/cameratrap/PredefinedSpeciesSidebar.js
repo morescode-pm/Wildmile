@@ -277,7 +277,7 @@ export default function PredefinedSpeciesSidebar({
           variant="outline"
           onClick={() => setRunTutorial((prev) => prev + 1)}
           leftSection={<IconHelp size={16} />}
-          style={{ width: 85 }}
+          style={{ width: 110 }}
         >
           Help
         </Button>
@@ -315,15 +315,15 @@ export default function PredefinedSpeciesSidebar({
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
           {selectedCategory === "all" ? (
             <Stack gap="md">
-              {!searchQuery.trim() && lastSelected.length > 0 && (
+              {!searchQuery.trim() && recentSpecies.length > 0 && (
                 <Stack gap={4}>
                   <Divider
-                    label="Recently Selected"
+                    label="Recently Saved"
                     labelPosition="left"
                     styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
                   />
                   <SpeciesList
-                    results={lastSelected}
+                    results={recentSpecies.slice(0, 4)}
                     onSpeciesSelect={handleSpeciesSelectWithTracking}
                   />
                 </Stack>
