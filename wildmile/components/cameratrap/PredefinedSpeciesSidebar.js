@@ -100,12 +100,6 @@ export default function PredefinedSpeciesSidebar({
   const [selectedCategory, setSelectedCategory] = useState("selected");
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    if (searchQuery.trim() && selectedCategory !== "all") {
-      setSelectedCategory("all");
-    }
-  }, [searchQuery, selectedCategory]);
-
   const handleRefresh = async () => {
     if (selectedCategory === "recent") {
       setRecentLoading(true);
@@ -276,7 +270,13 @@ export default function PredefinedSpeciesSidebar({
           size="xs"
           leftSection={<Search size={14} />}
           value={searchQuery}
-          onChange={(event) => setSearchQuery(event.currentTarget.value)}
+          onChange={(event) => {
+            const val = event.currentTarget.value;
+            setSearchQuery(val);
+            if (val.trim() && selectedCategory !== "all") {
+              setSelectedCategory("all");
+            }
+          }}
           style={{ flex: 1 }}
         />
         {searchControl}

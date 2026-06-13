@@ -42,15 +42,25 @@ export function ImageAnnotation({ filters }) {
   const [showAIBoxes, setShowAIBoxes] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
 
   const handleImageLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
-    const ratio = Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
-    setImageSize({
-      width: naturalWidth * ratio,
-      height: naturalHeight * ratio,
-    });
+    setNaturalSize({ width: naturalWidth, height: naturalHeight });
   };
+
+  useEffect(() => {
+    if (naturalSize.width > 0 && containerWidth > 0 && containerHeight > 0) {
+      const ratio = Math.min(
+        containerWidth / naturalSize.width,
+        containerHeight / naturalSize.height,
+      );
+      setImageSize({
+        width: naturalSize.width * ratio,
+        height: naturalSize.height * ratio,
+      });
+    }
+  }, [naturalSize, containerWidth, containerHeight]);
 
   useEffect(() => {
     if (currentImage) {
@@ -169,63 +179,73 @@ export function ImageAnnotation({ filters }) {
                   width: "100%",
                 }}
               >
-                <img
-                  src={currentImage.publicURL}
-                  onLoad={handleImageLoad}
+                <div
                   style={{
-                    display: "block",
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
+                    position: "relative",
+                    width: imageSize.width,
+                    height: imageSize.height,
                   }}
-                  alt="Wildlife image"
-                />
-                {showAIBoxes && imageSize.width > 0 && (
-                  <div
+                >
+                  <img
+                    src={currentImage.publicURL}
+                    onLoad={handleImageLoad}
                     style={{
-                      position: "absolute",
-                      width: imageSize.width,
-                      height: imageSize.height,
-                      pointerEvents: "none",
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
                     }}
-                  >
-                    {currentImage.aiResults?.[0]?.animalDetections?.map(
-                      (detection, index) => {
-                        const [xmin, ymin, width, height] = detection.bbox;
-                        return (
-                          <div
-                            key={index}
-                            style={{
-                              position: "absolute",
-                              left: `${xmin * 100}%`,
-                              top: `${ymin * 100}%`,
-                              width: `${width * 100}%`,
-                              height: `${height * 100}%`,
-                              border: "2px solid #00ff00",
-                              pointerEvents: "none",
-                              boxSizing: "border-box",
-                              zIndex: 10,
-                            }}
-                          >
-                            <Badge
-                              variant="filled"
-                              color="green"
-                              size="xs"
+                    alt="Wildlife image"
+                  />
+                  {showAIBoxes && imageSize.width > 0 && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      {currentImage.aiResults?.[0]?.animalDetections?.map(
+                        (detection, index) => {
+                          const [xmin, ymin, width, height] = detection.bbox;
+                          return (
+                            <div
+                              key={index}
                               style={{
                                 position: "absolute",
-                                top: -20,
-                                left: 0,
+                                left: `${xmin * 100}%`,
+                                top: `${ymin * 100}%`,
+                                width: `${width * 100}%`,
+                                height: `${height * 100}%`,
+                                border: "2px solid #00ff00",
                                 pointerEvents: "none",
+                                boxSizing: "border-box",
+                                zIndex: 10,
                               }}
                             >
-                              {Math.round(detection.conf * 100)}%
-                            </Badge>
-                          </div>
-                        );
-                      }
-                    )}
-                  </div>
-                )}
+                              <Badge
+                                variant="filled"
+                                color="green"
+                                size="xs"
+                                style={{
+                                  position: "absolute",
+                                  top: -20,
+                                  left: 0,
+                                  pointerEvents: "none",
+                                }}
+                              >
+                                {Math.round(detection.conf * 100)}%
+                              </Badge>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </TransformComponent>
           </TransformWrapper>
