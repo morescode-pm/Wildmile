@@ -1,5 +1,0 @@
-
-> wildmile@1.0.0 dev
-> cross-env NODE_OPTIONS=--inspect next dev
-
-sh: 1: cross-env: not found
