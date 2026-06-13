@@ -34,19 +34,19 @@ export const CameraTrapTutorial = () => {
     },
     {
       target: '#wildlife-search-container',
-      content: 'If animals are present, select them from the available species in this sidebar. You can filter the list to find a specific animal.',
+      content: 'Select animals from the available species here. The "Selected" tab shows what you\'ve already labeled, while "All Species" lets you browse the full catalog.',
       placement: 'left',
       disableBeacon: true,
     },
     {
       target: '#species-tabs',
-      content: 'Use these tabs to see your recently used species or your own collection.',
+      content: 'Switch between "Selected Animals" and "All Species". Your 4 most recent selections will appear at the top of the All Species list for quick access.',
       placement: 'left',
       disableBeacon: true,
     },
     {
       target: '#observation-tally-container',
-      content: 'Check the Human or Vehicle boxes if they are present. You can also add comments here.',
+      content: 'Toggles for Human and Vehicle presence are in the header. Below, you can see a summary of your selections and add any necessary comments.',
       placement: 'left',
       disableBeacon: true,
     },

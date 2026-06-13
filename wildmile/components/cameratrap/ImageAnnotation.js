@@ -352,7 +352,7 @@ export function ImageAnnotation({ filters }) {
             </Group>
           </Group>
 
-          <Group gap="xs">
+          <Group gap="xs" style={{ minHeight: 30 }}>
             <SpeciesConsensusBadges
               speciesConsensus={currentImage.speciesConsensus}
             />

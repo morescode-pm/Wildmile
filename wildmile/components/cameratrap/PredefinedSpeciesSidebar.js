@@ -47,6 +47,7 @@ export default function PredefinedSpeciesSidebar({
   searchControl,
 }) {
   const [runTutorial, setRunTutorial] = useTutorial();
+  const [lastSelected, setLastSelected] = useState([]);
   const {
     data: predefinedData,
     error: predefinedError,
@@ -99,6 +100,21 @@ export default function PredefinedSpeciesSidebar({
 
   const [selectedCategory, setSelectedCategory] = useState("selected");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const updateLastSelected = useCallback((species) => {
+    setLastSelected((prev) => {
+      const speciesId = species.taxonId || species.id;
+      const filtered = prev.filter((s) => (s.taxonId || s.id) !== speciesId);
+      return [species, ...filtered].slice(0, 4);
+    });
+  }, []);
+
+  const handleSpeciesSelectWithTracking = (species) => {
+    if (onSpeciesSelect) {
+      onSpeciesSelect(species);
+    }
+    updateLastSelected(species);
+  };
 
   const handleRefresh = async () => {
     if (selectedCategory === "recent") {
@@ -295,6 +311,19 @@ export default function PredefinedSpeciesSidebar({
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
           {selectedCategory === "all" ? (
             <Stack gap="md">
+              {!searchQuery.trim() && lastSelected.length > 0 && (
+                <Stack gap={4}>
+                  <Divider
+                    label="Recently Selected"
+                    labelPosition="left"
+                    styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
+                  />
+                  <SpeciesList
+                    results={lastSelected}
+                    onSpeciesSelect={handleSpeciesSelectWithTracking}
+                  />
+                </Stack>
+              )}
               {["Mammals", "Birds", "Reptiles", "Amphibians", "Fish", "Other"].map(
                 (category) => {
                   const speciesInCategory = (filteredResults || [])
@@ -328,7 +357,7 @@ export default function PredefinedSpeciesSidebar({
                       />
                       <SpeciesList
                         results={speciesInCategory}
-                        onSpeciesSelect={onSpeciesSelect}
+                        onSpeciesSelect={handleSpeciesSelectWithTracking}
                       />
                     </Stack>
                   );
@@ -339,7 +368,7 @@ export default function PredefinedSpeciesSidebar({
             filteredResults?.length > 0 && (
               <SpeciesList
                 results={filteredResults}
-                onSpeciesSelect={onSpeciesSelect}
+                onSpeciesSelect={handleSpeciesSelectWithTracking}
               />
             )
           )}
