@@ -324,6 +324,14 @@ export default function PredefinedSpeciesSidebar({
         data={categoryData}
         size="xs"
         fullWidth
+        styles={(theme) => ({
+          control: {
+            '&:first-of-type': {
+              backgroundColor: 'var(--mantine-color-blue-0)',
+              borderRadius: 'var(--mantine-radius-sm)',
+            },
+          },
+        })}
       />
 
       {selectedCategory && (
