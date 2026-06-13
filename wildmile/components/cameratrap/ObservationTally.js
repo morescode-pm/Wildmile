@@ -192,22 +192,21 @@ export function ObservationTally({ fetchNextImage }) {
         }
         if (data.savedSpecies?.length) {
           setRecentSpecies((prev) => {
-            const existingNames = new Set(
-              prev.map((s) => s.name?.toLowerCase())
+            // Get the list of unique species that were just saved
+            const justSaved = selection.filter((s) =>
+              data.savedSpecies.includes(s.name)
             );
-            const newEntries = selection
-              .filter(
-                (s) =>
-                  data.savedSpecies.includes(s.name) &&
-                  !existingNames.has(s.name?.toLowerCase())
-              )
-              .map((s) => ({
-                ...s,
-                name: s.name,
-                preferred_common_name: s.preferred_common_name,
-              }));
-            if (!newEntries.length) return prev;
-            return [...newEntries, ...prev].slice(0, 12);
+
+            // IDs of the just-saved species
+            const savedIds = new Set(justSaved.map((s) => s.taxonId || s.id));
+
+            // Remove just-saved species from the existing recent list to avoid duplicates
+            const remaining = prev.filter(
+              (s) => !savedIds.has(s.taxonId || s.id)
+            );
+
+            // Combine and limit to 10
+            return [...justSaved, ...remaining].slice(0, 10);
           });
         }
         await loadUserLabeled();
@@ -267,131 +266,31 @@ export function ObservationTally({ fetchNextImage }) {
 
   if (!currentImage && !runTutorial) return null;
 
+  const summaryParts = selection.map((animal) => {
+    const animalId = animal.taxonId || animal.id;
+    const count = animalCounts[animalId] || 1;
+    const name = animal.preferred_common_name || animal.name;
+    return `${count}x ${name}`;
+  });
+
+  if (humanPresent) summaryParts.push("+ Human");
+  if (vehiclePresent) summaryParts.push("+ Vehicle");
+
+  const summary = summaryParts.join(", ");
+
   return (
     <Paper
       shadow="xs"
-      p="md"
+      p="xs"
       withBorder
       radius="md"
       id="observation-tally-container"
       style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
     >
-      <Stack gap="md">
+      <Stack gap="xs">
         <Group justify="space-between" align="center">
           <Text fw={700}>Observations</Text>
-          <Button
-            id="help-button"
-            size="xs"
-            color="green"
-            variant="outline"
-            onClick={() => setRunTutorial((prev) => prev + 1)}
-            leftSection={<IconHelp size={16} />}
-          >
-            Help
-          </Button>
-        </Group>
-
-        <Stack gap="md">
-          {!noAnimalsVisible && selection.length > 0 && (
-            <Flex direction="row" wrap="wrap" gap="xs">
-              {selection.map((animal, index) => {
-                  const animalId = animal.taxonId || animal.id;
-                  const bgColor =
-                    SELECTION_COLORS[index % SELECTION_COLORS.length];
-                  return (
-                    <div
-                      key={animalId}
-                      className={styles.selectionContainer}
-                      style={{ backgroundColor: bgColor }}
-                    >
-                      <div className={styles.selectionContent}>
-                        <Text size="sm" className={styles.speciesName}>
-                          {animal.preferred_common_name || animal.name}
-                        </Text>
-                        <div className={styles.controls}>
-                          <Group gap={2}>
-                            <ActionIcon
-                              size="lg"
-                              variant="subtle"
-                              onClick={() =>
-                                handleCountChange(
-                                  animalId,
-                                  Math.max(1, (animalCounts[animalId] || 1) - 1)
-                                )
-                              }
-                              disabled={(animalCounts[animalId] || 1) <= 1}
-                            >
-                              <IconMinus size={22} />
-                            </ActionIcon>
-                            <NumberInput
-                              size="xs"
-                              value={animalCounts[animalId] ?? 1}
-                              onChange={(value) => {
-                                // Allow the input to be empty while typing
-                                if (value === "" || value === undefined) {
-                                  handleCountChange(animalId, "");
-                                } else {
-                                  handleCountChange(animalId, value);
-                                }
-                              }}
-                              hideControls
-                              min={1}
-                              max={99}
-                              style={{ width: 50 }}
-                              styles={{
-                                input: {
-                                  textAlign: "center",
-                                  fontWeight: 600,
-                                  fontSize: 14,
-                                },
-                              }}
-                            />
-                            <ActionIcon
-                              size="lg"
-                              variant="subtle"
-                              onClick={() =>
-                                handleCountChange(
-                                  animalId,
-                                  (animalCounts[animalId] || 1) + 1
-                                )
-                              }
-                            >
-                              <IconPlus size={22} />
-                            </ActionIcon>
-                          </Group>
-                          <ActionIcon
-                            size="sm"
-                            color="red"
-                            variant="subtle"
-                            onClick={() => handleRemoveAnimal(animalId)}
-                            className={styles.removeButton}
-                          >
-                            <IconX size={22} />
-                          </ActionIcon>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </Flex>
-            )}
-
-          {comments.length > 0 && (
-            <Stack gap="xs">
-              <Text size="sm" fw={700}>
-                Recent Comments
-              </Text>
-              {comments.map((comment, index) => (
-                <Text key={index} size="sm">
-                  <strong>{comment.author.name}:</strong> {comment.text}
-                </Text>
-              ))}
-            </Stack>
-          )}
-        </Stack>
-
-        <Stack gap="md">
-          <Group grow wrap="nowrap" id="human-vehicle-checkboxes">
+          <Group gap="xs" id="human-vehicle-checkboxes">
             <Checkbox
               classNames={checkboxClasses}
               label="Human"
@@ -419,10 +318,21 @@ export function ObservationTally({ fetchNextImage }) {
               }}
             />
           </Group>
+        </Group>
 
+        <Stack gap="xs">
+          {summary && (
+            <Text size="sm" fw={600} c="dimmed" fs="italic">
+              Saving: {summary}
+            </Text>
+          )}
+        </Stack>
+
+        <Stack gap="xs">
           <Group id="comment-input">
             <TextInput
               placeholder="Add a comment..."
+              size="xs"
               value={comment}
               onChange={(event) => {
                 const val = event.currentTarget.value;

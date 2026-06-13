@@ -1,53 +1,62 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
-
-const steps = [
-  {
-    target: '#main-navigation-bar',
-    content: '1. Use these controls to navigate images. You can go to the next/previous photo with the arrows, jump to the earliest image, or click "Get Images" to refresh. You can also adjust your filters here.',
-    placement: 'bottom',
-    disableBeacon: true,
-  },
-  {
-    target: '#image-annotation-card',
-    content: '2. You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
-    placement: 'right',
-  },
-  {
-    target: '#image-action-buttons',
-    content: '3. Use these buttons to interact with the image: copy a share link, view AI detections, play a video, request ID help, report issues, or favorite the image.',
-    placement: 'top',
-  },
-  {
-    target: '#save-observations-button',
-    content: '4. If no animals are visible, click "No Animals Visible". Also, check the Human or Vehicle boxes if they are present in the photo.',
-    placement: 'left',
-  },
-  {
-    target: '#wildlife-search-container',
-    content: '5. If animals are present, select them from the available species in this sidebar. Tip: Select one now for step 7 to make sense',
-    placement: 'left',
-  },
-  {
-    target: '#species-tabs',
-    content: '6. Use the clock icon for "Recently Used" species and the user icon for "My Animals". You can also search for a specific animal. If you need help, post to our WhatsApp channel!',
-    placement: 'left',
-  },
-  {
-    target: '#observation-tally-container',
-    content: '7. Once you select animals, they will appear here. Use the plus and minus buttons to set the count for each type visible in the photo.',
-    placement: 'left',
-  },
-  {
-    target: '#save-observations-button',
-    content: '8. Finally, click "Save Observations" (log in or sign up first!). Your selections are kept between images to help with photo bursts, so remember to remove any animals that aren\'t in the next photo!',
-    placement: 'top',
-  },
-];
+import { useUser } from 'lib/hooks';
 
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
+  const { user } = useUser();
+
+  const steps = useMemo(() => [
+    ...(user ? [] : [{
+      target: '#login-button',
+      content: 'First, please log in or sign up to save your observations and track your progress!',
+      placement: 'bottom',
+      disableBeacon: true,
+    }]),
+    {
+      target: '#main-navigation-bar',
+      content: 'Use these controls to navigate images. You can go to the next/previous photo with the arrows, or adjust your filters here.',
+      placement: 'bottom',
+      disableBeacon: true,
+    },
+    {
+      target: '#image-annotation-card',
+      content: 'You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
+      placement: 'right',
+      disableBeacon: true,
+    },
+    {
+      target: '#image-action-buttons',
+      content: 'Use these buttons to interact with the image: view AI detections, play a video, or favorite the image.',
+      placement: 'top',
+      disableBeacon: true,
+    },
+    {
+      target: '#wildlife-search-container',
+      content: 'Select animals from the available species here. The "Selected" tab shows what you\'ve already labeled, while "All Species" lets you browse the full catalog.',
+      placement: 'left',
+      disableBeacon: true,
+    },
+    {
+      target: '#species-tabs',
+      content: 'Switch between "Selected Animals" and "All Species". Your 10 most recent selections will appear at the top of the All Species list for quick access.',
+      placement: 'left',
+      disableBeacon: true,
+    },
+    {
+      target: '#observation-tally-container',
+      content: 'Toggles for Human and Vehicle presence are in the header. Below, you can see a summary of your selections and add any necessary comments.',
+      placement: 'left',
+      disableBeacon: true,
+    },
+    {
+      target: '#save-observations-button',
+      content: 'Finally, click "Save Observations" or "No Animals Visible" to complete your identification. Your selections are kept between images to help with photo bursts!',
+      placement: 'top',
+      disableBeacon: true,
+    },
+  ], [user]);
 
   const handleJoyrideCallback = (data) => {
     const { status, type, index, action } = data;

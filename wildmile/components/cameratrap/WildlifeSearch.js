@@ -27,13 +27,13 @@ const WildlifeSearch = () => {
     <Paper
       ref={clickOutsideRef}
       shadow="xs"
-      p="md"
+      p="xs"
       withBorder
       radius="md"
       h="100%"
       id="wildlife-search-container"
     >
-      <Stack gap="md" h="100%">
+      <Stack gap="xs" h="100%">
         <Box
           style={{
             flex: 1,
@@ -48,9 +48,10 @@ const WildlifeSearch = () => {
               <Button
                 id="species-search-button"
                 variant="default"
-                leftSection={<IconSearch />}
+                leftSection={<IconSearch size={16} />}
                 onClick={toggle}
                 size="xs"
+                style={{ width: 110 }}
               >
                 Search
               </Button>

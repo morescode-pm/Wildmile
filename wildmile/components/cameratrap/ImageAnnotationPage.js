@@ -198,28 +198,29 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
-        style={{ flex: 1, margin: 0, padding: "10px" }}
-        gutter="md"
+        style={{ flex: 1, margin: 0, padding: "5px" }}
+        gutter="xs"
       >
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
           style={{
-            height: "100%",
+            height: "calc(100vh - 70px)",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
         >
-          <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
-            <Button.Group id="image-navigation-controls">
+          <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+            <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
               <Tooltip label="Previous Image">
                 <Button
                   id="prev-image-button"
                   onClick={() => handleNavigateImage("previous")}
                   variant="default"
                   radius="md"
+                  size="sm"
                 >
-                  <IconArrowLeft />
+                  <IconArrowLeft size={18} />
                 </Button>
               </Tooltip>
 
@@ -229,28 +230,39 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   onClick={() => handleNavigateImage("next")}
                   variant="default"
                   radius="md"
+                  size="sm"
                 >
-                  <IconArrowRight />
+                  <IconArrowRight size={18} />
                 </Button>
               </Tooltip>
-            </Button.Group>
-            <ImageFilterControls
-              initialFilters={appliedFilters}
-              onApplyFilters={handleApplyFilters}
-              onJumpToEarliest={handleJumpToEarliest}
-              deployments={deployments}
-            />
-          </Group>
-          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: "var(--mantine-spacing-md)" }}>
+              <ImageFilterControls
+                initialFilters={appliedFilters}
+                onApplyFilters={handleApplyFilters}
+                onJumpToEarliest={handleJumpToEarliest}
+                deployments={deployments}
+                setRunTutorial={setRunTutorial}
+              />
+            </Group>
             <div style={{ flex: 1, minHeight: 0 }}>
               <ImageAnnotation filters={appliedFilters} />
             </div>
-            <ObservationTally fetchNextImage={fetchNextImage} />
-          </div>
+          </Paper>
         </GridCol>
 
-        <GridCol span={{ base: 12, md: 4, lg: 4 }} style={{ height: "calc(100vh - 100px)" }}>
-          <WildlifeSearch />
+        <GridCol
+          span={{ base: 12, md: 4, lg: 4 }}
+          style={{
+            height: "calc(100vh - 70px)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "xs",
+            minHeight: 0,
+          }}
+        >
+          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+            <WildlifeSearch />
+          </div>
+          <ObservationTally fetchNextImage={fetchNextImage} />
         </GridCol>
       </Grid>
     </div>
