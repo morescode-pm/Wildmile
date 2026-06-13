@@ -17,6 +17,7 @@ import {
   IconAdjustmentsHorizontal,
   IconRefresh,
   IconChevronsLeft,
+  IconHelp,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -33,7 +34,7 @@ const blankFiltersState = {
   animalProbability: [0, 1],
 };
 
-export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialFilters }) {
+export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialFilters, setRunTutorial }) {
   const [opened, { open, close }] = useDisclosure(false);
   // Initialize filters with initialFilters if provided, otherwise fallback to blank.
   // initialFilters will come from ImageAnnotationPage, potentially with server defaults.
@@ -120,7 +121,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group position="apart" id="filter-controls-group">
+      <Group gap="xs" id="filter-controls-group">
         <Button
           id="get-images-button"
           size="md"
@@ -146,12 +147,23 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
         )}
         <Button
           id="filters-button"
+          size="md"
           onClick={open}
           leftSection={<IconAdjustmentsHorizontal size={16} />}
           variant={hasActiveFilters ? "filled" : "outline"}
           color={hasActiveFilters ? "yellow" : "grey"}
         >
           {hasActiveFilters ? "Filters Active" : "Filters"}
+        </Button>
+        <Button
+          id="help-button"
+          size="md"
+          color="green"
+          variant="outline"
+          onClick={() => setRunTutorial((prev) => prev + 1)}
+          leftSection={<IconHelp size={16} />}
+        >
+          Help
         </Button>
       </Group>
 

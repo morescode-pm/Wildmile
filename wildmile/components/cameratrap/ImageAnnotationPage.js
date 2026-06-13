@@ -212,34 +212,35 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         >
           <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
             <Group id="main-navigation-bar" gap="xs" justify="center" mb="xs">
-              <Button.Group id="image-navigation-controls">
-                <Tooltip label="Previous Image">
-                  <Button
-                    id="prev-image-button"
-                    onClick={() => handleNavigateImage("previous")}
-                    variant="default"
-                    radius="md"
-                  >
-                    <IconArrowLeft />
-                  </Button>
-                </Tooltip>
+              <Tooltip label="Previous Image">
+                <Button
+                  id="prev-image-button"
+                  onClick={() => handleNavigateImage("previous")}
+                  variant="default"
+                  radius="md"
+                  size="md"
+                >
+                  <IconArrowLeft />
+                </Button>
+              </Tooltip>
 
-                <Tooltip label="Next Image">
-                  <Button
-                    id="next-image-button"
-                    onClick={() => handleNavigateImage("next")}
-                    variant="default"
-                    radius="md"
-                  >
-                    <IconArrowRight />
-                  </Button>
-                </Tooltip>
-              </Button.Group>
+              <Tooltip label="Next Image">
+                <Button
+                  id="next-image-button"
+                  onClick={() => handleNavigateImage("next")}
+                  variant="default"
+                  radius="md"
+                  size="md"
+                >
+                  <IconArrowRight />
+                </Button>
+              </Tooltip>
               <ImageFilterControls
                 initialFilters={appliedFilters}
                 onApplyFilters={handleApplyFilters}
                 onJumpToEarliest={handleJumpToEarliest}
                 deployments={deployments}
+                setRunTutorial={setRunTutorial}
               />
             </Group>
             <div style={{ flex: 1, minHeight: 0 }}>

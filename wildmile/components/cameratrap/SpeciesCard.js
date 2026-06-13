@@ -14,6 +14,7 @@ import {
   Anchor,
   Tabs,
   Divider,
+  HoverCard,
 } from "@mantine/core";
 import classes from "./SpeciesCard.module.css";
 import {
@@ -279,47 +280,62 @@ export function SpeciesList({ results, onSpeciesSelect }) {
               className={classes.listItem}
               data-selected={isSelected || undefined}
             >
-              <Image
-                src={result.image || "/No_plant_image.jpg"}
-                alt={result.title}
-                className={classes.listImage}
-                style={{ width: 60, height: 60 }} // Increased size
-              />
+              <HoverCard width={280} shadow="md" withArrow>
+                <HoverCard.Target>
+                  <Image
+                    src={result.image || "/No_plant_image.jpg"}
+                    alt={result.title}
+                    className={classes.listImage}
+                    style={{ width: 60, height: 60 }} // Increased size
+                  />
+                </HoverCard.Target>
+                <HoverCard.Dropdown>
+                  <Image
+                    src={result.image || "/No_plant_image.jpg"}
+                    alt={result.title}
+                    radius="md"
+                  />
+                </HoverCard.Dropdown>
+              </HoverCard>
               <div className={classes.listContent}>
-                <Text className={classes.listTitle}>{result.title}</Text>
-                <Text className={classes.listSubtitle}>{result.subtitle}</Text>
-                {isSelected && (
-                  <Group gap={2} mt={4} onClick={(e) => e.stopPropagation()}>
-                    <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      onClick={() =>
-                        handleCountChange(
-                          animalId,
-                          Math.max(1, (animalCounts[animalId] || 1) - 1),
-                        )
-                      }
-                      disabled={(animalCounts[animalId] || 1) <= 1}
-                    >
-                      <IconMinus size={16} />
-                    </ActionIcon>
-                    <Text size="sm" fw={700} style={{ width: 20, textAlign: 'center' }}>
-                      {animalCounts[animalId] || 1}
-                    </Text>
-                    <ActionIcon
-                      size="sm"
-                      variant="subtle"
-                      onClick={() =>
-                        handleCountChange(
-                          animalId,
-                          (animalCounts[animalId] || 1) + 1,
-                        )
-                      }
-                    >
-                      <IconPlus size={16} />
-                    </ActionIcon>
-                  </Group>
-                )}
+                <Group justify="space-between" wrap="nowrap">
+                  <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+                    <Text className={classes.listTitle}>{result.title}</Text>
+                    <Text className={classes.listSubtitle}>{result.subtitle}</Text>
+                  </Stack>
+                  {isSelected && (
+                    <Group gap={2} onClick={(e) => e.stopPropagation()}>
+                      <ActionIcon
+                        size="sm"
+                        variant="subtle"
+                        onClick={() =>
+                          handleCountChange(
+                            animalId,
+                            Math.max(1, (animalCounts[animalId] || 1) - 1),
+                          )
+                        }
+                        disabled={(animalCounts[animalId] || 1) <= 1}
+                      >
+                        <IconMinus size={16} />
+                      </ActionIcon>
+                      <Text size="sm" fw={700} style={{ width: 20, textAlign: 'center' }}>
+                        {animalCounts[animalId] || 1}
+                      </Text>
+                      <ActionIcon
+                        size="sm"
+                        variant="subtle"
+                        onClick={() =>
+                          handleCountChange(
+                            animalId,
+                            (animalCounts[animalId] || 1) + 1,
+                          )
+                        }
+                      >
+                        <IconPlus size={16} />
+                      </ActionIcon>
+                    </Group>
+                  )}
+                </Group>
               </div>
               <ActionIcon
                 variant="subtle"

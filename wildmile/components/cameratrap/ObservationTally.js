@@ -279,16 +279,6 @@ export function ObservationTally({ fetchNextImage }) {
       <Stack gap="md">
         <Group justify="space-between" align="center">
           <Text fw={700}>Observations</Text>
-          <Button
-            id="help-button"
-            size="xs"
-            color="green"
-            variant="outline"
-            onClick={() => setRunTutorial((prev) => prev + 1)}
-            leftSection={<IconHelp size={16} />}
-          >
-            Help
-          </Button>
         </Group>
 
         <Stack gap="md">
