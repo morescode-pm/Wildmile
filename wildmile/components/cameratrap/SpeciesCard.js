@@ -280,16 +280,15 @@ export function SpeciesList({ results, onSpeciesSelect }) {
               className={classes.listItem}
               data-selected={isSelected || undefined}
             >
-            <HoverCard width={280} shadow="md" withArrow position="left">
+            <HoverCard width={280} shadow="md" withArrow position="left" closeDelay={0}>
                 <HoverCard.Target>
                   <Image
                     src={result.image || "/No_plant_image.jpg"}
                     alt={result.title}
                     className={classes.listImage}
-                    style={{ width: 60, height: 60 }} // Increased size
                   />
                 </HoverCard.Target>
-                <HoverCard.Dropdown>
+                <HoverCard.Dropdown style={{ pointerEvents: 'none' }}>
                   <Stack gap="xs">
                     <Text fw={700} size="sm">{result.title}</Text>
                     <Image
@@ -342,12 +341,12 @@ export function SpeciesList({ results, onSpeciesSelect }) {
               </div>
               <ActionIcon
                 variant="subtle"
-                size="sm"
+                size="md"
                 onClick={(e) => handleInfoClick(e, result)}
                 aria-label="Species info"
                 c="dimmed"
               >
-                <IconInfoCircle size={16} stroke={1.5} />
+                <IconInfoCircle size={24} stroke={1.5} />
               </ActionIcon>
             </Paper>
           );

@@ -13,6 +13,7 @@ import {
   ScrollArea,
   Divider,
   TextInput,
+  Button,
 } from "@mantine/core";
 import { IconClock, IconRefresh, IconUser, IconHelp } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
@@ -250,15 +251,16 @@ export default function PredefinedSpeciesSidebar({
             </ActionIcon>
           )}
         </Group>
-        <ActionIcon
+        <Button
           id="help-button"
-          size="sm"
+          size="xs"
           color="green"
           variant="outline"
           onClick={() => setRunTutorial((prev) => prev + 1)}
+          leftSection={<IconHelp size={16} />}
         >
-          <IconHelp size={16} />
-        </ActionIcon>
+          Help
+        </Button>
       </Group>
 
       <Group gap="xs" wrap="nowrap">
@@ -328,20 +330,10 @@ export default function PredefinedSpeciesSidebar({
             </Stack>
           ) : (
             filteredResults?.length > 0 && (
-              selectedCategory === "recent" || selectedCategory === "user" ? (
-                <SimpleGrid cols={3} spacing="xs">
-                  <Species
-                    results={filteredResults}
-                    onSpeciesSelect={onSpeciesSelect}
-                    compact
-                  />
-                </SimpleGrid>
-              ) : (
-                <SpeciesList
-                  results={filteredResults}
-                  onSpeciesSelect={onSpeciesSelect}
-                />
-              )
+              <SpeciesList
+                results={filteredResults}
+                onSpeciesSelect={onSpeciesSelect}
+              />
             )
           )}
         </ScrollArea>
