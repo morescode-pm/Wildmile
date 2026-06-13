@@ -15,7 +15,7 @@ import {
   TextInput,
   Button,
 } from "@mantine/core";
-import { IconClock, IconRefresh, IconUser, IconHelp } from "@tabler/icons-react";
+import { IconClock, IconRefresh, IconSearch, IconHelp } from "@tabler/icons-react";
 import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
@@ -99,12 +99,18 @@ export default function PredefinedSpeciesSidebar({
   const [selectedCategory, setSelectedCategory] = useState("recent");
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    if (searchQuery.trim() && selectedCategory !== "all") {
+      setSelectedCategory("all");
+    }
+  }, [searchQuery, selectedCategory]);
+
   const handleRefresh = async () => {
     if (selectedCategory === "recent") {
       setRecentLoading(true);
       await loadRecent();
       setRecentLoading(false);
-    } else if (selectedCategory === "user") {
+    } else if (selectedCategory === "all") {
       setUserLabeledLoading(true);
       await loadUserLabeled();
       setUserLabeledLoading(false);
@@ -123,11 +129,11 @@ export default function PredefinedSpeciesSidebar({
       ),
     },
     {
-      value: "user",
+      value: "all",
       label: (
-        <Tooltip label="My Animals">
+        <Tooltip label="All Species">
           <Center>
-            <IconUser size={20} stroke={1.5} />
+            <IconSearch size={20} stroke={1.5} />
           </Center>
         </Tooltip>
       ),
@@ -205,7 +211,7 @@ export default function PredefinedSpeciesSidebar({
   if (
     selectedCategory &&
     selectedCategory !== "recent" &&
-    selectedCategory !== "user"
+    selectedCategory !== "all"
   ) {
     filteredResults = predefinedData
       ?.filter((spec) => spec)
@@ -214,9 +220,9 @@ export default function PredefinedSpeciesSidebar({
           iconicTaxonNameToCategory(spec.iconic_taxon_name) === selectedCategory
       );
   } else if (selectedCategory === "recent") {
-    filteredResults = recentSpecies;
-  } else if (selectedCategory === "user") {
-    filteredResults = userLabeledSpecies;
+    filteredResults = (recentSpecies || []).slice(0, 3);
+  } else if (selectedCategory === "all") {
+    filteredResults = predefinedData || [];
   }
 
   // Apply search filter if query exists
@@ -229,8 +235,8 @@ export default function PredefinedSpeciesSidebar({
     });
   }
 
-  // Sort alphabetically unless it's the "recent" or "user" category (and not searching)
-  if ((selectedCategory !== "recent" && selectedCategory !== "user") || searchQuery.trim()) {
+  // Sort alphabetically unless it's the "recent" category (and not searching)
+  if (selectedCategory !== "recent" || searchQuery.trim()) {
     filteredResults = [...filteredResults].sort((a, b) => {
       const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
       const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
@@ -245,7 +251,7 @@ export default function PredefinedSpeciesSidebar({
           <Text size="md" fw={700} id="species-title">
             Species
           </Text>
-          {(selectedCategory === "recent" || selectedCategory === "user") && (
+          {(selectedCategory === "recent" || selectedCategory === "all") && (
             <ActionIcon variant="subtle" onClick={handleRefresh} size="sm">
               <IconRefresh size={16} />
             </ActionIcon>
@@ -286,7 +292,7 @@ export default function PredefinedSpeciesSidebar({
 
       {selectedCategory && (
         <ScrollArea style={{ flex: 1 }} offsetScrollbars>
-          {selectedCategory === "user" ? (
+          {selectedCategory === "all" ? (
             <Stack gap="md">
               {["Mammals", "Birds", "Reptiles", "Amphibians", "Fish", "Other"].map(
                 (category) => {
