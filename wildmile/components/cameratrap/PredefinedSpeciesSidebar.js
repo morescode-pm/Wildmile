@@ -100,6 +100,7 @@ export default function PredefinedSpeciesSidebar({
 
   const [selectedCategory, setSelectedCategory] = useState("selected");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterActive, setIsFilterActive] = useState(false);
 
   const updateLastSelected = useCallback((species) => {
     setLastSelected((prev) => {
@@ -203,6 +204,7 @@ export default function PredefinedSpeciesSidebar({
 
   const handleCategoryChange = (newValue) => {
     setSelectedCategory((prev) => (prev === newValue ? null : newValue));
+    setIsFilterActive(false);
   };
 
   if (predefinedError) {
@@ -236,8 +238,8 @@ export default function PredefinedSpeciesSidebar({
     filteredResults = predefinedData || [];
   }
 
-  // Apply search filter if query exists
-  if (searchQuery.trim()) {
+  // Apply search filter if active
+  if (isFilterActive && searchQuery.trim()) {
     const query = searchQuery.toLowerCase();
     filteredResults = filteredResults.filter((spec) => {
       const commonName = (spec.preferred_common_name || "").toLowerCase();
@@ -247,7 +249,7 @@ export default function PredefinedSpeciesSidebar({
   }
 
   // Sort alphabetically unless it's the "selected" category (and not searching)
-  if (selectedCategory !== "selected" || searchQuery.trim()) {
+  if (selectedCategory !== "selected" || (isFilterActive && searchQuery.trim())) {
     filteredResults = [...filteredResults].sort((a, b) => {
       const nameA = (a.preferred_common_name || a.name || "").toLowerCase();
       const nameB = (b.preferred_common_name || b.name || "").toLowerCase();
@@ -275,6 +277,7 @@ export default function PredefinedSpeciesSidebar({
           variant="outline"
           onClick={() => setRunTutorial((prev) => prev + 1)}
           leftSection={<IconHelp size={16} />}
+          style={{ width: 85 }}
         >
           Help
         </Button>
@@ -289,6 +292,7 @@ export default function PredefinedSpeciesSidebar({
           onChange={(event) => {
             const val = event.currentTarget.value;
             setSearchQuery(val);
+            setIsFilterActive(true);
             if (val.trim() && selectedCategory !== "all") {
               setSelectedCategory("all");
             }
