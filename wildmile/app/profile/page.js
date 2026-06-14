@@ -85,15 +85,22 @@ export default function ProfilePage() {
     if (!loading && !user) router.replace("/login");
   }, [user, loading]);
 
-  let photoSrc = "https://api.multiavatar.com/noname.png";
+  // Find the highest level RANK achievement that has been earned
+  const earnedRanks = userStats?.achievements?.filter(
+    (a) => a.progress === 100 && a.type === "RANK"
+  ) || [];
 
+  const cameratrapRank = earnedRanks.length > 0
+    ? [...earnedRanks].sort((a, b) => b.level - a.level)[0]
+    : null;
+
+  let photoSrc = "https://api.multiavatar.com/noname.png";
   if (user && user.profile) {
     photoSrc = "https://api.multiavatar.com/" + user.profile.name + ".png";
   }
 
   // Use rank badge if available
-  const rankBadge = userStats?.domainRanks?.CAMERATRAP?.currentRank?.badge;
-  const displayAvatar = rankBadge || photoSrc;
+  const displayAvatar = cameratrapRank?.badge || photoSrc;
 
   async function handleEditProfile(values) {
     if (!values.email) delete values.email;
@@ -109,12 +116,10 @@ export default function ProfilePage() {
     close();
   }
 
-  // Filter earned achievements. Only non-RANK badges are shown in the main badges list.
+  // Filter earned achievements that are NOT Ranks
   const earnedBadges = userStats?.achievements?.filter(
-    (a) => a.progress === 100 
+    (a) => a.progress === 100 && a.type !== "RANK"
   );
-
-  const cameratrapRank = userStats?.domainRanks?.CAMERATRAP?.currentRank;
 
   if (loading) return null;
 
@@ -227,7 +232,7 @@ export default function ProfilePage() {
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="md">
             {/* Cameratrap Rank */}
-            {cameratrapRank && cameratrapRank.type === "RANK" && (
+            {cameratrapRank && (
               <Card withBorder shadow="sm" radius="md">
                 <Group>
                   <Avatar src={cameratrapRank.badge} size="lg" />
@@ -348,7 +353,7 @@ export default function ProfilePage() {
                               size="md"
                               radius="md"
                             />
-                            <Text size="xs" fw={500} ta="center">
+                            <Text size="xs" fw={500} ta="center" >
                               {achievement.name}
                             </Text>
                           </Stack>
