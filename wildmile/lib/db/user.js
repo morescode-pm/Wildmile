@@ -72,7 +72,6 @@ export async function findUserByEmail(email) {
   return await User.findOne({ email: email.toLowerCase() }, [
     // "-_id",
     "-__v",
-    "-createdAt",
     "-updatedAt",
   ]);
 }
