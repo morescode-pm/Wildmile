@@ -82,7 +82,7 @@ export default async function Page() {
       <Stack gap="md">
         <StatsScorecards stats={stats} />
 
-        <Grid gutter="xl">
+        <Grid gutter="md">
           {/* Pane 1: Resources & Management */}
           <GridCol span={{ base: 12, md: 4 }}>
             <Fieldset legend="Resources">
