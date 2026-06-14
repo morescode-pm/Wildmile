@@ -13,49 +13,49 @@ export const CameraTrapTutorial = () => {
       target: '#login-button',
       content: 'First, please log in or sign up to save your observations and track your progress!',
       placement: 'bottom',
-      disableBeacon: true,
+      skipBeacon: true, // Changed from disableBeacon to skipBeacon
     }]),
     {
       target: '#main-navigation-bar',
       content: 'Use these controls to navigate images. You can go to the next/previous photo with the arrows, or adjust your filters here.',
       placement: 'bottom',
-      disableBeacon: true,
+      skipBeacon: true, // Changed from disableBeacon to skipBeacon
     },
     {
       target: '#image-annotation-card',
       content: 'You can zoom in and out of the image using your mouse wheel or pinch gestures to see details more clearly.',
       placement: 'right',
-      disableBeacon: true,
+      skipBeacon: true,
     },
     {
       target: '#image-action-buttons',
       content: 'Use these buttons to interact with the image: view AI detections, play a video, or favorite the image.',
       placement: 'top',
-      disableBeacon: true,
+      skipBeacon: true,
     },
     {
       target: '#wildlife-search-container',
       content: 'Select animals from the available species here. The "Selected" tab shows what you\'ve already picked, while "All Species" lets you browse recent selections and the full catalog.',
       placement: 'left',
-      disableBeacon: true,
+      skipBeacon: true,
     },
     {
       target: '#species-tabs',
       content: 'Switch between "Selected Animals" and "All Species". Your 10 most recent selections will appear at the top of the All Species list for quick access.',
       placement: 'left',
-      disableBeacon: true,
+      skipBeacon: true,
     },
     {
       target: '#observation-tally-container',
       content: 'Toggles for Human and Vehicle presence are here. Below, you can see a summary of your selections and add any necessary comments.',
       placement: 'left',
-      disableBeacon: true,
+      skipBeacon: true,
     },
     {
       target: '#save-observations-button',
       content: 'Finally, click "Save Observations" or "No Animals Visible" to complete your identification. Your selections are kept between images to help with photo bursts!',
       placement: 'top',
-      disableBeacon: true,
+      skipBeacon: true,
     },
   ], [user]);
 
@@ -84,7 +84,7 @@ export const CameraTrapTutorial = () => {
   }, [run, steps]);
 
   const handleJoyrideCallback = (data) => {
-    const { status, type, index, action } = data;
+    const { status } = data;
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(0);
@@ -95,8 +95,9 @@ export const CameraTrapTutorial = () => {
     <Joyride
       key={run}
       steps={steps}
-      run={run > 0 && ready}
-      continuous
+      run={run > 0}
+      continuous={true}
+      autoStart={true}
       showProgress
       showSkipButton
       scrollOffset={100}
@@ -104,7 +105,7 @@ export const CameraTrapTutorial = () => {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#40c057', // Green
+          primaryColor: '#40c057', 
           zIndex: 10000,
           overlayColor: 'rgba(0, 0, 0, 0.5)',
         },
@@ -114,12 +115,6 @@ export const CameraTrapTutorial = () => {
         buttonPrimary: {
           backgroundColor: '#40c057',
           color: '#ffffff',
-        },
-        beaconInner: {
-          backgroundColor: '#ff0000',
-        },
-        beaconOuter: {
-          border: '2px solid #ff0000',
         },
         spotlight: {
           // Keep empty
