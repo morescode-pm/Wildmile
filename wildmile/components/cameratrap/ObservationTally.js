@@ -219,7 +219,7 @@ export function ObservationTally({ fetchNextImage }) {
           setAnimalCounts({});
         }
         setRelabeling(false);
-        fetchNextImage();
+        await fetchNextImage();
       } else {
         alert("Failed to save observations.");
       }

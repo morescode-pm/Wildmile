@@ -177,11 +177,16 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         const image = await response.json();
         setCurrentImage(image);
       } else {
-        console.error("Failed to fetch image");
+        if (response.status === 404) {
+          console.log("No more images found.");
+          setCurrentImage(null);
+        } else {
+          console.error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+        }
         // If fetch fails (e.g. 404 No more images), and we are in reviewMode, maybe try without direction or just notify
         if (processedParams.direction === "next" || processedParams.direction === "previous") {
            // Try fetching a random one if next/prev fails
-           await fetchCamtrapImage({ ...appliedFilters });
+           await fetchCamtrapImage({ ...appliedFilters, reviewMode: processedParams.reviewMode });
         }
       }
     } catch (error) {
@@ -282,7 +287,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   onClick={() => {
                     setReviewMode(true);
                     setRelabeling(false);
-                    fetchCamtrapImage({ ...appliedFilters });
+                    fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                   }}
                 >
                   Review Mode
