@@ -13,14 +13,15 @@ import {
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage, useTutorial } from "./ContextCamera";
+import { useImage, useTutorial, useReviewMode, useRelabeling } from "./ContextCamera";
 import { useUser } from "lib/hooks";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
 import WildlifeSearch from "./WildlifeSearch";
 import { CameraTrapTutorial } from "./CameraTrapTutorial";
-import { IconArrowLeft, IconArrowRight, IconHelp } from "@tabler/icons-react";
+import { ReviewControls } from "./ReviewControls";
+import { IconArrowLeft, IconArrowRight, IconHelp, IconEye, IconEdit } from "@tabler/icons-react";
 import classes from "styles/cameraTrapLayout.module.css";
 import { useCallback } from "react"; // Added for useCallback
 import { LoadingOverlay } from "@mantine/core"; // For page loading state
@@ -46,6 +47,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   const [appliedFilters, setAppliedFilters] = useState(clientSideDefaultFilters);
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
   const [runTutorial, setRunTutorial] = useTutorial();
+  const [reviewMode, setReviewMode] = useReviewMode();
+  const [isRelabeling] = useRelabeling();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -85,15 +88,15 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       setAppliedFilters(currentInitialFilters); // Set state after fetching
 
       if (initialImageId) {
-        fetchCamtrapImage({ selectedImageId: initialImageId });
+        fetchCamtrapImage({ ...currentInitialFilters, selectedImageId: initialImageId });
       } else {
-        fetchCamtrapImage(currentInitialFilters);
+        fetchCamtrapImage({ ...currentInitialFilters, reviewMode: reviewMode });
       }
       setPageLoading(false);
     };
     initializePage();
     // Adding initialImageId and fetchFilterDefaults to dependencies.
-  }, [initialImageId, fetchFilterDefaults]); // Removed fetchDeployments from here as it's stable and not in useCallback
+  }, [initialImageId, fetchFilterDefaults, reviewMode]); // Removed fetchDeployments from here as it's stable and not in useCallback
 
   const { user, loading: userLoading } = useUser();
 
@@ -142,7 +145,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   const fetchCamtrapImage = async (params = {}) => {
-    let processedParams = { ...params }; // Clone to avoid modifying the state directly
+    let processedParams = { ...params, reviewMode: reviewMode }; // Clone to avoid modifying the state directly
 
     // Convert animalProbability array to comma-separated string
     if (processedParams.animalProbability && Array.isArray(processedParams.animalProbability) && processedParams.animalProbability.length === 2) {
@@ -212,6 +215,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <div className={classes.fullViewport}>
       <CameraTrapTutorial />
+      <ReviewControls fetchNextImage={fetchNextImage} />
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
@@ -219,7 +223,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         gutter="xs"
       >
         <GridCol
-          span={{ base: 12, md: 8, lg: 8 }}
+          span={{ base: 12, md: reviewMode && !isRelabeling ? 12 : 8, lg: reviewMode && !isRelabeling ? 12 : 8 }}
           style={{
             height: "calc(100vh - 70px)",
             display: "flex",
@@ -228,59 +232,88 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           }}
         >
           <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-            <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
-              <Tooltip label="Previous Image">
-                <Button
-                  id="prev-image-button"
-                  onClick={() => handleNavigateImage("previous")}
-                  variant="default"
-                  radius="md"
-                  size="sm"
-                >
-                  <IconArrowLeft size={18} />
-                </Button>
-              </Tooltip>
+            {(!reviewMode || isRelabeling) && (
+              <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
+                <Tooltip label="Previous Image">
+                  <Button
+                    id="prev-image-button"
+                    onClick={() => handleNavigateImage("previous")}
+                    variant="default"
+                    radius="md"
+                    size="sm"
+                  >
+                    <IconArrowLeft size={18} />
+                  </Button>
+                </Tooltip>
 
-              <Tooltip label="Next Image">
+                <Tooltip label="Next Image">
+                  <Button
+                    id="next-image-button"
+                    onClick={() => handleNavigateImage("next")}
+                    variant="default"
+                    radius="md"
+                    size="sm"
+                  >
+                    <IconArrowRight size={18} />
+                  </Button>
+                </Tooltip>
+                <ImageFilterControls
+                  initialFilters={appliedFilters}
+                  onApplyFilters={handleApplyFilters}
+                  onJumpToEarliest={handleJumpToEarliest}
+                  deployments={deployments}
+                  setRunTutorial={setRunTutorial}
+                />
                 <Button
-                  id="next-image-button"
-                  onClick={() => handleNavigateImage("next")}
-                  variant="default"
-                  radius="md"
+                  variant="light"
+                  color="blue"
                   size="sm"
+                  leftSection={<IconEye size={18} />}
+                  onClick={() => {
+                    setReviewMode(true);
+                    fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
+                  }}
                 >
-                  <IconArrowRight size={18} />
+                  Review Mode
                 </Button>
-              </Tooltip>
-              <ImageFilterControls
-                initialFilters={appliedFilters}
-                onApplyFilters={handleApplyFilters}
-                onJumpToEarliest={handleJumpToEarliest}
-                deployments={deployments}
-                setRunTutorial={setRunTutorial}
-              />
-            </Group>
+              </Group>
+            )}
+            {reviewMode && !isRelabeling && (
+              <Group justify="center" mb={4}>
+                <Button
+                  variant="subtle"
+                  color="gray"
+                  size="sm"
+                  leftSection={<IconEdit size={18} />}
+                  onClick={() => setReviewMode(false)}
+                >
+                  Exit Review Mode
+                </Button>
+              </Group>
+            )}
             <div style={{ flex: 1, minHeight: 0 }}>
               <ImageAnnotation filters={appliedFilters} />
             </div>
           </Paper>
         </GridCol>
 
-        <GridCol
-          span={{ base: 12, md: 4, lg: 4 }}
-          style={{
-            height: "calc(100vh - 70px)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "xs",
-            minHeight: 0,
-          }}
-        >
-          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
-            <WildlifeSearch />
-          </div>
-          <ObservationTally fetchNextImage={fetchNextImage} />
-        </GridCol>
+        {(!reviewMode || isRelabeling) && (
+          <GridCol
+            span={{ base: 12, md: 4, lg: 4 }}
+            style={{
+              height: "calc(100vh - 70px)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "xs",
+              minHeight: 0,
+            }}
+          >
+            <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+              <WildlifeSearch />
+            </div>
+            <ObservationTally fetchNextImage={fetchNextImage} />
+          </GridCol>
+        )}
       </Grid>
     </div>
   );

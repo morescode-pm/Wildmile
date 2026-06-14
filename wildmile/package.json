@@ -46,6 +46,7 @@
     "exifreader": "^4.26.0",
     "exiftool-vendored": "^28.8.0",
     "express-session": "^1.18.1",
+    "framer-motion": "^12.4.7",
     "iron-session": "^8.0.4",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",

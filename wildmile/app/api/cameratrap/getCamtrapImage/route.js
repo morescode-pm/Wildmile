@@ -23,6 +23,7 @@ export async function GET(request) {
   const direction = searchParams.get("direction");
   const currentImageId = searchParams.get("currentImageId");
   const selectedImageId = searchParams.get("selectedImageId");
+  const reviewMode = searchParams.get("reviewMode");
 
   const animalProbabilityParam = searchParams.get("animalProbability");
   let minAnimalConf, maxAnimalConf;
@@ -127,8 +128,12 @@ export async function GET(request) {
     query.$expr = { $and: timeQuery };
   }
 
-  if (reviewed === "true") {
+  if (reviewed === "true" || reviewMode === "true") {
     query.reviewCount = { $gt: 0 };
+  }
+
+  if (reviewMode === "true") {
+    query.consensusStatus = { $ne: "ConsensusReached" };
   }
 
   if (
@@ -150,7 +155,7 @@ export async function GET(request) {
     };
   }
 
-  if (notReviewedByUser === "true") {
+  if (notReviewedByUser === "true" || reviewMode === "true") {
     const session = await getSession({ headers });
     if (session?._id) {
       query.reviewers = { $nin: [session._id] };
