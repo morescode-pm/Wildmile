@@ -21,8 +21,6 @@ import {
   ThemeIcon,
   Modal,
   ActionIcon,
-  Breadcrumbs,
-  Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
@@ -110,29 +108,17 @@ export default function ProfilePage() {
     close();
   }
 
-  const earnedAchievements = userStats?.achievements?.filter(
-    (a) => a.progress === 100
+  // Only show RANK badges
+  const earnedRanks = userStats?.achievements?.filter(
+    (a) => a.progress === 100 && a.type === "RANK"
   );
 
   const cameratrapRank = userStats?.domainRanks?.CAMERATRAP?.currentRank;
 
   if (loading) return null;
 
-  const breadcrumbItems = [
-    { title: "Account", href: "#" },
-    { title: "Profile", href: "/profile" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index} c="dimmed" size="sm" underline="hover">
-      {item.title}
-    </Anchor>
-  ));
-
   return (
-    <Container size="xl" my="2rem">
-      <Stack gap="xs" mb="lg">
-        <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-      </Stack>
-
+    <Container size="xl" my="4rem">
       <Grid gutter="md">
         {/* Left Column: Profile Info & Progress */}
         <Grid.Col span={{ base: 12, md: 4 }}>
@@ -324,11 +310,11 @@ export default function ProfilePage() {
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Card withBorder shadow="sm" radius="md" style={{ height: '100%' }}>
                   <Title order={4} mb="md">
-                    Earned Badges
+                    Earned Ranks
                   </Title>
-                  {earnedAchievements && earnedAchievements.length > 0 ? (
+                  {earnedRanks && earnedRanks.length > 0 ? (
                     <SimpleGrid cols={3} spacing="md">
-                      {earnedAchievements.slice(0, 6).map((achievement) => (
+                      {earnedRanks.slice(0, 6).map((achievement) => (
                         <Tooltip
                           key={achievement.id}
                           multiline
@@ -364,19 +350,19 @@ export default function ProfilePage() {
                     </SimpleGrid>
                   ) : (
                     <Text c="dimmed" size="sm" ta="center" py="xl">
-                      No badges earned yet.
+                      No ranks earned yet.
                     </Text>
                   )}
                 </Card>
               </Grid.Col>
             </Grid>
 
-            {/* All Badges (if many) */}
-            {earnedAchievements && earnedAchievements.length > 6 && (
+            {/* All Ranks (if many) */}
+            {earnedRanks && earnedRanks.length > 6 && (
               <Paper withBorder p="md" radius="md">
-                <Text size="sm" fw={700} mb="md">All Earned Badges</Text>
+                <Text size="sm" fw={700} mb="md">All Earned Ranks</Text>
                 <SimpleGrid cols={{ base: 4, sm: 6, md: 8 }} spacing="md">
-                  {earnedAchievements.slice(6).map((achievement) => (
+                  {earnedRanks.slice(6).map((achievement) => (
                     <Tooltip
                       key={achievement.id}
                       multiline

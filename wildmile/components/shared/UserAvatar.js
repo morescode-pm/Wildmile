@@ -161,12 +161,12 @@ export function UserAvatar({ userId, size = "sm" }) {
               </Text>
               <Group spacing={4}>
                 {userStats.achievements
-                  .filter((a) => a.progress === 100)
+                  .filter((a) => a.progress === 100 && a.achievement)
                   .slice(0, 5)
                   .map((achievement) => {
                     return (
                       <Tooltip
-                        key={achievement._id}
+                        key={achievement._id || achievement.id}
                         label={`${achievement.achievement.name}: ${achievement.achievement.description}`}
                       >
                         <Avatar
