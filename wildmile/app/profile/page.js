@@ -109,11 +109,7 @@ export default function ProfilePage() {
     close();
   }
 
-  // Filter earned achievements by type
-  const earnedRanks = userStats?.achievements?.filter(
-    (a) => a.progress === 100 && a.type === "RANK"
-  );
-
+  // Filter earned achievements. Only non-RANK badges are shown in the main badges list.
   const earnedBadges = userStats?.achievements?.filter(
     (a) => a.progress === 100 && a.type !== "RANK"
   );
@@ -123,7 +119,7 @@ export default function ProfilePage() {
   if (loading) return null;
 
   return (
-    <Container size="xl" mt="xl" mb="4rem">
+    <Container size="lg" mt="xl" mb="4rem">
       <Grid gutter="md">
         {/* Left Column: Profile Info & Progress */}
         <Grid.Col span={{ base: 12, md: 4 }}>
@@ -332,7 +328,7 @@ export default function ProfilePage() {
                           w={220}
                           withArrow
                           label={
-                            <Stack gap={4}>
+                            <Stack gap={10}>
                               <Text fw={700} size="sm">{achievement.name}</Text>
                               <Text size="xs">{achievement.description}</Text>
                               {achievement.criteria && achievement.criteria.length > 0 && (
@@ -352,7 +348,7 @@ export default function ProfilePage() {
                               size="md"
                               radius="md"
                             />
-                            <Text size="xs" fw={500} ta="center" truncate>
+                            <Text size="xs" fw={500} ta="center" >
                               {achievement.name}
                             </Text>
                           </Stack>

@@ -3,6 +3,7 @@ import dbConnect from "lib/db/setup";
 import Observation from "models/cameratrap/Observation";
 import User from "models/User";
 import UserProgress from "models/users/UserProgress";
+import Species from "models/Species";
 // import { updateUserStats } from "lib/db/updateUserStats";
 
 // Update single user
@@ -94,20 +95,13 @@ export async function GET(request) {
       (obs) => obs.observationType === "blank",
     ).length;
 
-    // Calculate unique species
-    const uniqueSpecies = new Set(
-      animalObservations
-        .map((obs) => obs.scientificName)
-        .filter((name) => name), // Remove null/undefined
-    );
-
-    // Get top species
+    // Get top species and fetch their preferred common names
     const speciesCounts = animalObservations.reduce((acc, obs) => {
-      const key = obs.commonName || obs.scientificName;
+      const key = obs.scientificName;
+      if (!key) return acc;
       if (!acc[key]) {
         acc[key] = {
-          commonName: obs.commonName,
-          scientificName: obs.scientificName,
+          scientificName: key,
           count: 0,
         };
       }
@@ -115,9 +109,20 @@ export async function GET(request) {
       return acc;
     }, {});
 
-    const topSpecies = Object.values(speciesCounts)
+    const topSpeciesList = Object.values(speciesCounts)
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
+
+    // Enrich with preferred common names from Species model
+    const enrichedTopSpecies = await Promise.all(
+      topSpeciesList.map(async (s) => {
+        const speciesDoc = await Species.findOne({ name: s.scientificName }).select("preferred_common_name").lean();
+        return {
+          ...s,
+          commonName: speciesDoc?.preferred_common_name || s.scientificName,
+        };
+      })
+    );
 
     // Convert domainRanks Map to object for JSON response
     const domainRanks = {};
@@ -137,15 +142,15 @@ export async function GET(request) {
         totalImagesReviewed,
         totalAnimalsObserved,
         totalBlanksLogged,
-        uniqueSpeciesCount: uniqueSpecies.size,
+        uniqueSpeciesCount: enrichedTopSpecies.length,
       },
       streaks: progress.streaks,
       achievements: formattedAchievements,
       totalPoints: progress.totalPoints,
       level: progress.level,
       domainRanks,
-      topSpecies,
-      uniqueSpeciesCount: uniqueSpecies.size,
+      topSpecies: enrichedTopSpecies,
+      uniqueSpeciesCount: [...new Set(animalObservations.map(o => o.scientificName).filter(Boolean))].length,
       totalImagesReviewed,
       totalAnimalsObserved,
       totalBlanksLogged,
