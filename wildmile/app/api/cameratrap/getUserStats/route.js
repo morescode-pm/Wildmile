@@ -38,7 +38,7 @@ export async function GET(request) {
         model: "Achievement",
         select: "name description icon badge level type domain criteria points",
       },
-      { path: "user", select: "profile avatar" },
+      { path: "user", select: "profile avatar roles" },
     ]);
 
     // Find the highest level RANK achievement that has been earned
