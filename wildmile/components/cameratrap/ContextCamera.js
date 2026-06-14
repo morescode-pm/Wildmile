@@ -36,6 +36,7 @@ const [TutorialProvider, useTutorial] = createCtx(0);
 const [ReviewModeProvider, useReviewMode] = createCtx(false);
 const [RelabelingProvider, useRelabeling] = createCtx(false);
 const [ImageLoadedProvider, useImageLoaded] = createCtx(false);
+const [IsFetchingProvider, useIsFetching] = createCtx(false);
 
 // Combined provider
 function IdentificationProvider({ children }) {
@@ -50,7 +51,9 @@ function IdentificationProvider({ children }) {
                   <ReviewModeProvider>
                     <RelabelingProvider>
                       <ImageLoadedProvider>
-                        <TutorialProvider>{children}</TutorialProvider>
+                        <IsFetchingProvider>
+                          <TutorialProvider>{children}</TutorialProvider>
+                        </IsFetchingProvider>
                       </ImageLoadedProvider>
                     </RelabelingProvider>
                   </ReviewModeProvider>
@@ -77,4 +80,5 @@ export {
   useReviewMode,
   useRelabeling,
   useImageLoaded,
+  useIsFetching,
 };

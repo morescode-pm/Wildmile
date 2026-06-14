@@ -22,6 +22,7 @@ import {
   useAnimalCounts,
   useObservationState,
   useImageLoaded,
+  useIsFetching,
 } from "./ContextCamera";
 import { motion, useAnimation } from "framer-motion";
 
@@ -29,6 +30,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
   const [currentImage] = useImage();
   const [reviewMode] = useReviewMode();
   const [imageLoaded] = useImageLoaded();
+  const [isFetching] = useIsFetching();
   const [isRelabeling, setRelabeling] = useRelabeling();
   const [, setSelection] = useSelection();
   const [, setAnimalCounts] = useAnimalCounts();
@@ -45,19 +47,16 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   if (!reviewMode || !currentImage || isRelabeling) return null;
 
-  if (!imageLoaded) {
+  if (isFetching || !imageLoaded) {
     return (
       <div style={{
-        position: "fixed",
-        bottom: 20,
-        left: "83%",
-        transform: "translateX(-50%)",
-        zIndex: 1000,
-        width: "100%",
-        maxWidth: 320,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
         padding: "0 10px"
       }}>
-        <Paper shadow="xl" p="md" withBorder radius="xl" style={{ backgroundColor: "var(--mantine-color-body)", opacity: 0.5 }}>
+        <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)", opacity: 0.5 }}>
           <Stack gap="xs" align="center">
             <Text size="md" fw={700} ta="center" c="dimmed">
               Loading...
@@ -150,7 +149,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
       .map(i => ({
         taxonId: i.taxonID,
         name: i.scientificName,
-        // preferred_common_name: i.scientificName, // We might not have it here
+        preferred_common_name: i.preferredCommonName || i.scientificName,
       }));
 
     const initialCounts = {};
@@ -185,13 +184,10 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   return (
     <div style={{
-      position: "fixed",
-      bottom: 20,
-      left: "83%",
-      transform: "translateX(-50%)",
-      zIndex: 1000,
-      width: "100%",
-      maxWidth: 350,
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
       padding: "0 10px"
     }}>
       <motion.div
@@ -201,7 +197,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
         animate={controls}
         style={{ width: "100%" }}
       >
-        <Paper shadow="xl" p="md" withBorder radius="xl" style={{ backgroundColor: "var(--mantine-color-body)" }}>
+        <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)" }}>
           <Stack gap="xs" align="center">
             <Text size="md" fw={700} ta="center">
               Does this photo have:

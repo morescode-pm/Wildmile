@@ -13,7 +13,7 @@ import {
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded } from "./ContextCamera";
+import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded, useIsFetching } from "./ContextCamera";
 import { useUser } from "lib/hooks";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
@@ -50,6 +50,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   const [reviewMode, setReviewMode] = useReviewMode();
   const [isRelabeling, setRelabeling] = useRelabeling();
   const [, setImageLoaded] = useImageLoaded();
+  const [isFetching, setIsFetching] = useIsFetching();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -147,6 +148,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
   const fetchCamtrapImage = async (params = {}) => {
     setImageLoaded(false);
+    setIsFetching(true);
     let processedParams = { reviewMode, ...params }; // Clone to avoid modifying the state directly
 
     // Convert animalProbability array to comma-separated string
@@ -179,11 +181,13 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         // If fetch fails (e.g. 404 No more images), and we are in reviewMode, maybe try without direction or just notify
         if (processedParams.direction === "next" || processedParams.direction === "previous") {
            // Try fetching a random one if next/prev fails
-           fetchCamtrapImage({ ...appliedFilters });
+           await fetchCamtrapImage({ ...appliedFilters });
         }
       }
     } catch (error) {
       console.error("Error fetching image:", error);
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -222,7 +226,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <div className={classes.fullViewport}>
       <CameraTrapTutorial />
-      <ReviewControls fetchNextImage={fetchNextImage} />
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
@@ -321,23 +324,27 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           </Paper>
         </GridCol>
 
-        {(!reviewMode || isRelabeling) && (
-          <GridCol
-            span={{ base: 12, md: 4, lg: 4 }}
-            style={{
-              height: "calc(100vh - 70px)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "xs",
-              minHeight: 0,
-            }}
-          >
-            <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
-              <WildlifeSearch />
-            </div>
-            <ObservationTally fetchNextImage={fetchNextImage} />
-          </GridCol>
-        )}
+        <GridCol
+          span={{ base: 12, md: 4, lg: 4 }}
+          style={{
+            height: "calc(100vh - 70px)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "xs",
+            minHeight: 0,
+          }}
+        >
+          {reviewMode && !isRelabeling ? (
+            <ReviewControls fetchNextImage={fetchNextImage} />
+          ) : (
+            <>
+              <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+                <WildlifeSearch />
+              </div>
+              <ObservationTally fetchNextImage={fetchNextImage} />
+            </>
+          )}
+        </GridCol>
       </Grid>
     </div>
   );

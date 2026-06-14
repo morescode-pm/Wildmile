@@ -195,8 +195,8 @@ export async function GET(request) {
     }
 
     if (image) {
-      // If in reviewMode, enhance speciesConsensus with preferred_common_name
-      if (reviewMode === "true" && image.speciesConsensus) {
+      // Enhance speciesConsensus with preferred_common_name
+      if (image.speciesConsensus) {
         const enrichedConsensus = await Promise.all(
           image.speciesConsensus.map(async (item) => {
             if (item.observationType === "animal" && item.scientificName) {
