@@ -74,11 +74,22 @@ export default function ProfilePage() {
     },
   });
 
+  // Only initialize form when user data is first available
   useEffect(() => {
-    if (!user || !user.profile) return;
-    form.setFieldValue("email", user.email || "");
-    form.setFieldValue("name", user.profile.name || "");
-    form.setFieldValue("location", user.profile.location || "");
+    if (user && user.profile) {
+      form.setInitialValues({
+        email: user.email || "",
+        password: "",
+        name: user.profile.name || "",
+        location: user.profile.location || "",
+      });
+      form.setValues({
+        email: user.email || "",
+        password: "",
+        name: user.profile.name || "",
+        location: user.profile.location || "",
+      });
+    }
   }, [user]);
 
   useEffect(() => {
@@ -96,29 +107,30 @@ export default function ProfilePage() {
 
   let photoSrc = "https://api.multiavatar.com/noname.png";
   if (user && user.profile) {
-    photoSrc = "https://api.multiavatar.com/" + user.profile.name + ".png";
+    photoSrc = "https://api.multiavatar.com/" + (user.profile.name || "user") + ".png";
   }
 
   // Use rank badge if available
   const displayAvatar = cameratrapRank?.badge || photoSrc;
 
   async function handleEditProfile(values) {
-    if (!values.email) delete values.email;
-    if (!values.password) delete values.password;
+    const payload = { ...values };
+    if (!payload.email) delete payload.email;
+    if (!payload.password) delete payload.password;
 
     const res = await fetch(`/api/user`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+      body: JSON.stringify(payload),
     });
-    const updatedUser = await res.json();
-    mutate(updatedUser);
+    const result = await res.json();
+    mutate(result);
     close();
   }
 
-  // Filter earned achievements that are NOT Ranks
+  // Filter earned achievements. Avatar/Card uses RANK, other earned badges are shown below.
   const earnedBadges = userStats?.achievements?.filter(
-    (a) => a.progress === 100 // && a.type !== "RANK"
+    (a) => a.progress === 100 && a.type !== "RANK"
   );
 
   if (loading) return null;
@@ -231,6 +243,24 @@ export default function ProfilePage() {
         {/* Right Column: Stats & Achievements */}
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="md">
+            {/* Cameratrap Rank */}
+            {cameratrapRank && (
+              <Card withBorder shadow="sm" radius="md">
+                <Group>
+                  <Avatar src={cameratrapRank.badge} size="lg" />
+                  <Box style={{ flex: 1 }}>
+                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      Cameratrap Rank
+                    </Text>
+                    <Text size="xl" fw={700}>
+                      {cameratrapRank.name}
+                    </Text>
+                    <Text size="sm">{cameratrapRank.description}</Text>
+                  </Box>
+                </Group>
+              </Card>
+            )}
+
             {/* Activity Summary */}
             <Title order={3} mt="sm">
               Activity Summary
