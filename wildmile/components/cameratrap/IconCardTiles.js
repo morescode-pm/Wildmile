@@ -1,5 +1,5 @@
 "use client";
-import { Text, Group, Overlay, Transition, Paper, rem, Stack } from "@mantine/core";
+import { Text, Group, Paper, rem, Stack } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
 import {
@@ -37,40 +37,24 @@ function CardTile({ card }) {
       p="sm"
       radius="md"
       style={{
-        position: "relative",
         textDecoration: "none",
         color: "inherit",
-        overflow: "hidden",
         display: "block",
-        transition: "transform 150ms ease, box-shadow 150ms ease",
+        transition: "box-shadow 150ms ease",
       }}
       shadow={hovered ? "md" : "xs"}
     >
-      <Group gap="md" wrap="nowrap">
-        <Icon size={rem(28)} stroke={1.5} />
-        <Text fw={500} size="sm">
-          {card.title}
+      <Group justify="space-between" wrap="nowrap" gap="xs">
+        <Group gap="sm" wrap="nowrap" style={{ flexShrink: 0 }}>
+          <Icon size={rem(24)} stroke={1.5} />
+          <Text fw={500} size="sm">
+            {card.title}
+          </Text>
+        </Group>
+        <Text size="xs" c="dimmed" ta="right" style={{ lineHeight: 1.2 }}>
+          {card.description}
         </Text>
       </Group>
-
-      <Transition mounted={hovered} transition="fade" duration={200}>
-        {(styles) => (
-          <Overlay
-            color="var(--mantine-color-body)"
-            backgroundOpacity={0.95}
-            style={{
-              ...styles,
-              display: "flex",
-              alignItems: "center",
-              padding: rem(8),
-            }}
-          >
-            <Text size="xs" lineClamp={2}>
-              {card.description}
-            </Text>
-          </Overlay>
-        )}
-      </Transition>
     </Paper>
   );
 }
