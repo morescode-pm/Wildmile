@@ -9,7 +9,6 @@ import {
   Loader,
   Stack,
 } from "@mantine/core";
-import { IconCardGrid } from "/components/icon_card_grid";
 import { IconCardTiles } from "components/cameratrap/IconCardTiles";
 import classes from "/styles/card.module.css";
 import {
@@ -31,26 +30,26 @@ import { headers } from "next/headers";
 
 const cameraTrapCards = [
   {
-    icon: IconPokeball,
+    icon: "IconPokeball",
     title: "Identify wildlife",
     href: "/cameratrap/identify",
     description:
       "Find and catagorize wildlife captured around the Chicago River",
   },
   {
-    icon: IconZoomIn,
+    icon: "IconZoomIn",
     title: "Explore Data",
     href: "/cameratrap/explore",
     description: "Explore wildlife images which have been catagorized",
   },
   {
-    icon: IconPaw,
+    icon: "IconPaw",
     title: "Wildlife Analytics",
     href: "/cameratrap/wildlife",
     description: "Analyze species activity, temporal patterns, co-occurrence, and biodiversity",
   },
   {
-    icon: IconAbacus,
+    icon: "IconAbacus",
     title: "Project Analytics",
     href: "/cameratrap/analytics/total-images",
     description: "See analytics on images, observations, and volunteers",
@@ -59,25 +58,25 @@ const cameraTrapCards = [
 
 const mgmtCards = [
   {
-    icon: IconCameraPlus,
+    icon: "IconCameraPlus",
     title: "New Camera",
     href: "/cameratrap/camera/new",
     description: "Add a new camera device",
   },
   {
-    icon: IconCameraSearch,
+    icon: "IconCameraSearch",
     title: "Cameras",
     href: "/cameratrap/camera",
     description: "Manage the camera inventory",
   },
   {
-    icon: IconUsers,
+    icon: "IconUsers",
     title: "Deployments",
     href: "/cameratrap/deployment",
     description: "Manage the deployments",
   },
   {
-    icon: IconMapPin,
+    icon: "IconMapPin",
     title: "Locations",
     href: "/cameratrap/locations",
     description: "Manage the deployment locations",
