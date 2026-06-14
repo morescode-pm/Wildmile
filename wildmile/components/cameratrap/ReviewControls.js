@@ -21,12 +21,14 @@ import {
   useSelection,
   useAnimalCounts,
   useObservationState,
+  useImageLoaded,
 } from "./ContextCamera";
 import { motion, useAnimation } from "framer-motion";
 
 export const ReviewControls = ({ fetchNextImage }) => {
   const [currentImage] = useImage();
   const [reviewMode] = useReviewMode();
+  const [imageLoaded] = useImageLoaded();
   const [isRelabeling, setRelabeling] = useRelabeling();
   const [, setSelection] = useSelection();
   const [, setAnimalCounts] = useAnimalCounts();
@@ -41,7 +43,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   }, [currentImage, controls]);
 
-  if (!reviewMode || !currentImage || isRelabeling) return null;
+  if (!reviewMode || !currentImage || isRelabeling || !imageLoaded) return null;
 
   const consensusItems = currentImage.speciesConsensus || [];
 
@@ -190,7 +192,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   variant="light"
                   color="red"
                   radius="xl"
-                  size="md"
+                  size="lg"
                   leftSection={<IconX size={24} />}
                   onClick={handleRelabel}
                 >

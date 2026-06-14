@@ -25,7 +25,7 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useImage, useTutorial } from "./ContextCamera";
+import { useImage, useTutorial, useImageLoaded } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
@@ -44,9 +44,11 @@ export function ImageAnnotation({ filters }) {
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
 
+  const [, setImageLoaded] = useImageLoaded();
   const handleImageLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     setNaturalSize({ width: naturalWidth, height: naturalHeight });
+    setImageLoaded(true);
   };
 
   useEffect(() => {
@@ -67,8 +69,9 @@ export function ImageAnnotation({ filters }) {
       setIsFavorite(currentImage.favorite || false);
       setNeedsReview(currentImage.needsReview || false);
       setFlagged(currentImage.flagged || false);
+      setImageLoaded(false);
     }
-  }, [currentImage]);
+  }, [currentImage, setImageLoaded]);
 
   const handleToggleFavorite = async () => {
     try {
