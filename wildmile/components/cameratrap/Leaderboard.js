@@ -28,8 +28,8 @@ export function Leaderboard({ stats }) {
               <Group key={creator.id || index} justify="space-between">
                 <Group gap="sm">
                   <Text size="sm" fw={700} w={20}>{index + 1}.</Text>
-                  <UserAvatar userId={creator.id} />
-                  <Text size="sm" fw={500}>{creator.name}</Text>
+                  <UserAvatar userId={creator.id || creator.name} />
+                  {/* <Text size="sm" fw={500}>{creator.name}</Text> */}
                 </Group>
                 <Text size="sm" c="dimmed">
                   {creator.count.toLocaleString()} observation
