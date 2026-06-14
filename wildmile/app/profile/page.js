@@ -19,9 +19,13 @@ import {
   SimpleGrid,
   Box,
   ThemeIcon,
+  Modal,
+  ActionIcon,
+  Breadcrumbs,
+  Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser, fetcher } from "../../lib/hooks";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -36,11 +40,14 @@ import {
   IconSchool,
   IconUser,
   IconMapPin,
+  IconPencil,
 } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function ProfilePage() {
   const { user, loading, mutate } = useUser();
   const router = useRouter();
+  const [opened, { open, close }] = useDisclosure(false);
 
   const { data: userStats, error: statsError } = useSWR(
     user ? `/api/cameratrap/getUserStats?userId=${user._id}` : null,
@@ -101,6 +108,7 @@ export default function ProfilePage() {
     });
     const updatedUser = await res.json();
     mutate(updatedUser);
+    close();
   }
 
   const earnedAchievements = userStats?.achievements?.filter(
@@ -111,98 +119,106 @@ export default function ProfilePage() {
 
   if (loading) return null;
 
+  const breadcrumbItems = [
+    { title: "Account", href: "#" },
+    { title: "Profile", href: "/profile" },
+  ].map((item, index) => (
+    <Anchor href={item.href} key={index} c="dimmed" size="sm">
+      {item.title}
+    </Anchor>
+  ));
+
   return (
-    <Container size="xl" my="4rem">
+    <Container size="xl" my="2rem">
+      <Stack gap="xs" mb="lg">
+        <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+        <Title order={1}>Account / Profile</Title>
+      </Stack>
+
       <Grid gutter="md">
-        {/* Left Column: Profile Info & Edit */}
+        {/* Left Column: Profile Info */}
         <Grid.Col span={{ base: 12, md: 4 }}>
-          <Stack gap="md">
-            <Paper withBorder shadow="md" p={30} radius="md">
-              <Stack align="center" gap="xl" mb="xl">
-                <Avatar src={displayAvatar} size={150} radius={150} />
-                <Stack align="center" gap={0}>
+          <Paper withBorder shadow="md" p={30} radius="md">
+            <Stack align="center" gap="xl">
+              <Avatar src={displayAvatar} size={150} radius={150} />
+              <Stack align="center" gap={4}>
+                <Group gap={8}>
                   <Title order={2} ta="center">
                     {user?.profile?.name || "User Profile"}
                   </Title>
-                  <Text c="dimmed" size="sm">
-                    {user?.email}
-                  </Text>
-                </Stack>
-                <Badge size="lg" variant="filled" color="blue">
-                  Level {userStats?.level || 1}
-                </Badge>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    onClick={open}
+                    size="sm"
+                  >
+                    <IconPencil size={18} />
+                  </ActionIcon>
+                </Group>
+                <Text c="dimmed" size="sm">
+                  {user?.email}
+                </Text>
               </Stack>
+              <Badge size="lg" variant="filled" color="blue">
+                Level {userStats?.level || 1}
+              </Badge>
 
-              <Divider my="lg" label="Edit Profile" labelPosition="center" />
+              <Divider w="100%" />
 
-              <form
-                onSubmit={form.onSubmit((values) => {
-                  handleEditProfile(values);
-                })}
-              >
-                <Stack gap="sm">
-                  <TextInput
-                    label="Email"
-                    placeholder="you@urbanriv.com"
-                    leftSection={<IconUser size={16} />}
-                    {...form.getInputProps("email")}
-                  />
-                  <PasswordInput
-                    label="New Password"
-                    placeholder="Leave blank to keep current"
-                    {...form.getInputProps("password")}
-                  />
-                  <TextInput
-                    label="Name"
-                    placeholder="Name"
-                    {...form.getInputProps("name")}
-                  />
-                  <TextInput
-                    label="Neighborhood"
-                    placeholder="Loop"
-                    leftSection={<IconMapPin size={16} />}
-                    {...form.getInputProps("location")}
-                  />
-                  <Button mt="md" type="submit" fullWidth>
-                    Update Profile
-                  </Button>
-                </Stack>
-              </form>
-            </Paper>
-
-            {/* Joining & Streak Stats */}
-            <Paper withBorder shadow="md" p="md" radius="md">
-              <Stack gap="xs">
+              <Stack gap="xs" w="100%">
                 <Group>
                   <ThemeIcon variant="light" color="gray">
                     <IconCalendar size={18} />
                   </ThemeIcon>
-                  <Text size="sm">
-                    Joined:{" "}
-                    {user?.createdAt
-                      ? new Date(user.createdAt).toLocaleDateString()
-                      : "Recently"}
-                  </Text>
+                  <Box>
+                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      Joined
+                    </Text>
+                    <Text size="sm">
+                      {user?.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString()
+                        : "Recently"}
+                    </Text>
+                  </Box>
                 </Group>
                 <Group>
                   <ThemeIcon variant="light" color="orange">
                     <IconFlame size={18} />
                   </ThemeIcon>
-                  <Text size="sm">
-                    Longest Streak: {userStats?.streaks?.longest || 0} days
-                  </Text>
+                  <Box>
+                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      Longest Streak
+                    </Text>
+                    <Text size="sm">{userStats?.streaks?.longest || 0} days</Text>
+                  </Box>
                 </Group>
                 <Group>
                   <ThemeIcon variant="light" color="red">
                     <IconFlame size={18} />
                   </ThemeIcon>
-                  <Text size="sm">
-                    Current Streak: {userStats?.streaks?.current || 0} days
-                  </Text>
+                  <Box>
+                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      Current Streak
+                    </Text>
+                    <Text size="sm">{userStats?.streaks?.current || 0} days</Text>
+                  </Box>
                 </Group>
+                {user?.profile?.location && (
+                  <Group>
+                    <ThemeIcon variant="light" color="blue">
+                      <IconMapPin size={18} />
+                    </ThemeIcon>
+                    <Box>
+                      <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                        Neighborhood
+                      </Text>
+                      <Text size="sm">{user.profile.location}</Text>
+                    </Box>
+                  </Group>
+                )}
               </Stack>
-            </Paper>
-          </Stack>
+            </Stack>
+          </Paper>
         </Grid.Col>
 
         {/* Right Column: Stats & Achievements */}
@@ -249,7 +265,7 @@ export default function ProfilePage() {
             )}
 
             {/* Activity Summary */}
-            <Title order={3} mt="md">
+            <Title order={3} mt="sm">
               Activity Summary
             </Title>
             <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
@@ -286,7 +302,7 @@ export default function ProfilePage() {
             </SimpleGrid>
 
             {/* Earned Badges */}
-            <Title order={3} mt="md">
+            <Title order={3} mt="sm">
               Earned Badges
             </Title>
             <Paper withBorder p="md" radius="md">
@@ -295,8 +311,23 @@ export default function ProfilePage() {
                   {earnedAchievements.map((achievement) => (
                     <Tooltip
                       key={achievement.id}
-                      label={achievement.description}
+                      multiline
+                      w={220}
                       withArrow
+                      label={
+                        <Stack gap={4}>
+                          <Text fw={700} size="sm">{achievement.name}</Text>
+                          <Text size="xs">{achievement.description}</Text>
+                          {achievement.criteria && achievement.criteria.length > 0 && (
+                            <Box mt={4}>
+                              <Text size="xs" fw={700}>Criteria:</Text>
+                              {achievement.criteria.map((c, i) => (
+                                <Text key={i} size="xs">• {c.type}: {c.threshold}</Text>
+                              ))}
+                            </Box>
+                          )}
+                        </Stack>
+                      }
                     >
                       <Stack align="center" gap={4}>
                         <Avatar
@@ -320,6 +351,43 @@ export default function ProfilePage() {
           </Stack>
         </Grid.Col>
       </Grid>
+
+      {/* Edit Profile Modal */}
+      <Modal opened={opened} onClose={close} title="Edit Profile" centered>
+        <form
+          onSubmit={form.onSubmit((values) => {
+            handleEditProfile(values);
+          })}
+        >
+          <Stack gap="sm">
+            <TextInput
+              label="Email"
+              placeholder="you@urbanriv.com"
+              leftSection={<IconUser size={16} />}
+              {...form.getInputProps("email")}
+            />
+            <PasswordInput
+              label="New Password"
+              placeholder="Leave blank to keep current"
+              {...form.getInputProps("password")}
+            />
+            <TextInput
+              label="Name"
+              placeholder="Name"
+              {...form.getInputProps("name")}
+            />
+            <TextInput
+              label="Neighborhood"
+              placeholder="Loop"
+              leftSection={<IconMapPin size={16} />}
+              {...form.getInputProps("location")}
+            />
+            <Button mt="md" type="submit" fullWidth>
+              Update Profile
+            </Button>
+          </Stack>
+        </form>
+      </Modal>
     </Container>
   );
 }
