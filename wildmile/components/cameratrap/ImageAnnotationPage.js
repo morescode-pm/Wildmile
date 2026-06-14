@@ -223,7 +223,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         gutter="xs"
       >
         <GridCol
-          span={{ base: 12, md: 8, lg: 8 }}
+          span={{ base: 12, md: reviewMode && !isRelabeling ? 12 : 8, lg: reviewMode && !isRelabeling ? 12 : 8 }}
           style={{
             height: "calc(100vh - 70px)",
             display: "flex",
@@ -271,6 +271,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   leftSection={<IconEye size={18} />}
                   onClick={() => {
                     setReviewMode(true);
+                    setRelabeling(false);
                     fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                   }}
                 >
@@ -278,20 +279,33 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                 </Button>
               </Group>
             )}
-            {reviewMode && !isRelabeling && (
+            {reviewMode && (
               <Group justify="center" mb={4}>
-                <Button
-                  variant="subtle"
-                  color="gray"
-                  size="sm"
-                  leftSection={<IconEdit size={18} />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setReviewMode(false);
-                  }}
-                >
-                  Exit Review Mode
-                </Button>
+                {isRelabeling ? (
+                  <Button
+                    variant="light"
+                    color="blue"
+                    size="sm"
+                    leftSection={<IconEye size={18} />}
+                    onClick={() => setRelabeling(false)}
+                  >
+                    Back to Review
+                  </Button>
+                ) : (
+                  <Button
+                    variant="subtle"
+                    color="gray"
+                    size="sm"
+                    leftSection={<IconEdit size={18} />}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setReviewMode(false);
+                      setRelabeling(false);
+                    }}
+                  >
+                    Exit Review Mode
+                  </Button>
+                )}
               </Group>
             )}
             <div style={{ flex: 1, minHeight: 0 }}>

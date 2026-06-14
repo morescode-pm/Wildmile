@@ -214,6 +214,10 @@ export function ObservationTally({ fetchNextImage }) {
           });
         }
         await loadUserLabeled();
+        if (reviewMode) {
+          setSelection([]);
+          setAnimalCounts({});
+        }
         setRelabeling(false);
         fetchNextImage();
       } else {
@@ -378,6 +382,16 @@ export function ObservationTally({ fetchNextImage }) {
               loading={isSaving}
             >
               No Animals Visible
+            </Button>
+          )}
+          {reviewMode && (
+            <Button
+              size="sm"
+              variant="subtle"
+              color="gray"
+              onClick={() => setRelabeling(false)}
+            >
+              Cancel Re-label
             </Button>
           )}
         </Stack>

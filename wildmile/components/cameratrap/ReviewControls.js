@@ -104,6 +104,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
       if (response.ok) {
         await controls.start({ x: 500, opacity: 0 });
+        setSelection([]);
+        setAnimalCounts({});
         fetchNextImage();
         controls.set({ x: 0, opacity: 1 });
       } else {
