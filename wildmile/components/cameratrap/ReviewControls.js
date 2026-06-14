@@ -43,7 +43,30 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   }, [currentImage, controls]);
 
-  if (!reviewMode || !currentImage || isRelabeling || !imageLoaded) return null;
+  if (!reviewMode || !currentImage || isRelabeling) return null;
+
+  if (!imageLoaded) {
+    return (
+      <div style={{
+        position: "fixed",
+        bottom: 20,
+        left: "83%",
+        transform: "translateX(-50%)",
+        zIndex: 1000,
+        width: "100%",
+        maxWidth: 320,
+        padding: "0 10px"
+      }}>
+        <Paper shadow="xl" p="md" withBorder radius="xl" style={{ backgroundColor: "var(--mantine-color-body)", opacity: 0.5 }}>
+          <Stack gap="xs" align="center">
+            <Text size="md" fw={700} ta="center" c="dimmed">
+              Loading...
+            </Text>
+          </Stack>
+        </Paper>
+      </div>
+    );
+  }
 
   const consensusItems = currentImage.speciesConsensus || [];
 

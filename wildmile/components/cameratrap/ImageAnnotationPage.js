@@ -13,7 +13,7 @@ import {
   GridCol,
   ScrollArea,
 } from "@mantine/core";
-import { useImage, useTutorial, useReviewMode, useRelabeling } from "./ContextCamera";
+import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded } from "./ContextCamera";
 import { useUser } from "lib/hooks";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
@@ -48,7 +48,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   const [pageLoading, setPageLoading] = useState(true); // To manage loading state of defaults and initial image
   const [runTutorial, setRunTutorial] = useTutorial();
   const [reviewMode, setReviewMode] = useReviewMode();
-  const [isRelabeling] = useRelabeling();
+  const [isRelabeling, setRelabeling] = useRelabeling();
+  const [, setImageLoaded] = useImageLoaded();
 
   const fetchFilterDefaults = useCallback(async () => {
     try {
@@ -145,6 +146,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   const fetchCamtrapImage = async (params = {}) => {
+    setImageLoaded(false);
     let processedParams = { reviewMode, ...params }; // Clone to avoid modifying the state directly
 
     // Convert animalProbability array to comma-separated string
@@ -174,6 +176,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         setCurrentImage(image);
       } else {
         console.error("Failed to fetch image");
+        // If fetch fails (e.g. 404 No more images), and we are in reviewMode, maybe try without direction or just notify
+        if (processedParams.direction === "next" || processedParams.direction === "previous") {
+           // Try fetching a random one if next/prev fails
+           fetchCamtrapImage({ ...appliedFilters });
+        }
       }
     } catch (error) {
       console.error("Error fetching image:", error);
@@ -223,7 +230,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         gutter="xs"
       >
         <GridCol
-          span={{ base: 12, md: reviewMode && !isRelabeling ? 12 : 8, lg: reviewMode && !isRelabeling ? 12 : 8 }}
+          span={{ base: 12, md: 8, lg: 8 }}
           style={{
             height: "calc(100vh - 70px)",
             display: "flex",

@@ -69,9 +69,8 @@ export function ImageAnnotation({ filters }) {
       setIsFavorite(currentImage.favorite || false);
       setNeedsReview(currentImage.needsReview || false);
       setFlagged(currentImage.flagged || false);
-      setImageLoaded(false);
     }
-  }, [currentImage, setImageLoaded]);
+  }, [currentImage]);
 
   const handleToggleFavorite = async () => {
     try {
