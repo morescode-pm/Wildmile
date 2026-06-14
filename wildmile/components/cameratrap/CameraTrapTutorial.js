@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
 import { useUser } from 'lib/hooks';
@@ -6,6 +6,7 @@ import { useUser } from 'lib/hooks';
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
   const { user } = useUser();
+  const [ready, setReady] = useState(false);
 
   const steps = useMemo(() => [
     ...(user ? [] : [{
@@ -58,6 +59,30 @@ export const CameraTrapTutorial = () => {
     },
   ], [user]);
 
+  useEffect(() => {
+    let timeoutId;
+    if (run > 0) {
+      const checkElements = () => {
+        const allPresent = steps.every(step => {
+          if (step.target === '.joyride-beacon') return true; // ignore beacon if any
+          return !!document.querySelector(step.target);
+        });
+        if (allPresent) {
+          setReady(true);
+        } else {
+          // Retry after a short delay
+          timeoutId = setTimeout(checkElements, 100);
+        }
+      };
+      checkElements();
+    } else {
+      setReady(false);
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [run, steps]);
+
   const handleJoyrideCallback = (data) => {
     const { status, type, index, action } = data;
 
@@ -70,7 +95,7 @@ export const CameraTrapTutorial = () => {
     <Joyride
       key={run}
       steps={steps}
-      run={run > 0}
+      run={run > 0 && ready}
       continuous
       showProgress
       showSkipButton

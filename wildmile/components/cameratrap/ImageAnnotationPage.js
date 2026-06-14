@@ -99,14 +99,18 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   // tutorial only fires until the user completes one observation.
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Wait for the page to load and an image to be present before auto-starting
+    if (pageLoading || !currentImage) return;
+
     try {
       if (!window.localStorage.getItem("wildmile.hasAnnotated")) {
-        setRunTutorial((prev) => prev + 1);
+        // Only trigger if not already running
+        setRunTutorial((prev) => (prev === 0 ? 1 : prev));
       }
     } catch (e) {
       // localStorage may be unavailable (private mode); fail silently.
     }
-  }, [setRunTutorial]);
+  }, [setRunTutorial, pageLoading, currentImage]);
 
   const fetchDeployments = async () => {
     try {

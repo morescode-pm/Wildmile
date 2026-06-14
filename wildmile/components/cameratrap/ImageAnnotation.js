@@ -25,7 +25,7 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useImage } from "./ContextCamera";
+import { useImage, useTutorial } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
@@ -135,7 +135,9 @@ export function ImageAnnotation({ filters }) {
     setEnlargedImage(!enlargedImage);
   };
 
-  if (!currentImage) {
+  const [runTutorial] = useTutorial();
+
+  if (!currentImage && !runTutorial) {
     return <Text>No image selected</Text>;
   }
 
@@ -187,7 +189,7 @@ export function ImageAnnotation({ filters }) {
                   }}
                 >
                   <img
-                    src={currentImage.publicURL}
+                    src={currentImage?.publicURL}
                     onLoad={handleImageLoad}
                     style={{
                       display: "block",
@@ -208,7 +210,7 @@ export function ImageAnnotation({ filters }) {
                         pointerEvents: "none",
                       }}
                     >
-                      {currentImage.aiResults?.[0]?.animalDetections?.map(
+                      {currentImage?.aiResults?.[0]?.animalDetections?.map(
                         (detection, index) => {
                           const [xmin, ymin, width, height] = detection.bbox;
                           return (
@@ -264,10 +266,12 @@ export function ImageAnnotation({ filters }) {
                 size="md"
                 variant="outline"
                 onClick={() => {
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/cameratrap/identify/${currentImage.mediaID}`
-                  );
-                  alert("Image URL copied to clipboard");
+                  if (currentImage?.mediaID) {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/cameratrap/identify/${currentImage.mediaID}`
+                    );
+                    alert("Image URL copied to clipboard");
+                  }
                 }}
               >
                 <IconLink />
@@ -279,7 +283,7 @@ export function ImageAnnotation({ filters }) {
                   variant={showAIBoxes ? "filled" : "outline"}
                   color="blue"
                   disabled={
-                    !currentImage.aiResults ||
+                    !currentImage?.aiResults ||
                     currentImage.aiResults.length === 0 ||
                     !currentImage.aiResults[0].animalDetections ||
                     currentImage.aiResults[0].animalDetections.length === 0
@@ -321,8 +325,8 @@ export function ImageAnnotation({ filters }) {
               </Tooltip>
               <Indicator
                 inline
-                label={currentImage.favoriteCount}
-                disabled={!currentImage.favoriteCount}
+                label={currentImage?.favoriteCount}
+                disabled={!currentImage?.favoriteCount}
                 size={16}
               >
                 <ActionIcon
@@ -344,19 +348,19 @@ export function ImageAnnotation({ filters }) {
             </Group>
             <Group gap="xs">
               <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
-                Time: {new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" })}
+                Time: {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
               </Text>
               <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
-                ID: {currentImage.mediaID}
+                ID: {currentImage?.mediaID || 'N/A'}
               </Text>
             </Group>
           </Group>
 
           <Group gap="xs" style={{ minHeight: 30 }}>
             <SpeciesConsensusBadges
-              speciesConsensus={currentImage.speciesConsensus}
+              speciesConsensus={currentImage?.speciesConsensus}
             />
-            <ObservationHistoryPopover mediaID={currentImage.mediaID} />
+            <ObservationHistoryPopover mediaID={currentImage?.mediaID} />
           </Group>
         </Stack>
         </Stack>
@@ -405,7 +409,7 @@ export function ImageAnnotation({ filters }) {
                 }}
               >
                 <img
-                  src={currentImage.publicURL}
+                  src={currentImage?.publicURL}
                   style={{
                     display: "block",
                     maxHeight: "100vh",
@@ -415,7 +419,7 @@ export function ImageAnnotation({ filters }) {
                   alt="Enlarged wildlife image"
                 />
                 {showAIBoxes &&
-                  currentImage.aiResults?.[0]?.animalDetections?.map(
+                  currentImage?.aiResults?.[0]?.animalDetections?.map(
                     (detection, index) => {
                       const [xmin, ymin, width, height] = detection.bbox;
                       return (
