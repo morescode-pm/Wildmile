@@ -188,7 +188,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   variant="light"
                   color="red"
                   radius="xl"
-                  size="lg"
+                  size="md"
                   leftSection={<IconX size={24} />}
                   onClick={handleRelabel}
                 >
