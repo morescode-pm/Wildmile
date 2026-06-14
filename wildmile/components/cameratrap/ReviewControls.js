@@ -184,10 +184,13 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   return (
     <div style={{
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
+      position: "fixed",
+      top: "25%",
+      left: "83%",
+      transform: "translateX(-50%)",
+      zIndex: 1000,
+      width: "100%",
+      maxWidth: 350,
       padding: "0 10px"
     }}>
       <motion.div
@@ -211,7 +214,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   variant="light"
                   color="red"
                   radius="xl"
-                  size="lg"
+                  size="md"
                   leftSection={<IconX size={24} />}
                   onClick={handleRelabel}
                 >
