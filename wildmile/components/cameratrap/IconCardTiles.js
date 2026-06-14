@@ -10,27 +10,6 @@ import {
   AspectRatio,
 } from "@mantine/core";
 import { useState } from "react";
-import {
-  IconAbacus,
-  IconUsers,
-  IconPokeball,
-  IconCameraSearch,
-  IconCameraPlus,
-  IconZoomIn,
-  IconMapPin,
-  IconPaw,
-} from "@tabler/icons-react";
-
-const iconMap = {
-  IconAbacus,
-  IconUsers,
-  IconPokeball,
-  IconCameraSearch,
-  IconCameraPlus,
-  IconZoomIn,
-  IconMapPin,
-  IconPaw,
-};
 
 export function IconCardTiles({ cards }) {
   return (
@@ -44,7 +23,6 @@ export function IconCardTiles({ cards }) {
 
 function CardTile({ card }) {
   const [hovered, setHovered] = useState(false);
-  const IconComponent = iconMap[card.icon] || IconPaw;
 
   return (
     <Card
@@ -70,7 +48,7 @@ function CardTile({ card }) {
       }}
     >
       <Box style={{ textAlign: "center", width: "100%" }}>
-        <IconComponent size="2rem" stroke={1.5} color="var(--mantine-color-blue-6)" />
+        <card.icon size="2rem" stroke={1.5} color="var(--mantine-color-blue-6)" />
         <Text size="sm" fw={700} mt="xs" c="dark">
           {card.title}
         </Text>
