@@ -90,8 +90,8 @@ export default async function Page() {
   ]);
 
   return (
-    <Container maw="95%" my="5rem">
-      <Stack gap="xl">
+    <Container maw="95%" mt="xl" my="5rem">
+      <Stack gap="md">
         <StatsScorecards stats={stats} />
 
         <Grid gutter="xl">
