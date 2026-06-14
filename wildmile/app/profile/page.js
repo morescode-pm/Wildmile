@@ -123,7 +123,7 @@ export default function ProfilePage() {
   if (loading) return null;
 
   return (
-    <Container size="xl" my="4rem">
+    <Container size="xl" mt="xl" mb="4rem">
       <Grid gutter="md">
         {/* Left Column: Profile Info & Progress */}
         <Grid.Col span={{ base: 12, md: 4 }}>
