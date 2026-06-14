@@ -45,7 +45,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   }, [currentImage, controls]);
 
-  if (!reviewMode || !currentImage || isRelabeling) return null;
+  if (!reviewMode || !currentImage) return null;
+  if (isRelabeling) return null;
 
   if (isFetching || !imageLoaded) {
     return (
@@ -146,17 +147,21 @@ export const ReviewControls = ({ fetchNextImage }) => {
     // Pre-fill selection and counts for relabeling
     const initialSelection = consensusItems
       .filter(i => i.observationType === 'animal')
-      .map(i => ({
-        taxonId: i.taxonID,
-        id: i.taxonID, // For double compatibility
-        name: i.scientificName,
-        scientificName: i.scientificName,
-        preferred_common_name: i.preferred_common_name || i.scientificName,
-      }));
+      .map(i => {
+        const tId = i.taxonID ? Number(i.taxonID) : null;
+        return {
+          taxonId: tId,
+          id: tId, // For double compatibility
+          name: i.scientificName,
+          scientificName: i.scientificName,
+          preferred_common_name: i.preferred_common_name || i.scientificName,
+        };
+      });
 
     const initialCounts = {};
     consensusItems.filter(i => i.observationType === 'animal').forEach(i => {
-      initialCounts[i.taxonID] = i.count;
+      const tId = i.taxonID ? Number(i.taxonID) : i.scientificName;
+      initialCounts[tId] = i.count;
     });
 
     setSelection(initialSelection);

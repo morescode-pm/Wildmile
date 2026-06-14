@@ -302,19 +302,21 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     Back to Review
                   </Button>
                 ) : (
-                  <Button
-                    variant="subtle"
-                    color="gray"
-                    size="sm"
-                    leftSection={<IconEdit size={18} />}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setReviewMode(false);
-                      setRelabeling(false);
-                    }}
-                  >
-                    Exit Review Mode
-                  </Button>
+                  <Group gap={4}>
+                    <Button
+                      variant="subtle"
+                      color="gray"
+                      size="sm"
+                      leftSection={<IconEdit size={18} />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setReviewMode(false);
+                        setRelabeling(false);
+                      }}
+                    >
+                      Exit Review Mode
+                    </Button>
+                  </Group>
                 )}
               </Group>
             )}

@@ -183,14 +183,24 @@ export async function GET(request) {
       if (image.speciesConsensus) {
         const enrichedConsensus = await Promise.all(
           image.speciesConsensus.map(async (item) => {
-            if (item.observationType === "animal" && item.scientificName) {
-              const species = await Species.findOne({
-                name: new RegExp(`^${item.scientificName}$`, "i"),
-              }).lean();
-              if (species && species.preferred_common_name) {
+            if (item.observationType === "animal") {
+              let species = null;
+              if (item.taxonID) {
+                species = await Species.findOne({
+                  taxonId: Number(item.taxonID),
+                }).lean();
+              }
+              if (!species && item.scientificName) {
+                species = await Species.findOne({
+                  name: new RegExp(`^${item.scientificName}$`, "i"),
+                }).lean();
+              }
+              if (species) {
                 return {
                   ...item,
-                  preferred_common_name: species.preferred_common_name,
+                  preferred_common_name: species.preferred_common_name || item.preferred_common_name,
+                  taxonID: species.taxonId || item.taxonID,
+                  scientificName: species.name || item.scientificName,
                 };
               }
             }
