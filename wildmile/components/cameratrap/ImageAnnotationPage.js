@@ -96,7 +96,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
     };
     initializePage();
     // Adding initialImageId and fetchFilterDefaults to dependencies.
-  }, [initialImageId, fetchFilterDefaults, reviewMode]); // Removed fetchDeployments from here as it's stable and not in useCallback
+  }, [initialImageId, fetchFilterDefaults]); // Removed reviewMode from here to prevent re-fetch on mode toggle
 
   const { user, loading: userLoading } = useUser();
 
@@ -145,7 +145,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   const fetchCamtrapImage = async (params = {}) => {
-    let processedParams = { ...params, reviewMode: reviewMode }; // Clone to avoid modifying the state directly
+    let processedParams = { reviewMode, ...params }; // Clone to avoid modifying the state directly
 
     // Convert animalProbability array to comma-separated string
     if (processedParams.animalProbability && Array.isArray(processedParams.animalProbability) && processedParams.animalProbability.length === 2) {
@@ -285,7 +285,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   color="gray"
                   size="sm"
                   leftSection={<IconEdit size={18} />}
-                  onClick={() => setReviewMode(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setReviewMode(false);
+                  }}
                 >
                   Exit Review Mode
                 </Button>

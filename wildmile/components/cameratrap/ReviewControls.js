@@ -27,7 +27,7 @@ import { motion, useAnimation } from "framer-motion";
 export const ReviewControls = ({ fetchNextImage }) => {
   const [currentImage] = useImage();
   const [reviewMode] = useReviewMode();
-  const [, setRelabeling] = useRelabeling();
+  const [isRelabeling, setRelabeling] = useRelabeling();
   const [, setSelection] = useSelection();
   const [, setAnimalCounts] = useAnimalCounts();
   const [, setObsState] = useObservationState();
@@ -41,23 +41,27 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   }, [currentImage, controls]);
 
-  if (!reviewMode || !currentImage) return null;
+  if (!reviewMode || !currentImage || isRelabeling) return null;
 
   const consensusItems = currentImage.speciesConsensus || [];
 
   const summaryParts = consensusItems.map((item) => {
     if (item.observationType === "animal") {
-      const displayName = item.preferredCommonName || item.scientificName;
-      return `${item.count}x ${displayName}`;
+      const commonName = item.preferredCommonName || item.scientificName;
+      const scientificName = item.preferredCommonName ? item.scientificName : null;
+      return (
+        <Stack gap={0} align="center" key={item.scientificName}>
+          <Text fw={800} size="xl" c="blue">{item.count}x {commonName}</Text>
+          {scientificName && (
+            <Text size="xs" c="dimmed" fs="italic">{scientificName}</Text>
+          )}
+        </Stack>
+      );
     }
-    if (item.observationType === "human") return "Human";
-    if (item.observationType === "vehicle") return "Vehicle";
+    if (item.observationType === "human") return <Text fw={800} size="xl" c="blue" key="human">Human</Text>;
+    if (item.observationType === "vehicle") return <Text fw={800} size="xl" c="blue" key="vehicle">Vehicle</Text>;
     return null;
   }).filter(Boolean);
-
-  const summaryText = summaryParts.length > 0
-    ? summaryParts.join(", ")
-    : "No animals/humans/vehicles";
 
   const handleConfirm = async () => {
     setIsSaving(true);
@@ -155,7 +159,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
   return (
     <div style={{
       position: "fixed",
-      bottom: "10%",
+      bottom: 20,
       left: "83%",
       transform: "translateX(-50%)",
       zIndex: 1000,
@@ -172,12 +176,12 @@ export const ReviewControls = ({ fetchNextImage }) => {
       >
         <Paper shadow="xl" p="md" withBorder radius="xl" style={{ backgroundColor: "var(--mantine-color-body)" }}>
           <Stack gap="xs" align="center">
-            <Text size="lg" fw={700} ta="center">
+            <Text size="md" fw={700} ta="center">
               Does this photo have:
             </Text>
-            <Text size="xl" fw={800} c="blue" ta="center">
-              {summaryText}?
-            </Text>
+            <Stack gap={4} align="center">
+              {summaryParts.length > 0 ? summaryParts : <Text fw={800} size="xl" c="blue">No animals/humans/vehicles</Text>}
+            </Stack>
             <Group justify="space-between" mt="md" style={{ width: "100%" }}>
               <Tooltip label="Swipe Left to Re-label">
                 <Button
