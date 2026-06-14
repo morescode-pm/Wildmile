@@ -7,6 +7,7 @@ import {
   Fieldset,
   Loader,
   Stack,
+  Title,
 } from "@mantine/core";
 import { IconCardTiles } from "/components/cameratrap/IconCardTiles";
 import { RandomFavorite } from "components/cameratrap/RandomFavorite";
@@ -23,6 +24,7 @@ const cameraTrapCards = [
     href: "/cameratrap/identify",
     description:
       "Find and catagorize wildlife captured around the Chicago River",
+    borderColor: "blue",
   },
   {
     icon: "IconZoomIn",
@@ -80,6 +82,7 @@ export default async function Page() {
   return (
     <Container maw="95%" mt="xl" my="5rem">
       <Stack gap="md">
+        <Title order={2}>Welcome to the Camera Crew!</Title>
         <StatsScorecards stats={stats} />
 
         <Grid gutter="md">

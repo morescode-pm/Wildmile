@@ -1,4 +1,5 @@
 "use client";
+
 import { Text, Group, Paper, rem, Stack } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
@@ -36,11 +37,13 @@ function CardTile({ card }) {
       withBorder
       p="sm"
       radius="md"
+      /* 1. This tells Mantine to parse "blue.6" or "green.6" natively */
+      bd={card.borderColor ? `2px solid ${card.borderColor}.6` : undefined}
       style={{
         textDecoration: "none",
         color: "inherit",
         display: "block",
-        transition: "box-shadow 150ms ease",
+        transition: "box-shadow 150ms ease, border-color 150ms ease",
       }}
       shadow={hovered ? "md" : "xs"}
     >
