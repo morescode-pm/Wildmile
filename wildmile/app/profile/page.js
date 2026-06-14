@@ -38,6 +38,7 @@ import {
   IconUser,
   IconMapPin,
   IconPencil,
+  IconEyeOff,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -108,9 +109,13 @@ export default function ProfilePage() {
     close();
   }
 
-  // Only show RANK badges
+  // Filter earned achievements by type
   const earnedRanks = userStats?.achievements?.filter(
     (a) => a.progress === 100 && a.type === "RANK"
+  );
+
+  const earnedBadges = userStats?.achievements?.filter(
+    (a) => a.progress === 100 && a.type !== "RANK"
   );
 
   const cameratrapRank = userStats?.domainRanks?.CAMERATRAP?.currentRank;
@@ -226,7 +231,7 @@ export default function ProfilePage() {
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="md">
             {/* Cameratrap Rank */}
-            {cameratrapRank && (
+            {cameratrapRank && cameratrapRank.type === "RANK" && (
               <Card withBorder shadow="sm" radius="md">
                 <Group>
                   <Avatar src={cameratrapRank.badge} size="lg" />
@@ -265,6 +270,12 @@ export default function ProfilePage() {
                 value={userStats?.uniqueSpeciesCount || userStats?.stats?.uniqueSpecies || 0}
                 icon={<IconBug size={32} />}
                 color="teal"
+              />
+              <StatsCard
+                title="Blanks Logged"
+                value={userStats?.totalBlanksLogged || userStats?.stats?.blanksLogged || 0}
+                icon={<IconEyeOff size={32} />}
+                color="orange"
               />
               <StatsCard
                 title="Consensus Reached"
@@ -310,11 +321,11 @@ export default function ProfilePage() {
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Card withBorder shadow="sm" radius="md" style={{ height: '100%' }}>
                   <Title order={4} mb="md">
-                    Earned Ranks
+                    Earned Badges
                   </Title>
-                  {earnedRanks && earnedRanks.length > 0 ? (
+                  {earnedBadges && earnedBadges.length > 0 ? (
                     <SimpleGrid cols={3} spacing="md">
-                      {earnedRanks.slice(0, 6).map((achievement) => (
+                      {earnedBadges.slice(0, 6).map((achievement) => (
                         <Tooltip
                           key={achievement.id}
                           multiline
@@ -350,19 +361,19 @@ export default function ProfilePage() {
                     </SimpleGrid>
                   ) : (
                     <Text c="dimmed" size="sm" ta="center" py="xl">
-                      No ranks earned yet.
+                      No badges earned yet.
                     </Text>
                   )}
                 </Card>
               </Grid.Col>
             </Grid>
 
-            {/* All Ranks (if many) */}
-            {earnedRanks && earnedRanks.length > 6 && (
+            {/* All Badges (if many) */}
+            {earnedBadges && earnedBadges.length > 6 && (
               <Paper withBorder p="md" radius="md">
-                <Text size="sm" fw={700} mb="md">All Earned Ranks</Text>
+                <Text size="sm" fw={700} mb="md">All Earned Badges</Text>
                 <SimpleGrid cols={{ base: 4, sm: 6, md: 8 }} spacing="md">
-                  {earnedRanks.slice(6).map((achievement) => (
+                  {earnedBadges.slice(6).map((achievement) => (
                     <Tooltip
                       key={achievement.id}
                       multiline
