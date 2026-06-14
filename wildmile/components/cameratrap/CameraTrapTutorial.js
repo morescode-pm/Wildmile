@@ -13,13 +13,13 @@ export const CameraTrapTutorial = () => {
       target: '#login-button',
       content: 'First, please log in or sign up to save your observations and track your progress!',
       placement: 'bottom',
-      skipBeacon: true, // Changed from disableBeacon to skipBeacon
+      skipBeacon: true,
     }]),
     {
       target: '#main-navigation-bar',
       content: 'Use these controls to navigate images. You can go to the next/previous photo with the arrows, or adjust your filters here.',
       placement: 'bottom',
-      skipBeacon: true, // Changed from disableBeacon to skipBeacon
+      skipBeacon: true,
     },
     {
       target: '#image-annotation-card',
@@ -95,7 +95,7 @@ export const CameraTrapTutorial = () => {
     <Joyride
       key={run}
       steps={steps}
-      run={run > 0}
+      run={run > 0 && ready}
       continuous={true}
       autoStart={true}
       showProgress
@@ -105,7 +105,7 @@ export const CameraTrapTutorial = () => {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#40c057', 
+          primaryColor: '#40c057',
           zIndex: 10000,
           overlayColor: 'rgba(0, 0, 0, 0.5)',
         },
