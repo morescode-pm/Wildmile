@@ -12,7 +12,7 @@ import { UserAvatar } from "/components/shared/UserAvatar";
 
 export function Leaderboard({ stats }) {
   return (
-    <Fieldset legend="Top Observers">
+    <Fieldset legend="Leaderboard">
         {stats.topCreators && stats.topCreators.length > 0 ? (
           <Stack gap="xs">
             {stats.topCreators.map((creator, index) => (
