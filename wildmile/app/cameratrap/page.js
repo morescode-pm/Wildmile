@@ -1,4 +1,3 @@
-"use server";
 import React, { Suspense } from "react";
 import {
   Title,
@@ -8,6 +7,7 @@ import {
   GridCol,
   Fieldset,
   Loader,
+  Stack,
 } from "@mantine/core";
 import { IconCardGrid } from "/components/icon_card_grid";
 import classes from "/styles/card.module.css";
@@ -22,8 +22,9 @@ import {
   IconPaw,
 } from "@tabler/icons-react";
 import { RandomFavorite } from "components/cameratrap/RandomFavorite";
-import InfoComponent from "components/cameratrap/InfoComponent";
-import { UserInfoServer } from "components/cameratrap/UserInfoServer";
+import { Leaderboard } from "components/cameratrap/Leaderboard";
+import { StatsScorecards } from "components/cameratrap/StatsScorecards";
+import { getStats } from "app/actions/CameratrapActions";
 import { getSession } from "lib/getSession";
 import { headers } from "next/headers";
 
@@ -83,37 +84,49 @@ const mgmtCards = [
 ];
 
 export default async function Page() {
-  const user = await getSession({ headers });
+  const [user, stats] = await Promise.all([
+    getSession({ headers }),
+    getStats(),
+  ]);
 
   return (
-    <>
-      <Container maw="85%" my="5rem">
-        <Grid mt="xl">
-          <GridCol span={{ base: 12, md: 7 }}>
-            <Title order={2} className={classes.title} ta="center" mt="sm">
+    <Container maw="95%" my="5rem">
+      <Stack gap="xl">
+        <StatsScorecards stats={stats} />
+
+        <Grid gutter="xl">
+          {/* Pane 1: Resources & Management */}
+          <GridCol span={{ base: 12, md: 4 }}>
+            <Title order={3} className={classes.title} ta="center">
               Camera Trap Resources
             </Title>
-            <Text c="dimmed" ta="center" mt="md">
+            <Text c="dimmed" ta="center" mt="md" mb="xl">
               Collecting and sharing data about Urban River's projects.
             </Text>
             <IconCardGrid cards={cameraTrapCards} />
             {user && (
-              <Fieldset legend="Management Tools">
+              <Fieldset legend="Management Tools" mt="xl">
                 <IconCardGrid cards={mgmtCards} />
               </Fieldset>
             )}
           </GridCol>
-          <GridCol span={{ base: 12, md: 5 }}>
-            <Suspense fallback={<Loader size="sm" />}>
-              <RandomFavorite />
-            </Suspense>
-            <Suspense fallback={<Loader size="sm" />}>
-              <InfoComponent />
-            </Suspense>
+
+          {/* Pane 2: Leaderboard */}
+          <GridCol span={{ base: 12, md: 4 }}>
+            <Leaderboard stats={stats} />
           </GridCol>
-          <GridCol span={5}></GridCol>
+
+          {/* Pane 3: Favorite Image */}
+          <GridCol span={{ base: 12, md: 4 }}>
+            <Stack gap="lg">
+              <Title order={3} ta="center">Favorite Image</Title>
+              <Suspense fallback={<Loader size="sm" />}>
+                <RandomFavorite />
+              </Suspense>
+            </Stack>
+          </GridCol>
         </Grid>
-      </Container>
-    </>
+      </Stack>
+    </Container>
   );
 }
