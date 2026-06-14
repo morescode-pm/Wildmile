@@ -223,7 +223,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         gutter="xs"
       >
         <GridCol
-          span={{ base: 12, md: reviewMode && !isRelabeling ? 12 : 8, lg: reviewMode && !isRelabeling ? 12 : 8 }}
+          span={{ base: 12, md: 8, lg: 8 }}
           style={{
             height: "calc(100vh - 70px)",
             display: "flex",

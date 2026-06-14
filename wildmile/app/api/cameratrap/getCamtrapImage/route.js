@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "lib/db/setup";
 import CameratrapMedia from "models/cameratrap/Media";
 import CameratrapDeployment from "models/cameratrap/Deployment";
+import Species from "models/Species";
 import { getSession } from "lib/getSession";
 import { headers } from "next/headers";
 
@@ -194,6 +195,27 @@ export async function GET(request) {
     }
 
     if (image) {
+      // If in reviewMode, enhance speciesConsensus with preferred_common_name
+      if (reviewMode === "true" && image.speciesConsensus) {
+        const enrichedConsensus = await Promise.all(
+          image.speciesConsensus.map(async (item) => {
+            if (item.observationType === "animal" && item.scientificName) {
+              const species = await Species.findOne({
+                name: new RegExp(`^${item.scientificName}$`, "i"),
+              }).lean();
+              if (species && species.preferred_common_name) {
+                return {
+                  ...item,
+                  preferredCommonName: species.preferred_common_name,
+                };
+              }
+            }
+            return item;
+          })
+        );
+        image.speciesConsensus = enrichedConsensus;
+      }
+
       return NextResponse.json(image);
     } else {
       return NextResponse.json(

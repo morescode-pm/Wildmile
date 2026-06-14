@@ -47,7 +47,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   const summaryParts = consensusItems.map((item) => {
     if (item.observationType === "animal") {
-      return `${item.count}x ${item.scientificName}`;
+      const displayName = item.preferredCommonName || item.scientificName;
+      return `${item.count}x ${displayName}`;
     }
     if (item.observationType === "human") return "Human";
     if (item.observationType === "vehicle") return "Vehicle";
@@ -154,13 +155,13 @@ export const ReviewControls = ({ fetchNextImage }) => {
   return (
     <div style={{
       position: "fixed",
-      bottom: 20,
-      left: "50%",
+      bottom: "10%",
+      left: "83%",
       transform: "translateX(-50%)",
       zIndex: 1000,
       width: "100%",
-      maxWidth: 500,
-      padding: "0 20px"
+      maxWidth: 350,
+      padding: "0 10px"
     }}>
       <motion.div
         drag="x"
