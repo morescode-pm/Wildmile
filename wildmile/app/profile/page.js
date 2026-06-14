@@ -111,7 +111,7 @@ export default function ProfilePage() {
 
   // Filter earned achievements. Only non-RANK badges are shown in the main badges list.
   const earnedBadges = userStats?.achievements?.filter(
-    (a) => a.progress === 100 && a.type !== "RANK"
+    (a) => a.progress === 100 
   );
 
   const cameratrapRank = userStats?.domainRanks?.CAMERATRAP?.currentRank;
@@ -348,7 +348,7 @@ export default function ProfilePage() {
                               size="md"
                               radius="md"
                             />
-                            <Text size="xs" fw={500} ta="center" >
+                            <Text size="xs" fw={500} ta="center">
                               {achievement.name}
                             </Text>
                           </Stack>
