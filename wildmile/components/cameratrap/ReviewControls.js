@@ -71,8 +71,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   const summaryParts = consensusItems.map((item) => {
     if (item.observationType === "animal") {
-      const commonName = item.preferredCommonName || item.scientificName;
-      const scientificName = item.preferredCommonName ? item.scientificName : null;
+      const commonName = item.preferred_common_name || item.scientificName;
+      const scientificName = item.preferred_common_name ? item.scientificName : null;
       return (
         <Stack gap={0} align="center" key={item.scientificName}>
           <Text fw={800} size="xl" c="blue">{item.count}x {commonName}</Text>
@@ -148,8 +148,10 @@ export const ReviewControls = ({ fetchNextImage }) => {
       .filter(i => i.observationType === 'animal')
       .map(i => ({
         taxonId: i.taxonID,
+        id: i.taxonID, // For double compatibility
         name: i.scientificName,
-        preferred_common_name: i.preferredCommonName || i.scientificName,
+        scientificName: i.scientificName,
+        preferred_common_name: i.preferred_common_name || i.scientificName,
       }));
 
     const initialCounts = {};
@@ -184,13 +186,10 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   return (
     <div style={{
-      position: "fixed",
-      top: "25%",
-      left: "83%",
-      transform: "translateX(-50%)",
-      zIndex: 1000,
-      width: "100%",
-      maxWidth: 350,
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
       padding: "0 10px"
     }}>
       <motion.div
@@ -214,7 +213,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   variant="light"
                   color="red"
                   radius="xl"
-                  size="md"
+                  size="lg"
                   leftSection={<IconX size={24} />}
                   onClick={handleRelabel}
                 >

@@ -37,26 +37,6 @@ export async function GET(request) {
     }
   }
 
-  if (selectedImageId) {
-    try {
-      const image = await CameratrapMedia.findOne({
-        mediaID: selectedImageId,
-      }).lean();
-      if (image) {
-        return NextResponse.json(image);
-      }
-      return NextResponse.json(
-        { message: "No images found matching the criteria" },
-        { status: 404 },
-      );
-    } catch (error) {
-      console.error("Error fetching selected image:", error);
-      return NextResponse.json(
-        { message: "Error fetching camera trap image", error: error.message },
-        { status: 500 },
-      );
-    }
-  }
 
   let query = {};
   let timeQuery = [];
@@ -170,7 +150,11 @@ export async function GET(request) {
 
   try {
     let image;
-    if (direction === "oldest") {
+    if (selectedImageId) {
+      image = await CameratrapMedia.findOne({
+        mediaID: selectedImageId,
+      }).lean();
+    } else if (direction === "oldest") {
       image = await CameratrapMedia.findOne(query)
         .sort({ timestamp: 1 })
         .lean();
@@ -206,7 +190,7 @@ export async function GET(request) {
               if (species && species.preferred_common_name) {
                 return {
                   ...item,
-                  preferredCommonName: species.preferred_common_name,
+                  preferred_common_name: species.preferred_common_name,
                 };
               }
             }

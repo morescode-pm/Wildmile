@@ -242,7 +242,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           }}
         >
           <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-            {(!reviewMode || isRelabeling) && (
+            {!reviewMode && (
               <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
                 <Tooltip label="Previous Image">
                   <Button
@@ -282,7 +282,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   onClick={() => {
                     setReviewMode(true);
                     setRelabeling(false);
-                    fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
+                    fetchCamtrapImage({ ...appliedFilters });
                   }}
                 >
                   Review Mode
