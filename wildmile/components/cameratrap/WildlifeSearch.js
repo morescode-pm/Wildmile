@@ -53,7 +53,7 @@ const WildlifeSearch = () => {
                 size="xs"
                 style={{ width: 110 }}
               >
-                Search
+                Find New
               </Button>
             }
           />

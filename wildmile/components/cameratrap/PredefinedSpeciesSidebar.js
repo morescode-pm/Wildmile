@@ -20,6 +20,7 @@ import { Fish, Turtle, Bird, Rabbit, Search } from "lucide-react";
 import { FrogIcon } from "/styles/icons/Frog";
 import useSWR from "swr";
 import { useRecentSpecies, useUserLabeledSpecies, useTutorial, useSelection } from "./ContextCamera";
+import { useUser } from "lib/hooks";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -46,6 +47,7 @@ export default function PredefinedSpeciesSidebar({
   onSpeciesSelect,
   searchControl,
 }) {
+  const { user } = useUser();
   const [runTutorial, setRunTutorial] = useTutorial();
   const [lastSelected, setLastSelected] = useState([]);
   const {
@@ -87,6 +89,8 @@ export default function PredefinedSpeciesSidebar({
   useEffect(() => {
     let mounted = true;
     (async () => {
+      setRecentLoading(true);
+      setUserLabeledLoading(true);
       await Promise.all([loadRecent(), loadUserLabeled()]);
       if (mounted) {
         setRecentLoading(false);
@@ -96,7 +100,7 @@ export default function PredefinedSpeciesSidebar({
     return () => {
       mounted = false;
     };
-  }, [loadRecent, loadUserLabeled]);
+  }, [loadRecent, loadUserLabeled, user]);
 
   const [selectedCategory, setSelectedCategory] = useState("selected");
   const [searchQuery, setSearchQuery] = useState("");
@@ -346,7 +350,7 @@ export default function PredefinedSpeciesSidebar({
               {!isFilterActive && recentSpecies.length > 0 && (
                 <Stack gap={4}>
                   <Divider
-                    label="Recently Saved"
+                    label={user ? "Recently Saved" : "Commonly Observed"}
                     labelPosition="left"
                     styles={{ label: { fontWeight: 700, fontSize: 'var(--mantine-font-size-sm)' } }}
                   />

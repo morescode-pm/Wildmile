@@ -14,6 +14,7 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { useImage, useTutorial } from "./ContextCamera";
+import { useUser } from "lib/hooks";
 import { ImageAnnotation } from "./ImageAnnotation";
 import { ObservationTally } from "./ObservationTally";
 import { ImageFilterControls } from "./ImageFilterControls";
@@ -94,19 +95,35 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
     // Adding initialImageId and fetchFilterDefaults to dependencies.
   }, [initialImageId, fetchFilterDefaults]); // Removed fetchDeployments from here as it's stable and not in useCallback
 
-  // Auto-start tutorial for first-time annotators. A successful save sets the
-  // "wildmile.hasAnnotated" flag in localStorage (see ObservationTally), so the
-  // tutorial only fires until the user completes one observation.
+  const { user, loading: userLoading } = useUser();
+
+  // Auto-start tutorial for first-time annotators or guest users.
+  // A successful save sets the "wildmile.hasAnnotated" flag in localStorage
+  // (see ObservationTally), so the tutorial only fires until the user completes one observation.
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || userLoading) return;
+
+    // Wait for the page to load and an image to be present before auto-starting
+    if (pageLoading || !currentImage) return;
+
     try {
-      if (!window.localStorage.getItem("wildmile.hasAnnotated")) {
-        setRunTutorial((prev) => prev + 1);
+      const hasAnnotated = window.localStorage.getItem("wildmile.hasAnnotated");
+
+      if (!user) {
+        // For guests, use sessionStorage so it only auto-launches once per session
+        const sessionTutorialShown = window.sessionStorage.getItem("wildmile.sessionTutorialShown");
+        if (!sessionTutorialShown) {
+          setRunTutorial((prev) => (prev === 0 ? 1 : prev));
+          window.sessionStorage.setItem("wildmile.sessionTutorialShown", "true");
+        }
+      } else if (!hasAnnotated) {
+        // For logged in users who haven't annotated, always auto-launch until they do
+        setRunTutorial((prev) => (prev === 0 ? 1 : prev));
       }
     } catch (e) {
-      // localStorage may be unavailable (private mode); fail silently.
+      // localStorage/sessionStorage may be unavailable (private mode); fail silently.
     }
-  }, [setRunTutorial]);
+  }, [setRunTutorial, pageLoading, currentImage, user, userLoading]);
 
   const fetchDeployments = async () => {
     try {
