@@ -2,10 +2,31 @@
 import { Text, Group, Overlay, Transition, Paper, rem, Stack } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
+import {
+  IconAbacus,
+  IconUsers,
+  IconPokeball,
+  IconCameraSearch,
+  IconCameraPlus,
+  IconZoomIn,
+  IconMapPin,
+  IconPaw,
+} from "@tabler/icons-react";
+
+const iconMap = {
+  IconAbacus,
+  IconUsers,
+  IconPokeball,
+  IconCameraSearch,
+  IconCameraPlus,
+  IconZoomIn,
+  IconMapPin,
+  IconPaw,
+};
 
 function CardTile({ card }) {
   const { hovered, ref } = useHover();
-  const Icon = card.icon;
+  const Icon = iconMap[card.icon] || IconPaw;
 
   return (
     <Paper
