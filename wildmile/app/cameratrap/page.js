@@ -110,9 +110,6 @@ export default async function Page() {
             <Suspense fallback={<Loader size="sm" />}>
               <InfoComponent />
             </Suspense>
-            <Suspense fallback={<Loader size="sm" />}>
-              <UserInfoServer user={user} />
-            </Suspense>
           </GridCol>
           <GridCol span={5}></GridCol>
         </Grid>
