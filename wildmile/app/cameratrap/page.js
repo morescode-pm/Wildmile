@@ -10,7 +10,6 @@ import {
   Stack,
 } from "@mantine/core";
 import { IconCardGrid } from "/components/icon_card_grid";
-import { IconCardTiles } from "components/cameratrap/IconCardTiles";
 import classes from "/styles/card.module.css";
 import {
   IconAbacus,
@@ -91,24 +90,25 @@ export default async function Page() {
   ]);
 
   return (
-    <Container maw="95%" mt="xl" mb="5rem">
+    <Container maw="95%" my="5rem">
       <Stack gap="xl">
         <StatsScorecards stats={stats} />
 
         <Grid gutter="xl">
           {/* Pane 1: Resources & Management */}
           <GridCol span={{ base: 12, md: 4 }}>
-            <Fieldset legend="Camera Trap Resources">
-              <Text c="dimmed" ta="center" mt="md">
-                Collecting and sharing data about Urban River's projects.
-              </Text>
-              <IconCardTiles cards={cameraTrapCards} />
-              {user && (
-                <Fieldset legend="Management Tools" mt="xl">
-                  <IconCardTiles cards={mgmtCards} />
-                </Fieldset>
-              )}
-            </Fieldset>
+            <Title order={3} className={classes.title} ta="center">
+              Camera Trap Resources
+            </Title>
+            <Text c="dimmed" ta="center" mt="md" mb="xl">
+              Collecting and sharing data about Urban River's projects.
+            </Text>
+            <IconCardGrid cards={cameraTrapCards} />
+            {user && (
+              <Fieldset legend="Management Tools" mt="xl">
+                <IconCardGrid cards={mgmtCards} />
+              </Fieldset>
+            )}
           </GridCol>
 
           {/* Pane 2: Leaderboard */}
@@ -118,9 +118,12 @@ export default async function Page() {
 
           {/* Pane 3: Favorite Image */}
           <GridCol span={{ base: 12, md: 4 }}>
-            <Suspense fallback={<Loader size="sm" />}>
-              <RandomFavorite />
-            </Suspense>
+            <Stack gap="lg">
+              <Title order={3} ta="center">Favorite Image</Title>
+              <Suspense fallback={<Loader size="sm" />}>
+                <RandomFavorite />
+              </Suspense>
+            </Stack>
           </GridCol>
         </Grid>
       </Stack>

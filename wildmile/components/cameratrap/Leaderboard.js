@@ -8,14 +8,14 @@ import {
   Card,
   Divider,
   Box,
-  Fieldset,
 } from "@mantine/core";
 import { UserAvatar } from "/components/shared/UserAvatar";
 
 export function Leaderboard({ stats }) {
   return (
-    <Fieldset legend="Leaderboard">
-      <Stack gap="lg" mt="md">
+    <Stack gap="lg">
+      <Title order={3} ta="center">Leaderboard</Title>
+      <Card withBorder radius="md" p="md">
         <Group justify="space-between" mb="md">
           <Text size="md" fw={500}>
             Top Observers
@@ -25,14 +25,15 @@ export function Leaderboard({ stats }) {
         {stats.topCreators && stats.topCreators.length > 0 ? (
           <Stack gap="xs">
             {stats.topCreators.map((creator, index) => (
-              <Group key={creator.id || index} justify="space-between" wrap="nowrap">
-                <Group gap="xs" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
+              <Group key={creator.id || index} justify="space-between">
+                <Group gap="sm">
                   <Text size="sm" fw={700} w={20}>{index + 1}.</Text>
-                  <UserAvatar userId={creator.id} />
-                  <Text size="sm" fw={500} truncate>{creator.name}</Text>
+                  <UserAvatar userId={creator.id || creator.name} />
+                  {/* <Text size="sm" fw={500}>{creator.name}</Text> */}
                 </Group>
-                <Text size="sm" c="dimmed" style={{ whiteSpace: "nowrap" }}>
-                  {creator.count.toLocaleString()} obs
+                <Text size="sm" c="dimmed">
+                  {creator.count.toLocaleString()} observation
+                  {creator.count !== 1 ? "s" : ""}
                 </Text>
               </Group>
             ))}
@@ -79,7 +80,7 @@ export function Leaderboard({ stats }) {
             </Box>
           </Group>
         </Stack>
-      </Stack>
-    </Fieldset>
+      </Card>
+    </Stack>
   );
 }

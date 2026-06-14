@@ -47,8 +47,8 @@ export function StatsScorecards({ stats }) {
     <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing="md">
       {scorecardData.map((item) => (
         <Card key={item.title} withBorder padding="md" radius="md">
-          <Group justify="space-between" wrap="nowrap">
-            <Text size="9px" c="dimmed" fw={700} tt="uppercase">
+          <Group justify="space-between">
+            <Text size="xs" c="dimmed" fw={700} tt="uppercase">
               {item.title}
             </Text>
             <item.icon size={20} color={`var(--mantine-color-${item.color}-6)`} />
