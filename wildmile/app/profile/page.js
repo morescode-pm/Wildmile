@@ -118,7 +118,7 @@ export default function ProfilePage() {
 
   // Filter earned achievements that are NOT Ranks
   const earnedBadges = userStats?.achievements?.filter(
-    (a) => a.progress === 100 && a.type !== "RANK"
+    (a) => a.progress === 100 // && a.type !== "RANK"
   );
 
   if (loading) return null;
@@ -231,24 +231,6 @@ export default function ProfilePage() {
         {/* Right Column: Stats & Achievements */}
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Stack gap="md">
-            {/* Cameratrap Rank */}
-            {cameratrapRank && (
-              <Card withBorder shadow="sm" radius="md">
-                <Group>
-                  <Avatar src={cameratrapRank.badge} size="lg" />
-                  <Box style={{ flex: 1 }}>
-                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
-                      Cameratrap Rank
-                    </Text>
-                    <Text size="xl" fw={700}>
-                      {cameratrapRank.name}
-                    </Text>
-                    <Text size="sm">{cameratrapRank.description}</Text>
-                  </Box>
-                </Group>
-              </Card>
-            )}
-
             {/* Activity Summary */}
             <Title order={3} mt="sm">
               Activity Summary
