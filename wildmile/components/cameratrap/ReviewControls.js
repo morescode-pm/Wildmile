@@ -206,20 +206,29 @@ export const ReviewControls = ({ fetchNextImage }) => {
       );
 
       const initialSelection = animalWinners.map((i) => {
-        const tId = i.taxonID ? Number(i.taxonID) : null;
+        const numericId = Number(i.taxonID);
+        const tId = !isNaN(numericId) ? numericId : null;
+        const animalId = tId || i.scientificName;
         return {
           taxonId: tId,
-          id: tId, // For double compatibility
+          id: animalId, // For double compatibility
           name: i.scientificName,
           scientificName: i.scientificName,
           preferred_common_name: i.preferred_common_name || i.scientificName,
+          default_photo: i.default_photo,
+          rank: i.rank,
+          iconic_taxon_name: i.iconic_taxon_name,
+          wikipedia_url: i.wikipedia_url,
+          // Add fields for SpeciesCards formatting compatibility
+          commonName: i.preferred_common_name || i.scientificName,
         };
       });
 
       const initialCounts = {};
       animalWinners.forEach((i) => {
-        const tId = i.taxonID ? Number(i.taxonID) : i.scientificName;
-        initialCounts[tId] = i.count;
+        const numericId = Number(i.taxonID);
+        const animalId = !isNaN(numericId) ? numericId : i.scientificName;
+        initialCounts[animalId] = i.count;
       });
 
       setSelection(initialSelection);
@@ -253,7 +262,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
       height: "100%",
       display: "flex",
       flexDirection: "column",
-      justifyContent: "flex-start",
+      justifyContent: "center",
       padding: "0 10px"
     }}>
       <motion.div

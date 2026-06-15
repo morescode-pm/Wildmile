@@ -176,55 +176,70 @@ export async function GET(request) {
       }
     } else {
       image = await CameratrapMedia.findOneRandom(query);
+      if (image && typeof image.toObject === "function") {
+        image = image.toObject();
+      }
     }
 
     if (image) {
+      // Ensure image is a plain object
+      const plainImage = typeof image.toObject === "function" ? image.toObject() : image;
+
       // Enhance speciesConsensus with preferred_common_name
-      if (image.speciesConsensus && Array.isArray(image.speciesConsensus)) {
+      if (plainImage.speciesConsensus && Array.isArray(plainImage.speciesConsensus)) {
         const enrichedConsensus = await Promise.all(
-          image.speciesConsensus.map(async (item) => {
+          plainImage.speciesConsensus.map(async (item) => {
             try {
-              if (item && item.observationType === "animal") {
+              // Ensure item is a plain object
+              const plainItem = typeof item.toObject === "function" ? item.toObject() : item;
+
+              if (plainItem && plainItem.observationType === "animal") {
                 let species = null;
                 // Try searching by numeric taxonId if taxonID is a number or can be cast to one
-                const numericTaxonId = Number(item.taxonID);
-                if (item.taxonID && !isNaN(numericTaxonId)) {
+                const numericTaxonId = Number(plainItem.taxonID);
+                if (plainItem.taxonID && !isNaN(numericTaxonId)) {
                   species = await Species.findOne({
                     taxonId: numericTaxonId,
                   }).lean();
                 }
                 // Fallback to searching by scientificName (which is often what taxonID holds in current data)
-                if (!species && item.scientificName) {
+                if (!species && plainItem.scientificName) {
                   species = await Species.findOne({
-                    name: new RegExp(`^${item.scientificName}$`, "i"),
+                    name: new RegExp(`^${plainItem.scientificName}$`, "i"),
                   }).lean();
                 }
                 // Also try searching by taxonID as a string if it's not a number
-                if (!species && item.taxonID && isNaN(numericTaxonId)) {
+                if (!species && plainItem.taxonID && isNaN(numericTaxonId)) {
                    species = await Species.findOne({
-                    name: new RegExp(`^${item.taxonID}$`, "i"),
+                    name: new RegExp(`^${plainItem.taxonID}$`, "i"),
                   }).lean();
                 }
 
                 if (species) {
                   return {
-                    ...item,
-                    preferred_common_name: species.preferred_common_name || item.preferred_common_name,
-                    taxonID: species.taxonId || item.taxonID,
-                    scientificName: species.name || item.scientificName,
+                    ...plainItem,
+                    name: species.name,
+                    preferred_common_name: species.preferred_common_name || plainItem.preferred_common_name,
+                    taxonID: species.taxonId || plainItem.taxonID,
+                    scientificName: species.name || plainItem.scientificName,
+                    default_photo: species.default_photo,
+                    rank: species.rank,
+                    iconic_taxon_name: species.iconic_taxon_name,
+                    wikipedia_url: species.wikipedia_url,
                   };
                 }
               }
+              return plainItem;
             } catch (err) {
               console.error("Error enriching consensus item:", err, item);
+              return item;
             }
-            return item;
           })
         );
-        image.speciesConsensus = enrichedConsensus;
+        plainImage.speciesConsensus = enrichedConsensus;
       }
 
-      return NextResponse.json(image);
+      return NextResponse.json(plainImage);
     } else {
       return NextResponse.json(
         { message: "No images found matching the criteria" },
