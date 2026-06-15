@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Text,
   Group,
   Button,
   Stack,
-  ActionIcon,
   Tooltip,
 } from "@mantine/core";
 import {
@@ -24,7 +23,6 @@ import {
   useImageLoaded,
   useIsFetching,
 } from "./ContextCamera";
-import { motion, useAnimation } from "framer-motion";
 
 export const ReviewControls = ({ fetchNextImage }) => {
   const [currentImage] = useImage();
@@ -36,14 +34,6 @@ export const ReviewControls = ({ fetchNextImage }) => {
   const [, setAnimalCounts] = useAnimalCounts();
   const [, setObsState] = useObservationState();
   const [isSaving, setIsSaving] = useState(false);
-
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (currentImage) {
-      controls.set({ x: 0, opacity: 1 });
-    }
-  }, [currentImage, controls]);
 
   if (!reviewMode) return null;
   if (isRelabeling) return null;
@@ -154,11 +144,9 @@ export const ReviewControls = ({ fetchNextImage }) => {
       });
 
       if (response.ok) {
-        await controls.start({ x: 500, opacity: 0 });
         setSelection([]);
         setAnimalCounts({});
         await fetchNextImage();
-        // currentImage change will trigger the useEffect to reset controls
       } else {
         alert("Failed to confirm observations.");
       }
@@ -222,17 +210,6 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
 
     setRelabeling(true);
-    controls.start({ x: -500, opacity: 0 });
-  };
-
-  const onDragEnd = (event, info) => {
-    if (info.offset.x > 100) {
-      handleConfirm();
-    } else if (info.offset.x < -100) {
-      handleRelabel();
-    } else {
-      controls.start({ x: 0 });
-    }
   };
 
   const showLoading = isFetching || !imageLoaded || isSaving;
@@ -266,20 +243,12 @@ export const ReviewControls = ({ fetchNextImage }) => {
         </div>
       )}
 
-      {/* Main Swipe Card */}
-      {currentImage && (
-        <motion.div
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={onDragEnd}
-          animate={controls}
+      {/* Main Review Card */}
+      {currentImage && !showLoading && (
+        <div
           style={{
             width: "100%",
-            touchAction: "pan-y",
-            zIndex: 1,
-            // Hide card if loading next image but NOT currently saving (which means we swiped away)
-            visibility: (isFetching || !imageLoaded) && !isSaving ? "hidden" : "visible"
+            zIndex: 1
           }}
         >
           <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)" }}>
@@ -297,7 +266,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                 )}
               </Stack>
               <Group justify="space-between" mt="md" style={{ width: "100%" }}>
-                <Tooltip label="Swipe Left to Re-label">
+                <Tooltip label="Re-label">
                   <Button
                     variant="light"
                     color="red"
@@ -310,7 +279,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   </Button>
                 </Tooltip>
 
-                <Tooltip label="Swipe Right to Confirm">
+                <Tooltip label="Confirm">
                   <Button
                     variant="filled"
                     color="green"
@@ -326,7 +295,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
               </Group>
             </Stack>
           </Paper>
-        </motion.div>
+        </div>
       )}
     </div>
   );
