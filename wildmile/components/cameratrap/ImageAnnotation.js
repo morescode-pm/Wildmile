@@ -44,7 +44,7 @@ export function ImageAnnotation({ filters }) {
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
 
-  const [, setImageLoaded] = useImageLoaded();
+  const [imageLoaded, setImageLoaded] = useImageLoaded();
   const handleImageLoad = (e) => {
     const { naturalWidth, naturalHeight } = e.target;
     setNaturalSize({ width: naturalWidth, height: naturalHeight });
@@ -69,6 +69,10 @@ export function ImageAnnotation({ filters }) {
       setIsFavorite(currentImage.favorite || false);
       setNeedsReview(currentImage.needsReview || false);
       setFlagged(currentImage.flagged || false);
+      // Reset sizes and loading state when image changes to prevent stale boxes
+      setNaturalSize({ width: 0, height: 0 });
+      setImageSize({ width: 0, height: 0 });
+      setImageLoaded(false);
     }
   }, [currentImage]);
 
@@ -201,7 +205,7 @@ export function ImageAnnotation({ filters }) {
                     }}
                     alt="Wildlife image"
                   />
-                  {showAIBoxes && imageSize.width > 0 && (
+                  {showAIBoxes && imageLoaded && imageSize.width > 0 && (
                     <div
                       style={{
                         position: "absolute",
@@ -420,7 +424,7 @@ export function ImageAnnotation({ filters }) {
                   }}
                   alt="Enlarged wildlife image"
                 />
-                {showAIBoxes &&
+                {showAIBoxes && imageLoaded &&
                   currentImage?.aiResults?.[0]?.animalDetections?.map(
                     (detection, index) => {
                       const [xmin, ymin, width, height] = detection.bbox;
