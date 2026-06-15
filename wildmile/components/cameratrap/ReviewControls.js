@@ -45,30 +45,10 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   }, [currentImage, controls]);
 
-  if (!reviewMode || !currentImage) return null;
+  if (!reviewMode) return null;
   if (isRelabeling) return null;
 
-  if (isFetching || !imageLoaded) {
-    return (
-      <div style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "0 10px"
-      }}>
-        <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)", opacity: 0.5 }}>
-          <Stack gap="xs" align="center">
-            <Text size="md" fw={700} ta="center" c="dimmed">
-              Loading...
-            </Text>
-          </Stack>
-        </Paper>
-      </div>
-    );
-  }
-
-  const consensusItems = currentImage.speciesConsensus || [];
+  const consensusItems = currentImage?.speciesConsensus || [];
 
   // Get blank count if it exists
   const blankItem = consensusItems.find((i) => i.observationType === "blank");
@@ -178,7 +158,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
         setSelection([]);
         setAnimalCounts({});
         await fetchNextImage();
-        controls.set({ x: 0, opacity: 1 });
+        // currentImage change will trigger the useEffect to reset controls
       } else {
         alert("Failed to confirm observations.");
       }
@@ -242,9 +222,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
 
     setRelabeling(true);
-    controls.start({ x: -500, opacity: 0 }).then(() => {
-        // Mode switch happens, component might unmount or change
-    });
+    controls.start({ x: -500, opacity: 0 });
   };
 
   const onDragEnd = (event, info) => {
@@ -257,67 +235,99 @@ export const ReviewControls = ({ fetchNextImage }) => {
     }
   };
 
+  const showLoading = isFetching || !imageLoaded || isSaving;
+
   return (
     <div style={{
       height: "100%",
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
-      padding: "0 10px"
+      padding: "0 10px",
+      position: "relative"
     }}>
-      <motion.div
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
-        onDragEnd={onDragEnd}
-        animate={controls}
-        style={{ width: "100%", touchAction: "pan-y" }}
-      >
-        <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)" }}>
-          <Stack gap="xs" align="center">
-            <Text size="md" fw={700} ta="center">
-              Does this photo have:
-            </Text>
-            <Stack gap={4} align="center">
-              {summaryParts.length > 0 && !isBlank ? (
-                summaryParts
-              ) : (
-                <Text fw={800} size="xl" c="blue">
-                  No animals, humans, or vehicles
-                </Text>
-              )}
+      {/* Background Loading indicator */}
+      {showLoading && (
+        <div style={{
+          position: currentImage ? "absolute" : "relative",
+          top: 0,
+          left: currentImage ? 10 : 0,
+          right: currentImage ? 10 : 0,
+          zIndex: 0,
+          width: "100%"
+        }}>
+          <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)", opacity: 0.5 }}>
+            <Stack gap="xs" align="center">
+              <Text size="md" fw={700} ta="center" c="dimmed">
+                Loading...
+              </Text>
             </Stack>
-            <Group justify="space-between" mt="md" style={{ width: "100%" }}>
-              <Tooltip label="Swipe Left to Re-label">
-                <Button
-                  variant="light"
-                  color="red"
-                  radius="xl"
-                  size="lg"
-                  leftSection={<IconX size={24} />}
-                  onClick={handleRelabel}
-                >
-                  Re-label
-                </Button>
-              </Tooltip>
+          </Paper>
+        </div>
+      )}
 
-              <Tooltip label="Swipe Right to Confirm">
-                <Button
-                  variant="filled"
-                  color="green"
-                  radius="xl"
-                  size="lg"
-                  rightSection={<IconCheck size={24} />}
-                  onClick={handleConfirm}
-                  loading={isSaving}
-                >
-                  Confirm
-                </Button>
-              </Tooltip>
-            </Group>
-          </Stack>
-        </Paper>
-      </motion.div>
+      {/* Main Swipe Card */}
+      {currentImage && (
+        <motion.div
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={onDragEnd}
+          animate={controls}
+          style={{
+            width: "100%",
+            touchAction: "pan-y",
+            zIndex: 1,
+            // Hide card if loading next image but NOT currently saving (which means we swiped away)
+            visibility: (isFetching || !imageLoaded) && !isSaving ? "hidden" : "visible"
+          }}
+        >
+          <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)" }}>
+            <Stack gap="xs" align="center">
+              <Text size="md" fw={700} ta="center">
+                Does this photo have:
+              </Text>
+              <Stack gap={4} align="center">
+                {summaryParts.length > 0 && !isBlank ? (
+                  summaryParts
+                ) : (
+                  <Text fw={800} size="xl" c="blue">
+                    No animals, humans, or vehicles
+                  </Text>
+                )}
+              </Stack>
+              <Group justify="space-between" mt="md" style={{ width: "100%" }}>
+                <Tooltip label="Swipe Left to Re-label">
+                  <Button
+                    variant="light"
+                    color="red"
+                    radius="xl"
+                    size="lg"
+                    leftSection={<IconX size={24} />}
+                    onClick={handleRelabel}
+                  >
+                    Re-label
+                  </Button>
+                </Tooltip>
+
+                <Tooltip label="Swipe Right to Confirm">
+                  <Button
+                    variant="filled"
+                    color="green"
+                    radius="xl"
+                    size="lg"
+                    rightSection={<IconCheck size={24} />}
+                    onClick={handleConfirm}
+                    loading={isSaving}
+                  >
+                    Confirm
+                  </Button>
+                </Tooltip>
+              </Group>
+            </Stack>
+          </Paper>
+        </motion.div>
+      )}
     </div>
   );
 };
