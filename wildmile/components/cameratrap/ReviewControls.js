@@ -44,16 +44,35 @@ export const ReviewControls = ({ fetchNextImage }) => {
   const blankItem = consensusItems.find((i) => i.observationType === "blank");
   const blankCount = blankItem ? blankItem.observationCount : 0;
 
-  // Group by type and pick the winner with highest observationCount
+  // Group by type and pick the winners
   const winners = [];
-  const types = ["animal", "human", "vehicle"];
-
   let maxOtherCount = 0;
 
-  types.forEach((type) => {
+  // Handle animals: group by scientificName and pick winner for each unique species
+  const animalItems = consensusItems.filter((i) => i.observationType === "animal");
+  const animalGroups = {};
+  animalItems.forEach((item) => {
+    const key = item.scientificName;
+    if (!animalGroups[key]) {
+      animalGroups[key] = [];
+    }
+    animalGroups[key].push(item);
+  });
+
+  Object.values(animalGroups).forEach((group) => {
+    // Sort by observationCount descending to pick the count most people agreed on for this species
+    group.sort((a, b) => b.observationCount - a.observationCount);
+    const winner = group[0];
+    winners.push(winner);
+    if (winner.observationCount > maxOtherCount) {
+      maxOtherCount = winner.observationCount;
+    }
+  });
+
+  // Handle human and vehicle: pick winner for each type
+  ["human", "vehicle"].forEach((type) => {
     const itemsOfType = consensusItems.filter((i) => i.observationType === type);
     if (itemsOfType.length > 0) {
-      // Sort by observationCount descending
       itemsOfType.sort((a, b) => b.observationCount - a.observationCount);
       const winner = itemsOfType[0];
       winners.push(winner);
