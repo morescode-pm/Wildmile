@@ -18,6 +18,7 @@ import {
   IconRefresh,
   IconMaximize,
   IconArrowsShuffle,
+  IconPlayerPlay,
 } from "@tabler/icons-react";
 import classes from "styles/CameraTrap.module.css";
 import useSWR from "swr";
@@ -31,6 +32,7 @@ const fetcher = async (url) => {
 export function RandomFavorite() {
   const [loading, setLoading] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   const {
     data: favoriteImage,
@@ -83,12 +85,23 @@ export function RandomFavorite() {
                 className={classes.mainImage}
                 style={{ objectFit: "contain" }}
               />
-              <ActionIcon
-                style={{ position: "absolute", top: 10, right: 10 }}
-                onClick={() => setEnlargedImage(true)}
+              <Group
+                gap="xs"
+                style={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}
               >
-                <IconMaximize size={24} />
-              </ActionIcon>
+                {favoriteImage.videoUrl && (
+                  <ActionIcon
+                    color="teal"
+                    variant="filled"
+                    onClick={() => setShowVideo(true)}
+                  >
+                    <IconPlayerPlay size={24} />
+                  </ActionIcon>
+                )}
+                <ActionIcon onClick={() => setEnlargedImage(true)}>
+                  <IconMaximize size={24} />
+                </ActionIcon>
+              </Group>
               {/* <Group gap="sm"> */}
               <Flex direction={{ base: "column", sm: "row" }} gap="sm">
                 <Text size="sm" c="dimmed" mt="md" flex="1">
@@ -118,6 +131,24 @@ export function RandomFavorite() {
           )}
         </div>
       </Fieldset>
+
+      <Modal
+        opened={showVideo}
+        onClose={() => setShowVideo(false)}
+        title="Favorite Video"
+        size="lg"
+      >
+        {favoriteImage?.videoUrl && (
+          <video
+            src={favoriteImage.videoUrl}
+            controls
+            autoPlay
+            style={{ width: "100%", maxHeight: "80vh" }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        )}
+      </Modal>
 
       <Modal
         opened={enlargedImage}
