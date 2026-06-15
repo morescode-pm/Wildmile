@@ -253,7 +253,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
       height: "100%",
       display: "flex",
       flexDirection: "column",
-      justifyContent: "center",
+      justifyContent: "flex-start",
       padding: "0 10px"
     }}>
       <motion.div
