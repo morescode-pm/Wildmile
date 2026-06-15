@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import {
-  Title,
   Text,
   Container,
   Grid,
@@ -8,19 +7,9 @@ import {
   Fieldset,
   Loader,
   Stack,
+  Title,
 } from "@mantine/core";
-import { IconCardGrid } from "/components/icon_card_grid";
-import classes from "/styles/card.module.css";
-import {
-  IconAbacus,
-  IconUsers,
-  IconPokeball,
-  IconCameraSearch,
-  IconCameraPlus,
-  IconZoomIn,
-  IconMapPin,
-  IconPaw,
-} from "@tabler/icons-react";
+import { IconCardTiles } from "/components/cameratrap/IconCardTiles";
 import { RandomFavorite } from "components/cameratrap/RandomFavorite";
 import { Leaderboard } from "components/cameratrap/Leaderboard";
 import { StatsScorecards } from "components/cameratrap/StatsScorecards";
@@ -30,26 +19,27 @@ import { headers } from "next/headers";
 
 const cameraTrapCards = [
   {
-    icon: IconPokeball,
+    icon: "IconPokeball",
     title: "Identify wildlife",
     href: "/cameratrap/identify",
     description:
       "Find and catagorize wildlife captured around the Chicago River",
+    borderColor: "blue",
   },
   {
-    icon: IconZoomIn,
+    icon: "IconZoomIn",
     title: "Explore Data",
     href: "/cameratrap/explore",
     description: "Explore wildlife images which have been catagorized",
   },
   {
-    icon: IconPaw,
+    icon: "IconPaw",
     title: "Wildlife Analytics",
     href: "/cameratrap/wildlife",
     description: "Analyze species activity, temporal patterns, co-occurrence, and biodiversity",
   },
   {
-    icon: IconAbacus,
+    icon: "IconAbacus",
     title: "Project Analytics",
     href: "/cameratrap/analytics/total-images",
     description: "See analytics on images, observations, and volunteers",
@@ -58,25 +48,25 @@ const cameraTrapCards = [
 
 const mgmtCards = [
   {
-    icon: IconCameraPlus,
+    icon: "IconCameraPlus",
     title: "New Camera",
     href: "/cameratrap/camera/new",
     description: "Add a new camera device",
   },
   {
-    icon: IconCameraSearch,
+    icon: "IconCameraSearch",
     title: "Cameras",
     href: "/cameratrap/camera",
     description: "Manage the camera inventory",
   },
   {
-    icon: IconUsers,
+    icon: "IconUsers",
     title: "Deployments",
     href: "/cameratrap/deployment",
     description: "Manage the deployments",
   },
   {
-    icon: IconMapPin,
+    icon: "IconMapPin",
     title: "Locations",
     href: "/cameratrap/locations",
     description: "Manage the deployment locations",
@@ -92,23 +82,23 @@ export default async function Page() {
   return (
     <Container maw="95%" mt="xl" my="5rem">
       <Stack gap="md">
+        <Title order={2}>Welcome to the Camera Crew!</Title>
         <StatsScorecards stats={stats} />
 
-        <Grid gutter="xl">
+        <Grid gutter="md">
           {/* Pane 1: Resources & Management */}
           <GridCol span={{ base: 12, md: 4 }}>
-            <Title order={3} className={classes.title} ta="center">
-              Camera Trap Resources
-            </Title>
-            <Text c="dimmed" ta="center" mt="md" mb="xl">
-              Collecting and sharing data about Urban River's projects.
-            </Text>
-            <IconCardGrid cards={cameraTrapCards} />
-            {user && (
-              <Fieldset legend="Management Tools" mt="xl">
-                <IconCardGrid cards={mgmtCards} />
-              </Fieldset>
-            )}
+            <Fieldset legend="Resources">
+              <Text c="dimmed" ta="center" mb="md" size="sm">
+                Collecting and sharing data about Urban River's projects.
+              </Text>
+              <IconCardTiles cards={cameraTrapCards} />
+              {user && (
+                <Fieldset legend="Management Tools" mt="xl">
+                  <IconCardTiles cards={mgmtCards} />
+                </Fieldset>
+              )}
+            </Fieldset>
           </GridCol>
 
           {/* Pane 2: Leaderboard */}
@@ -118,12 +108,9 @@ export default async function Page() {
 
           {/* Pane 3: Favorite Image */}
           <GridCol span={{ base: 12, md: 4 }}>
-            <Stack gap="lg">
-              <Title order={3} ta="center">Favorite Image</Title>
-              <Suspense fallback={<Loader size="sm" />}>
-                <RandomFavorite />
-              </Suspense>
-            </Stack>
+            <Suspense fallback={<Loader size="sm" />}>
+              <RandomFavorite />
+            </Suspense>
           </GridCol>
         </Grid>
       </Stack>

@@ -1,27 +1,18 @@
 "use client";
 import React from "react";
 import {
-  Title,
   Text,
   Group,
   Stack,
-  Card,
   Divider,
   Box,
+  Fieldset,
 } from "@mantine/core";
 import { UserAvatar } from "/components/shared/UserAvatar";
 
 export function Leaderboard({ stats }) {
   return (
-    <Stack gap="lg">
-      <Title order={3} ta="center">Leaderboard</Title>
-      <Card withBorder radius="md" p="md">
-        <Group justify="space-between" mb="md">
-          <Text size="md" fw={500}>
-            Top Observers
-          </Text>
-        </Group>
-
+    <Fieldset legend="Leaderboard">
         {stats.topCreators && stats.topCreators.length > 0 ? (
           <Stack gap="xs">
             {stats.topCreators.map((creator, index) => (
@@ -80,7 +71,6 @@ export function Leaderboard({ stats }) {
             </Box>
           </Group>
         </Stack>
-      </Card>
-    </Stack>
+    </Fieldset>
   );
 }
