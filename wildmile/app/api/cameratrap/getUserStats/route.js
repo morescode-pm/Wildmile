@@ -3,6 +3,7 @@ import dbConnect from "lib/db/setup";
 import Observation from "models/cameratrap/Observation";
 import User from "models/User";
 import UserProgress from "models/users/UserProgress";
+import Species from "models/Species";
 // import { updateUserStats } from "lib/db/updateUserStats";
 
 // Update single user
@@ -42,11 +43,10 @@ export async function GET(request) {
     ]);
 
     // Find the highest level RANK achievement that has been earned
-    // Find the highest level RANK achievement that has been earned
     const rankAchievements = progress.achievements
       .filter(
         (a) =>
-          a.achievement.type === "RANK" && a.progress === 100 && a.earnedAt,
+          a.achievement?.type === "RANK" && a.progress === 100 && a.earnedAt,
       )
       .sort((a, b) => b.achievement.level - a.achievement.level);
 
@@ -57,20 +57,22 @@ export async function GET(request) {
         : "💩";
 
     // Format achievements for response
-    const achievements = progress.achievements.map((achievement) => ({
-      id: achievement.achievement._id,
-      name: achievement.achievement.name,
-      description: achievement.achievement.description,
-      icon: achievement.achievement.icon,
-      badge: achievement.achievement.badge,
-      level: achievement.achievement.level,
-      type: achievement.achievement.type,
-      domain: achievement.achievement.domain,
-      points: achievement.achievement.points,
-      progress: achievement.progress,
-      earnedAt: achievement.earnedAt,
-      criteria: achievement.achievement.criteria,
-    }));
+    const formattedAchievements = progress.achievements
+      .filter((a) => a.achievement)
+      .map((achievement) => ({
+        id: achievement.achievement._id,
+        name: achievement.achievement.name,
+        description: achievement.achievement.description,
+        icon: achievement.achievement.icon,
+        badge: achievement.achievement.badge,
+        level: achievement.achievement.level,
+        type: achievement.achievement.type,
+        domain: achievement.achievement.domain,
+        points: achievement.achievement.points,
+        progress: achievement.progress,
+        earnedAt: achievement.earnedAt,
+        criteria: achievement.achievement.criteria,
+      }));
 
     // Get all observations by the user
     const observations = await Observation.find({ creator: userId });
@@ -93,20 +95,13 @@ export async function GET(request) {
       (obs) => obs.observationType === "blank",
     ).length;
 
-    // Calculate unique species
-    const uniqueSpecies = new Set(
-      animalObservations
-        .map((obs) => obs.scientificName)
-        .filter((name) => name), // Remove null/undefined
-    );
-
-    // Get top species
+    // Get top species and fetch their preferred common names
     const speciesCounts = animalObservations.reduce((acc, obs) => {
-      const key = obs.commonName || obs.scientificName;
+      const key = obs.scientificName;
+      if (!key) return acc;
       if (!acc[key]) {
         acc[key] = {
-          commonName: obs.commonName,
-          scientificName: obs.scientificName,
+          scientificName: key,
           count: 0,
         };
       }
@@ -114,43 +109,54 @@ export async function GET(request) {
       return acc;
     }, {});
 
-    const topSpecies = Object.values(speciesCounts)
+    const topSpeciesList = Object.values(speciesCounts)
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Format response
-    // const stats = {
-    //   user: {
-    //     ...user.toObject(),
-    //     avatar, // Add avatar to user object
-    //   },
-    //   ...progress,
-    // stats: progress.stats,
-    // streaks: progress.streaks,
-    // achievements,
-    // totalPoints: progress.totalPoints,
-    // level: progress.level,
-    // domainRanks: Object.fromEntries(progress.domainRanks),
-    // lastActive:
-    //   progress.stats.lastActive ||
-    //   (progress.streaks.lastLoginDate
-    //     ? new Date(progress.streaks.lastLoginDate)
-    //     : null),
-    // totalImagesReviewed,
-    // totalAnimalsObserved,
-    // totalBlanksLogged,
-    // uniqueSpeciesCount: uniqueSpecies.size,
-    // topSpecies,
-    // };
-    const stats = {
-      ...progress.toObject(),
+    // Enrich with preferred common names from Species model
+    const enrichedTopSpecies = await Promise.all(
+      topSpeciesList.map(async (s) => {
+        const speciesDoc = await Species.findOne({ name: s.scientificName }).select("preferred_common_name").lean();
+        return {
+          ...s,
+          commonName: speciesDoc?.preferred_common_name || s.scientificName,
+        };
+      })
+    );
+
+    // Convert domainRanks Map to object for JSON response
+    const domainRanks = {};
+    if (progress.domainRanks) {
+      progress.domainRanks.forEach((value, key) => {
+        domainRanks[key] = value;
+      });
+    }
+
+    const responseData = {
       user: {
         ...progress.user.toObject(),
         avatar,
       },
+      stats: {
+        ...progress.stats,
+        totalImagesReviewed,
+        totalAnimalsObserved,
+        totalBlanksLogged,
+        uniqueSpeciesCount: enrichedTopSpecies.length,
+      },
+      streaks: progress.streaks,
+      achievements: formattedAchievements,
+      totalPoints: progress.totalPoints,
+      level: progress.level,
+      domainRanks,
+      topSpecies: enrichedTopSpecies,
+      uniqueSpeciesCount: [...new Set(animalObservations.map(o => o.scientificName).filter(Boolean))].length,
+      totalImagesReviewed,
+      totalAnimalsObserved,
+      totalBlanksLogged,
     };
-    console.log(stats);
-    return NextResponse.json(stats);
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("Error fetching user stats:", error);
     return NextResponse.json(
