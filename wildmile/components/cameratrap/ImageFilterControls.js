@@ -17,6 +17,7 @@ import {
   IconAdjustmentsHorizontal,
   IconRefresh,
   IconChevronsLeft,
+  IconHelp,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -33,7 +34,7 @@ const blankFiltersState = {
   animalProbability: [0, 1],
 };
 
-export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialFilters }) {
+export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialFilters, setRunTutorial }) {
   const [opened, { open, close }] = useDisclosure(false);
   // Initialize filters with initialFilters if provided, otherwise fallback to blank.
   // initialFilters will come from ImageAnnotationPage, potentially with server defaults.
@@ -120,24 +121,24 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group position="apart" id="filter-controls-group">
+      <Group gap={4} id="filter-controls-group">
         <Button
           id="get-images-button"
-          size="md"
+          size="sm"
           onClick={handleApplyFilters}
-          leftSection={<IconRefresh />}
+          leftSection={<IconRefresh size={18} />}
         >
           Get Images
         </Button>
         {onJumpToEarliest && (
           <Button
             id="earliest-button"
-            size="md"
+            size="sm"
             onClick={() => {
               onApplyFilters(filters);
               onJumpToEarliest(filters);
             }}
-            leftSection={<IconChevronsLeft size={16} />}
+            leftSection={<IconChevronsLeft size={18} />}
             variant="light"
             color="teal"
           >
@@ -146,8 +147,9 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
         )}
         <Button
           id="filters-button"
+          size="sm"
           onClick={open}
-          leftSection={<IconAdjustmentsHorizontal size={16} />}
+          leftSection={<IconAdjustmentsHorizontal size={18} />}
           variant={hasActiveFilters ? "filled" : "outline"}
           color={hasActiveFilters ? "yellow" : "grey"}
         >

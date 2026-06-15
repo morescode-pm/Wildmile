@@ -25,11 +25,14 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { useImage } from "./ContextCamera";
+import { useImage, useTutorial, useImageLoaded } from "./ContextCamera";
 import { ObservationHistoryPopover } from "./ObservationHistory";
 import { SpeciesConsensusBadges } from "./SpeciesConsensusBadges";
 
+import { useElementSize } from "@mantine/hooks";
+
 export function ImageAnnotation({ filters }) {
+  const { ref: containerRef, width: containerWidth, height: containerHeight } = useElementSize();
   const [currentImage, setCurrentImage] = useImage();
   const [isSaving, setIsSaving] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -38,6 +41,28 @@ export function ImageAnnotation({ filters }) {
   const [flagged, setFlagged] = useState(false);
   const [showAIBoxes, setShowAIBoxes] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+
+  const [, setImageLoaded] = useImageLoaded();
+  const handleImageLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    setNaturalSize({ width: naturalWidth, height: naturalHeight });
+    setImageLoaded(true);
+  };
+
+  useEffect(() => {
+    if (naturalSize.width > 0 && containerWidth > 0 && containerHeight > 0) {
+      const ratio = Math.min(
+        containerWidth / naturalSize.width,
+        containerHeight / naturalSize.height,
+      );
+      setImageSize({
+        width: naturalSize.width * ratio,
+        height: naturalSize.height * ratio,
+      });
+    }
+  }, [naturalSize, containerWidth, containerHeight]);
 
   useEffect(() => {
     if (currentImage) {
@@ -112,13 +137,15 @@ export function ImageAnnotation({ filters }) {
     setEnlargedImage(!enlargedImage);
   };
 
-  if (!currentImage) {
+  const [runTutorial] = useTutorial();
+
+  if (!currentImage && !runTutorial) {
     return <Text>No image selected</Text>;
   }
 
   return (
     <>
-      <Card id="image-annotation-card" shadow="sm" radius="md" withBorder h="100%" p="xs">
+      <Box id="image-annotation-card" h="100%" p={0}>
         <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{
@@ -146,59 +173,83 @@ export function ImageAnnotation({ filters }) {
               }}
             >
               <div
+                ref={containerRef}
                 style={{
                   position: "relative",
-                  display: "inline-block",
-                  maxHeight: "100%",
-                  maxWidth: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  width: "100%",
                 }}
               >
-                <img
-                  src={currentImage.publicURL}
+                <div
                   style={{
-                    display: "block",
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
+                    position: "relative",
+                    width: imageSize.width,
+                    height: imageSize.height,
                   }}
-                  alt="Wildlife image"
-                />
-                {showAIBoxes &&
-                  currentImage.aiResults?.[0]?.animalDetections?.map(
-                    (detection, index) => {
-                      const [xmin, ymin, width, height] = detection.bbox;
-                      return (
-                        <div
-                          key={index}
-                          style={{
-                            position: "absolute",
-                            left: `${xmin * 100}%`,
-                            top: `${ymin * 100}%`,
-                            width: `${width * 100}%`,
-                            height: `${height * 100}%`,
-                            border: "2px solid #00ff00",
-                            pointerEvents: "none",
-                            boxSizing: "border-box",
-                            zIndex: 10,
-                          }}
-                        >
-                          <Badge
-                            variant="filled"
-                            color="green"
-                            size="xs"
-                            style={{
-                              position: "absolute",
-                              top: -20,
-                              left: 0,
-                              pointerEvents: "none",
-                            }}
-                          >
-                            {Math.round(detection.conf * 100)}%
-                          </Badge>
-                        </div>
-                      );
-                    }
+                >
+                  <img
+                    src={currentImage?.publicURL}
+                    onLoad={handleImageLoad}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    alt="Wildlife image"
+                  />
+                  {showAIBoxes && imageSize.width > 0 && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      {currentImage?.aiResults?.[0]?.animalDetections?.map(
+                        (detection, index) => {
+                          const [xmin, ymin, width, height] = detection.bbox;
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                position: "absolute",
+                                left: `${xmin * 100}%`,
+                                top: `${ymin * 100}%`,
+                                width: `${width * 100}%`,
+                                height: `${height * 100}%`,
+                                border: "2px solid #00ff00",
+                                pointerEvents: "none",
+                                boxSizing: "border-box",
+                                zIndex: 10,
+                              }}
+                            >
+                              <Badge
+                                variant="filled"
+                                color="green"
+                                size="xs"
+                                style={{
+                                  position: "absolute",
+                                  top: -20,
+                                  left: 0,
+                                  pointerEvents: "none",
+                                }}
+                              >
+                                {Math.round(detection.conf * 100)}%
+                              </Badge>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
                   )}
+                </div>
               </div>
             </TransformComponent>
           </TransformWrapper>
@@ -210,27 +261,31 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="auto">
+        <Stack gap="xs" mt="xs">
           <Group justify="space-between">
             <Group gap="xs" id="image-action-buttons">
               <ActionIcon
+                size="md"
                 variant="outline"
                 onClick={() => {
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/cameratrap/identify/${currentImage.mediaID}`
-                  );
-                  alert("Image URL copied to clipboard");
+                  if (currentImage?.mediaID) {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/cameratrap/identify/${currentImage.mediaID}`
+                    );
+                    alert("Image URL copied to clipboard");
+                  }
                 }}
               >
                 <IconLink />
               </ActionIcon>
               <Tooltip label="Show AI Detections">
                 <ActionIcon
+                  size="md"
                   onClick={() => setShowAIBoxes((prev) => !prev)}
                   variant={showAIBoxes ? "filled" : "outline"}
                   color="blue"
                   disabled={
-                    !currentImage.aiResults ||
+                    !currentImage?.aiResults ||
                     currentImage.aiResults.length === 0 ||
                     !currentImage.aiResults[0].animalDetections ||
                     currentImage.aiResults[0].animalDetections.length === 0
@@ -241,6 +296,7 @@ export function ImageAnnotation({ filters }) {
               </Tooltip>
               <Tooltip label="Play Video">
                 <ActionIcon
+                  size="md"
                   onClick={() => setShowVideo(true)}
                   variant="outline"
                   color="teal"
@@ -251,6 +307,7 @@ export function ImageAnnotation({ filters }) {
               </Tooltip>
               <Tooltip label="Need Help with ID">
                 <ActionIcon
+                  size="md"
                   onClick={handleNeedsReview}
                   variant={needsReview ? "filled" : "outline"}
                   color="yellow"
@@ -260,6 +317,7 @@ export function ImageAnnotation({ filters }) {
               </Tooltip>
               <Tooltip label="Report Inappropriate">
                 <ActionIcon
+                  size="md"
                   onClick={handleFlagged}
                   variant={flagged ? "filled" : "outline"}
                   color="red"
@@ -269,11 +327,12 @@ export function ImageAnnotation({ filters }) {
               </Tooltip>
               <Indicator
                 inline
-                label={currentImage.favoriteCount}
-                disabled={!currentImage.favoriteCount}
+                label={currentImage?.favoriteCount}
+                disabled={!currentImage?.favoriteCount}
                 size={16}
               >
                 <ActionIcon
+                  size="md"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleFavorite();
@@ -282,33 +341,32 @@ export function ImageAnnotation({ filters }) {
                   variant={isFavorite ? "filled" : "outline"}
                 >
                   {isFavorite ? (
-                    <IconHeartFilled size={24} />
+                    <IconHeartFilled size={22} />
                   ) : (
-                    <IconHeartPlus size={24} />
+                    <IconHeartPlus size={22} />
                   )}
                 </ActionIcon>
               </Indicator>
             </Group>
+            <Group gap="xs">
+              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
+                Time: {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
+              </Text>
+              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
+                ID: {currentImage?.mediaID || 'N/A'}
+              </Text>
+            </Group>
           </Group>
 
-          <Group gap="xl">
-            <Text size="xs" style={{ fontFamily: "monospace" }}>
-              Time: {new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" })}
-            </Text>
-            <Text size="xs" style={{ fontFamily: "monospace" }}>
-              ID: {currentImage.mediaID}
-            </Text>
-          </Group>
-
-          <Group mt="xs">
+          <Group gap="xs" style={{ minHeight: 30 }}>
             <SpeciesConsensusBadges
-              speciesConsensus={currentImage.speciesConsensus}
+              speciesConsensus={currentImage?.speciesConsensus}
             />
-            <ObservationHistoryPopover mediaID={currentImage.mediaID} />
+            <ObservationHistoryPopover mediaID={currentImage?.mediaID} />
           </Group>
         </Stack>
         </Stack>
-      </Card>
+      </Box>
 
       <Modal
         opened={enlargedImage}
@@ -353,7 +411,7 @@ export function ImageAnnotation({ filters }) {
                 }}
               >
                 <img
-                  src={currentImage.publicURL}
+                  src={currentImage?.publicURL}
                   style={{
                     display: "block",
                     maxHeight: "100vh",
@@ -363,7 +421,7 @@ export function ImageAnnotation({ filters }) {
                   alt="Enlarged wildlife image"
                 />
                 {showAIBoxes &&
-                  currentImage.aiResults?.[0]?.animalDetections?.map(
+                  currentImage?.aiResults?.[0]?.animalDetections?.map(
                     (detection, index) => {
                       const [xmin, ymin, width, height] = detection.bbox;
                       return (
