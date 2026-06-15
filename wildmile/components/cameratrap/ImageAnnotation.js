@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Card,
   Text,
@@ -41,8 +41,20 @@ export function ImageAnnotation({ filters }) {
   const [flagged, setFlagged] = useState(false);
   const [showAIBoxes, setShowAIBoxes] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+
+  const imageSize = useMemo(() => {
+    const width = currentImage?.naturalWidth || naturalSize.width;
+    const height = currentImage?.naturalHeight || naturalSize.height;
+    if (width > 0 && containerWidth > 0 && containerHeight > 0) {
+      const ratio = Math.min(containerWidth / width, containerHeight / height);
+      return {
+        width: width * ratio,
+        height: height * ratio,
+      };
+    }
+    return { width: 0, height: 0 };
+  }, [currentImage, naturalSize, containerWidth, containerHeight]);
 
   const [imageLoaded, setImageLoaded] = useImageLoaded();
   const handleImageLoad = (e) => {
@@ -52,27 +64,22 @@ export function ImageAnnotation({ filters }) {
   };
 
   useEffect(() => {
-    if (naturalSize.width > 0 && containerWidth > 0 && containerHeight > 0) {
-      const ratio = Math.min(
-        containerWidth / naturalSize.width,
-        containerHeight / naturalSize.height,
-      );
-      setImageSize({
-        width: naturalSize.width * ratio,
-        height: naturalSize.height * ratio,
-      });
-    }
-  }, [naturalSize, containerWidth, containerHeight]);
-
-  useEffect(() => {
     if (currentImage) {
       setIsFavorite(currentImage.favorite || false);
       setNeedsReview(currentImage.needsReview || false);
       setFlagged(currentImage.flagged || false);
-      // Reset dimensions and loading state when image changes to ensure synchronization
-      setNaturalSize({ width: 0, height: 0 });
-      setImageSize({ width: 0, height: 0 });
-      setImageLoaded(false);
+
+      if (currentImage.naturalWidth) {
+        setNaturalSize({
+          width: currentImage.naturalWidth,
+          height: currentImage.naturalHeight,
+        });
+        setImageLoaded(true);
+      } else {
+        // Fallback if not pre-loaded with dimensions
+        setNaturalSize({ width: 0, height: 0 });
+        setImageLoaded(false);
+      }
     }
   }, [currentImage, setImageLoaded]);
 

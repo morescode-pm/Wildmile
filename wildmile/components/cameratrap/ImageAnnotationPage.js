@@ -147,7 +147,6 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   };
 
   const fetchCamtrapImage = async (params = {}) => {
-    setImageLoaded(false);
     setIsFetching(true);
     let processedParams = { reviewMode, ...params }; // Clone to avoid modifying the state directly
 
@@ -179,7 +178,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         if (image.publicURL) {
           await new Promise((resolve) => {
             const img = new Image();
-            img.onload = () => resolve();
+            img.onload = () => {
+              image.naturalWidth = img.naturalWidth;
+              image.naturalHeight = img.naturalHeight;
+              resolve();
+            };
             img.onerror = () => resolve(); // Resolve even on error to prevent blocking UI
             img.src = image.publicURL;
           });
@@ -240,7 +243,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <div className={classes.fullViewport}>
       <CameraTrapTutorial />
-      <LoadingOverlay visible={(pageLoading || isFetching) && !runTutorial} overlayProps={{ blur: 2 }} />
+      <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
         style={{ flex: 1, margin: 0, padding: "5px" }}
@@ -265,6 +268,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     variant="default"
                     radius="md"
                     size="sm"
+                    loading={isFetching}
                   >
                     <IconArrowLeft size={18} />
                   </Button>
@@ -277,6 +281,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     variant="default"
                     radius="md"
                     size="sm"
+                    loading={isFetching}
                   >
                     <IconArrowRight size={18} />
                   </Button>
