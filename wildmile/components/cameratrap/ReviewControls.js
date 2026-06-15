@@ -70,43 +70,74 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
   const consensusItems = currentImage.speciesConsensus || [];
 
-  const summaryParts = consensusItems.map((item) => {
-    if (item.observationType === "animal") {
-      const commonName = item.preferred_common_name || item.scientificName;
-      const scientificName = item.preferred_common_name ? item.scientificName : null;
-      return (
-        <Stack gap={0} align="center" key={item.scientificName}>
-          <Text fw={800} size="xl" c="blue">{item.count}x {commonName}</Text>
-          {scientificName && (
-            <Text size="xs" c="dimmed" fs="italic">{scientificName}</Text>
-          )}
-        </Stack>
-      );
+  // Get blank count if it exists
+  const blankItem = consensusItems.find((i) => i.observationType === "blank");
+  const blankCount = blankItem ? blankItem.observationCount : 0;
+
+  // Group by type and pick the winner with highest observationCount
+  const winners = [];
+  const types = ["animal", "human", "vehicle"];
+
+  let maxOtherCount = 0;
+
+  types.forEach((type) => {
+    const itemsOfType = consensusItems.filter((i) => i.observationType === type);
+    if (itemsOfType.length > 0) {
+      // Sort by observationCount descending
+      itemsOfType.sort((a, b) => b.observationCount - a.observationCount);
+      const winner = itemsOfType[0];
+      winners.push(winner);
+      if (winner.observationCount > maxOtherCount) {
+        maxOtherCount = winner.observationCount;
+      }
     }
-    if (item.observationType === "human") return <Text fw={800} size="xl" c="blue" key="human">Human</Text>;
-    if (item.observationType === "vehicle") return <Text fw={800} size="xl" c="blue" key="vehicle">Vehicle</Text>;
-    return null;
-  }).filter(Boolean);
+  });
+
+  // It's blank if blank has strictly more votes than any other single observation,
+  // or if there are no other observations.
+  const isBlank = blankCount > maxOtherCount || winners.length === 0;
+
+  const summaryParts = winners
+    .map((item) => {
+      if (item.observationType === "animal") {
+        const commonName = item.preferred_common_name || item.scientificName;
+        const scientificName = item.preferred_common_name
+          ? item.scientificName
+          : null;
+        return (
+          <Stack gap={0} align="center" key={item.scientificName}>
+            <Text fw={800} size="xl" c="blue">
+              {item.count}x {commonName}
+            </Text>
+            {scientificName && (
+              <Text size="xs" c="dimmed" fs="italic">
+                {scientificName}
+              </Text>
+            )}
+          </Stack>
+        );
+      }
+      if (item.observationType === "human")
+        return (
+          <Text fw={800} size="xl" c="blue" key="human">
+            Human
+          </Text>
+        );
+      if (item.observationType === "vehicle")
+        return (
+          <Text fw={800} size="xl" c="blue" key="vehicle">
+            Vehicle
+          </Text>
+        );
+      return null;
+    })
+    .filter(Boolean);
 
   const handleConfirm = async () => {
     setIsSaving(true);
-    const observations = consensusItems.map((item) => ({
-      mediaId: currentImage.mediaID,
-      mediaInfo: {
-        md5: currentImage.mediaID,
-        imageHash: currentImage.imageHash,
-      },
-      taxonId: item.taxonID,
-      scientificName: item.scientificName,
-      count: item.count,
-      eventStart: currentImage.timestamp,
-      eventEnd: currentImage.timestamp,
-      observationLevel: "media",
-      observationType: item.observationType,
-    }));
+    let observations = [];
 
-    // If blank
-    if (observations.length === 0) {
+    if (isBlank) {
       observations.push({
         mediaId: currentImage.mediaID,
         mediaInfo: {
@@ -118,6 +149,21 @@ export const ReviewControls = ({ fetchNextImage }) => {
         observationLevel: "media",
         observationType: "blank",
       });
+    } else {
+      observations = winners.map((item) => ({
+        mediaId: currentImage.mediaID,
+        mediaInfo: {
+          md5: currentImage.mediaID,
+          imageHash: currentImage.imageHash,
+        },
+        taxonId: item.taxonID,
+        scientificName: item.scientificName,
+        count: item.count,
+        eventStart: currentImage.timestamp,
+        eventEnd: currentImage.timestamp,
+        observationLevel: "media",
+        observationType: item.observationType,
+      }));
     }
 
     try {
@@ -144,10 +190,22 @@ export const ReviewControls = ({ fetchNextImage }) => {
   };
 
   const handleRelabel = () => {
-    // Pre-fill selection and counts for relabeling
-    const initialSelection = consensusItems
-      .filter(i => i.observationType === 'animal')
-      .map(i => {
+    if (isBlank) {
+      setSelection([]);
+      setAnimalCounts({});
+      setObsState({
+        humanPresent: false,
+        vehiclePresent: false,
+        noAnimalsVisible: true,
+        comment: "",
+      });
+    } else {
+      // Pre-fill selection and counts for relabeling using the "winners"
+      const animalWinners = winners.filter(
+        (i) => i.observationType === "animal"
+      );
+
+      const initialSelection = animalWinners.map((i) => {
         const tId = i.taxonID ? Number(i.taxonID) : null;
         return {
           taxonId: tId,
@@ -158,20 +216,21 @@ export const ReviewControls = ({ fetchNextImage }) => {
         };
       });
 
-    const initialCounts = {};
-    consensusItems.filter(i => i.observationType === 'animal').forEach(i => {
-      const tId = i.taxonID ? Number(i.taxonID) : i.scientificName;
-      initialCounts[tId] = i.count;
-    });
+      const initialCounts = {};
+      animalWinners.forEach((i) => {
+        const tId = i.taxonID ? Number(i.taxonID) : i.scientificName;
+        initialCounts[tId] = i.count;
+      });
 
-    setSelection(initialSelection);
-    setAnimalCounts(initialCounts);
-    setObsState({
-      humanPresent: consensusItems.some(i => i.observationType === 'human'),
-      vehiclePresent: consensusItems.some(i => i.observationType === 'vehicle'),
-      noAnimalsVisible: consensusItems.length === 0,
-      comment: "",
-    });
+      setSelection(initialSelection);
+      setAnimalCounts(initialCounts);
+      setObsState({
+        humanPresent: winners.some((i) => i.observationType === "human"),
+        vehiclePresent: winners.some((i) => i.observationType === "vehicle"),
+        noAnimalsVisible: animalWinners.length === 0,
+        comment: "",
+      });
+    }
 
     setRelabeling(true);
     controls.start({ x: -500, opacity: 0 }).then(() => {
@@ -200,9 +259,10 @@ export const ReviewControls = ({ fetchNextImage }) => {
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
         onDragEnd={onDragEnd}
         animate={controls}
-        style={{ width: "100%" }}
+        style={{ width: "100%", touchAction: "pan-y" }}
       >
         <Paper shadow="md" p="md" withBorder radius="md" style={{ backgroundColor: "var(--mantine-color-body)" }}>
           <Stack gap="xs" align="center">
@@ -210,7 +270,13 @@ export const ReviewControls = ({ fetchNextImage }) => {
               Does this photo have:
             </Text>
             <Stack gap={4} align="center">
-              {summaryParts.length > 0 ? summaryParts : <Text fw={800} size="xl" c="blue">No animals/humans/vehicles</Text>}
+              {summaryParts.length > 0 && !isBlank ? (
+                summaryParts
+              ) : (
+                <Text fw={800} size="xl" c="blue">
+                  No animals, humans, or vehicles
+                </Text>
+              )}
             </Stack>
             <Group justify="space-between" mt="md" style={{ width: "100%" }}>
               <Tooltip label="Swipe Left to Re-label">

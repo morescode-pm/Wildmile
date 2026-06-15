@@ -337,20 +337,36 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
             height: "calc(100vh - 70px)",
             display: "flex",
             flexDirection: "column",
-            gap: "xs",
             minHeight: 0,
           }}
         >
-          {reviewMode && !isRelabeling ? (
-            <ReviewControls fetchNextImage={fetchNextImage} />
-          ) : (
-            <>
-              <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
-                <WildlifeSearch />
-              </div>
-              <ObservationTally fetchNextImage={fetchNextImage} />
-            </>
-          )}
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              minHeight: 0,
+            }}
+          >
+            {reviewMode && !isRelabeling ? (
+              <ReviewControls fetchNextImage={fetchNextImage} />
+            ) : (
+              <>
+                <div
+                  style={{
+                    flex: 1,
+                    minHeight: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <WildlifeSearch />
+                </div>
+                <ObservationTally fetchNextImage={fetchNextImage} />
+              </>
+            )}
+          </div>
         </GridCol>
       </Grid>
     </div>

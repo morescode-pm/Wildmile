@@ -180,29 +180,43 @@ export async function GET(request) {
 
     if (image) {
       // Enhance speciesConsensus with preferred_common_name
-      if (image.speciesConsensus) {
+      if (image.speciesConsensus && Array.isArray(image.speciesConsensus)) {
         const enrichedConsensus = await Promise.all(
           image.speciesConsensus.map(async (item) => {
-            if (item.observationType === "animal") {
-              let species = null;
-              if (item.taxonID) {
-                species = await Species.findOne({
-                  taxonId: Number(item.taxonID),
-                }).lean();
+            try {
+              if (item && item.observationType === "animal") {
+                let species = null;
+                // Try searching by numeric taxonId if taxonID is a number or can be cast to one
+                const numericTaxonId = Number(item.taxonID);
+                if (item.taxonID && !isNaN(numericTaxonId)) {
+                  species = await Species.findOne({
+                    taxonId: numericTaxonId,
+                  }).lean();
+                }
+                // Fallback to searching by scientificName (which is often what taxonID holds in current data)
+                if (!species && item.scientificName) {
+                  species = await Species.findOne({
+                    name: new RegExp(`^${item.scientificName}$`, "i"),
+                  }).lean();
+                }
+                // Also try searching by taxonID as a string if it's not a number
+                if (!species && item.taxonID && isNaN(numericTaxonId)) {
+                   species = await Species.findOne({
+                    name: new RegExp(`^${item.taxonID}$`, "i"),
+                  }).lean();
+                }
+
+                if (species) {
+                  return {
+                    ...item,
+                    preferred_common_name: species.preferred_common_name || item.preferred_common_name,
+                    taxonID: species.taxonId || item.taxonID,
+                    scientificName: species.name || item.scientificName,
+                  };
+                }
               }
-              if (!species && item.scientificName) {
-                species = await Species.findOne({
-                  name: new RegExp(`^${item.scientificName}$`, "i"),
-                }).lean();
-              }
-              if (species) {
-                return {
-                  ...item,
-                  preferred_common_name: species.preferred_common_name || item.preferred_common_name,
-                  taxonID: species.taxonId || item.taxonID,
-                  scientificName: species.name || item.scientificName,
-                };
-              }
+            } catch (err) {
+              console.error("Error enriching consensus item:", err, item);
             }
             return item;
           })
