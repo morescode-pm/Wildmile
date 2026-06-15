@@ -212,7 +212,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
     setRelabeling(true);
   };
 
-  const showLoading = isFetching || !imageLoaded || isSaving;
+  const showLoading = isSaving;
 
   return (
     <div style={{
