@@ -27,7 +27,9 @@ import {
   useUserLabeledSpecies,
   useAnimalCounts,
   useObservationState,
-  useTutorial
+  useTutorial,
+  useReviewMode,
+  useRelabeling
 } from "./ContextCamera";
 import checkboxClasses from "styles/checkbox.module.css";
 import styles from "styles/animalSelection.module.css";
@@ -52,6 +54,8 @@ export function ObservationTally({ fetchNextImage }) {
   const [animalCounts, setAnimalCounts] = useAnimalCounts();
   const [obsState, setObsState] = useObservationState();
   const [runTutorial, setRunTutorial] = useTutorial();
+  const [reviewMode] = useReviewMode();
+  const [, setRelabeling] = useRelabeling();
   const [isSaving, setIsSaving] = useState(false);
   const [comments, setComments] = useState([]);
 
@@ -210,7 +214,12 @@ export function ObservationTally({ fetchNextImage }) {
           });
         }
         await loadUserLabeled();
-        fetchNextImage();
+        if (reviewMode) {
+          setSelection([]);
+          setAnimalCounts({});
+        }
+        setRelabeling(false);
+        await fetchNextImage();
       } else {
         alert("Failed to save observations.");
       }
@@ -373,6 +382,16 @@ export function ObservationTally({ fetchNextImage }) {
               loading={isSaving}
             >
               No Animals Visible
+            </Button>
+          )}
+          {reviewMode && (
+            <Button
+              size="sm"
+              variant="subtle"
+              color="gray"
+              onClick={() => setRelabeling(false)}
+            >
+              Cancel Re-label
             </Button>
           )}
         </Stack>
