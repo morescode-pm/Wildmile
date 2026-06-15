@@ -69,12 +69,12 @@ export function ImageAnnotation({ filters }) {
       setIsFavorite(currentImage.favorite || false);
       setNeedsReview(currentImage.needsReview || false);
       setFlagged(currentImage.flagged || false);
-      // Reset sizes and loading state when image changes to prevent stale boxes
+      // Reset dimensions and loading state when image changes to ensure synchronization
       setNaturalSize({ width: 0, height: 0 });
       setImageSize({ width: 0, height: 0 });
       setImageLoaded(false);
     }
-  }, [currentImage]);
+  }, [currentImage, setImageLoaded]);
 
   const handleToggleFavorite = async () => {
     try {

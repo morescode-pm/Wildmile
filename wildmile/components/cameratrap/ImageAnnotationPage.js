@@ -175,6 +175,15 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       );
       if (response.ok) {
         const image = await response.json();
+        // Pre-load the image before updating currentImage state to prevent flicker
+        if (image.publicURL) {
+          await new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // Resolve even on error to prevent blocking UI
+            img.src = image.publicURL;
+          });
+        }
         setCurrentImage(image);
       } else {
         if (response.status === 404) {
@@ -231,7 +240,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
   return (
     <div className={classes.fullViewport}>
       <CameraTrapTutorial />
-      <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
+      <LoadingOverlay visible={(pageLoading || isFetching) && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
         style={{ flex: 1, margin: 0, padding: "5px" }}
