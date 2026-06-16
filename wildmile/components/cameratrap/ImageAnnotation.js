@@ -305,7 +305,11 @@ export function ImageAnnotation({ filters }) {
                   <IconFocus2 />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Play Video">
+              <Tooltip
+                label={
+                  currentImage?.videoUrl ? "Play Video" : "No video available"
+                }
+              >
                 <ActionIcon
                   size="md"
                   onClick={() => setShowVideo(true)}
@@ -480,7 +484,13 @@ export function ImageAnnotation({ filters }) {
         size="lg"
       >
         {currentImage?.videoUrl && (
-          <video src={currentImage.videoUrl} controls autoPlay style={{ width: "100%", maxHeight: "80vh" }}>
+          <video
+            src={currentImage.videoUrl}
+            controls
+            autoPlay
+            muted
+            style={{ width: "100%", maxHeight: "80vh" }}
+          >
             Your browser does not support the video tag.
           </video>
         )}
