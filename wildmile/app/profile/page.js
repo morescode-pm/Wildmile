@@ -410,7 +410,7 @@ export default function ProfilePage() {
                       href={`/cameratrap/identify/${item.mediaId}`}
                       style={{ cursor: "pointer", overflow: "hidden" }}
                     >
-                      <Box style={{ position: "relative", paddingTop: "100%" }}>
+                      <Box style={{ position: "relative", paddingTop: "75%" }}>
                         <img
                           src={item.publicURL}
                           alt="Labeled image"
