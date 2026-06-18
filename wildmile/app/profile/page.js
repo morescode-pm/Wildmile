@@ -410,7 +410,7 @@ export default function ProfilePage() {
                       href={`/cameratrap/identify/${item.mediaId}`}
                       style={{ cursor: "pointer", overflow: "hidden" }}
                     >
-                      <Box style={{ position: "relative", paddingTop: "75%" }}>
+                      <Box style={{ position: "relative", paddingTop: "70%" }}>
                         <img
                           src={item.publicURL}
                           alt="Labeled image"
@@ -419,13 +419,21 @@ export default function ProfilePage() {
                             top: 0,
                             left: 0,
                             width: "100%",
-                            height: "100%",
+                            height: "110%",
                             objectFit: "cover",
                           }}
                         />
                       </Box>
                       <Box p="xs">
-                        <Text size="xs" fw={700} truncate>
+                          <Text
+                            size="xs"
+                            fw={700}
+                            truncate="end"
+                            style={{
+                              lineHeight: "16px",
+                              height: "16px"
+                            }}
+                          >
                           {item.species
                             ?.filter((s) => s.observationType === "animal")
                             .map((s) => s.commonName || s.scientificName)
