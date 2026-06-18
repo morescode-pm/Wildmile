@@ -288,60 +288,6 @@ export default function ProfilePage() {
               />
             </SimpleGrid>
 
-            {/* Recent History */}
-            {userStats?.recentHistory && userStats.recentHistory.length > 0 && (
-              <>
-                <Group justify="space-between" mt="lg">
-                  <Title order={3}>Recent Labeling History</Title>
-                  <ThemeIcon variant="light" color="blue" size="lg">
-                    <IconHistory size={20} />
-                  </ThemeIcon>
-                </Group>
-                <SimpleGrid cols={{ base: 2, sm: 3, md: 6 }} spacing="md">
-                  {userStats.recentHistory.map((item) => (
-                    <Card
-                      key={item.mediaId}
-                      withBorder
-                      shadow="sm"
-                      radius="md"
-                      p={0}
-                      component="a"
-                      href={`/cameratrap/identify/${item.mediaId}`}
-                      style={{ cursor: "pointer", overflow: "hidden" }}
-                    >
-                      <Box style={{ position: "relative", paddingTop: "100%" }}>
-                        <img
-                          src={item.publicURL}
-                          alt="Labeled image"
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </Box>
-                      <Box p="xs">
-                        <Text size="xs" fw={700} truncate>
-                          {item.species
-                            ?.filter((s) => s.observationType === "animal")
-                            .map((s) => s.commonName || s.scientificName)
-                            .join(", ") ||
-                            item.species?.[0]?.observationType ||
-                            "Blank"}
-                        </Text>
-                        <Text size="10px" c="dimmed">
-                          {new Date(item.timestamp).toLocaleDateString()}
-                        </Text>
-                      </Box>
-                    </Card>
-                  ))}
-                </SimpleGrid>
-              </>
-            )}
-
             {/* Top Species & Badges */}
             <Grid gutter="md">
               <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -441,6 +387,60 @@ export default function ProfilePage() {
                   ))}
                 </SimpleGrid>
               </Paper>
+            )}
+
+            {/* Recent History */}
+            {userStats?.recentHistory && userStats.recentHistory.length > 0 && (
+              <>
+                <Group justify="space-between" mt="lg">
+                  <Title order={3}>Recent Labeling History</Title>
+                  <ThemeIcon variant="light" color="blue" size="lg">
+                    <IconHistory size={20} />
+                  </ThemeIcon>
+                </Group>
+                <SimpleGrid cols={{ base: 2, sm: 3, md: 6 }} spacing="md">
+                  {userStats.recentHistory.map((item) => (
+                    <Card
+                      key={item.mediaId}
+                      withBorder
+                      shadow="sm"
+                      radius="md"
+                      p={0}
+                      component="a"
+                      href={`/cameratrap/identify/${item.mediaId}`}
+                      style={{ cursor: "pointer", overflow: "hidden" }}
+                    >
+                      <Box style={{ position: "relative", paddingTop: "100%" }}>
+                        <img
+                          src={item.publicURL}
+                          alt="Labeled image"
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Box>
+                      <Box p="xs">
+                        <Text size="xs" fw={700} truncate>
+                          {item.species
+                            ?.filter((s) => s.observationType === "animal")
+                            .map((s) => s.commonName || s.scientificName)
+                            .join(", ") ||
+                            item.species?.[0]?.observationType ||
+                            "Blank"}
+                        </Text>
+                        <Text size="10px" c="dimmed">
+                          {new Date(item.timestamp).toLocaleDateString()}
+                        </Text>
+                      </Box>
+                    </Card>
+                  ))}
+                </SimpleGrid>
+              </>
             )}
           </Stack>
         </Grid.Col>
