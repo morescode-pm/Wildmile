@@ -83,10 +83,13 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
 
   // Effect for initializing page: fetch deployments, then defaults, then initial image
   useEffect(() => {
+    let isMounted = true;
     const initializePage = async () => {
       setPageLoading(true);
       await fetchDeployments(); // Fetch deployments first
       const currentInitialFilters = await fetchFilterDefaults(); // Then fetch defaults
+
+      if (!isMounted) return;
       setAppliedFilters(currentInitialFilters); // Set state after fetching
 
       if (initialImageId) {
@@ -97,8 +100,12 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       setPageLoading(false);
     };
     initializePage();
+
+    return () => {
+      isMounted = false;
+    };
     // Adding initialImageId and fetchFilterDefaults to dependencies.
-  }, [initialImageId, fetchFilterDefaults]); // Removed reviewMode from here to prevent re-fetch on mode toggle
+  }, [initialImageId]); // Removed fetchFilterDefaults to prevent re-fetch
 
   const { user, loading: userLoading } = useUser();
 
@@ -297,6 +304,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   variant="light"
                   color="blue"
                   size="sm"
+                  id="review-mode-toggle"
                   leftSection={<IconEye size={18} />}
                   onClick={() => {
                     setReviewMode(true);

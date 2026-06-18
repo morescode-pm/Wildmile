@@ -4,6 +4,8 @@ import Observation from "models/cameratrap/Observation";
 import User from "models/User";
 import UserProgress from "models/users/UserProgress";
 import Species from "models/Species";
+import CameratrapMedia from "models/cameratrap/Media";
+import mongoose from "mongoose";
 // import { updateUserStats } from "lib/db/updateUserStats";
 
 // Update single user
@@ -132,6 +134,95 @@ export async function GET(request) {
       });
     }
 
+    // Calculate user volunteer hours
+    const userVolunteerHoursResult = await Observation.aggregate([
+      { $match: { creator: new mongoose.Types.ObjectId(userId) } },
+      { $sort: { createdAt: 1 } },
+      {
+        $group: {
+          _id: "$creator",
+          createdAtDates: { $push: "$createdAt" },
+        },
+      },
+      {
+        $addFields: {
+          timeDifferences: {
+            $map: {
+              input: { $range: [1, { $size: "$createdAtDates" }] },
+              as: "index",
+              in: {
+                $subtract: [
+                  { $arrayElemAt: ["$createdAtDates", "$$index"] },
+                  {
+                    $arrayElemAt: [
+                      "$createdAtDates",
+                      { $subtract: ["$$index", 1] },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      { $unwind: { path: "$timeDifferences" } },
+      {
+        $match: {
+          timeDifferences: { $lt: 3600000 }, // Less than 1 hour (3600000 ms)
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalHours: {
+            $sum: {
+              $divide: ["$timeDifferences", 3600000], // Convert ms to hours
+            },
+          },
+        },
+      },
+    ]);
+
+    const volunteerHours = userVolunteerHoursResult[0]?.totalHours || 0;
+
+    // Get recent labeling history (6 unique images)
+    const recentHistory = await Observation.aggregate([
+      { $match: { creator: new mongoose.Types.ObjectId(userId) } },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$mediaId",
+          latestObservation: { $first: "$$ROOT" },
+          species: {
+            $addToSet: {
+              scientificName: "$scientificName",
+              commonName: "$commonName",
+              observationType: "$observationType",
+            },
+          },
+        },
+      },
+      { $sort: { "latestObservation.createdAt": -1 } },
+      { $limit: 6 },
+      {
+        $lookup: {
+          from: "cameratrapmedias",
+          localField: "_id",
+          foreignField: "mediaID",
+          as: "media",
+        },
+      },
+      { $unwind: "$media" },
+      {
+        $project: {
+          mediaId: "$_id",
+          publicURL: "$media.publicURL",
+          timestamp: "$latestObservation.createdAt",
+          species: 1,
+        },
+      },
+    ]);
+
     const responseData = {
       user: {
         ...progress.user.toObject(),
@@ -150,10 +241,16 @@ export async function GET(request) {
       level: progress.level,
       domainRanks,
       topSpecies: enrichedTopSpecies,
-      uniqueSpeciesCount: [...new Set(animalObservations.map(o => o.scientificName).filter(Boolean))].length,
+      uniqueSpeciesCount: [
+        ...new Set(
+          animalObservations.map((o) => o.scientificName).filter(Boolean),
+        ),
+      ].length,
       totalImagesReviewed,
       totalAnimalsObserved,
       totalBlanksLogged,
+      volunteerHours,
+      recentHistory,
     };
 
     return NextResponse.json(responseData);

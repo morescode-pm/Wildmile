@@ -265,6 +265,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
       {/* Main Review Card */}
       {currentImage && !showLoading && (
         <div
+          id="review-mode-controls"
           style={{
             width: "100%",
             zIndex: 1
@@ -287,6 +288,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
               <Group justify="space-between" mt="md" style={{ width: "100%" }}>
                 <Tooltip label="Re-label">
                   <Button
+                    id="relabel-button"
                     variant="light"
                     color="red"
                     radius="xl"
@@ -300,6 +302,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
 
                 <Tooltip label="Confirm">
                   <Button
+                    id="confirm-button"
                     variant="filled"
                     color="green"
                     radius="xl"

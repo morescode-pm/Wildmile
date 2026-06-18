@@ -1,10 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Joyride, STATUS } from 'react-joyride';
-import { useTutorial } from './ContextCamera';
+import { useTutorial, useReviewMode, useRelabeling } from './ContextCamera';
 import { useUser } from 'lib/hooks';
 
 export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
+  const [reviewMode] = useReviewMode();
+  const [isRelabeling] = useRelabeling();
   const { user } = useUser();
   const [ready, setReady] = useState(false);
 
@@ -57,7 +59,33 @@ export const CameraTrapTutorial = () => {
       placement: 'top',
       skipBeacon: true,
     },
-  ], [user]);
+    {
+      target: '#review-mode-toggle',
+      content: 'Once you are comfortable with identification, try Review Mode! It lets you quickly confirm or correct the community consensus.',
+      placement: 'bottom',
+      skipBeacon: true,
+    },
+    ...(reviewMode && !isRelabeling ? [
+      {
+        target: '#review-mode-controls',
+        content: 'In Review Mode, we show you what others have observed. Your job is to verify if this matches what you see.',
+        placement: 'left',
+        skipBeacon: true,
+      },
+      {
+        target: '#confirm-button',
+        content: 'If the list is correct, click "Confirm". This helps us reach consensus faster!',
+        placement: 'top',
+        skipBeacon: true,
+      },
+      {
+        target: '#relabel-button',
+        content: 'If something is missing or incorrect, click "Re-label" to enter the standard identification mode and provide your own labels.',
+        placement: 'top',
+        skipBeacon: true,
+      },
+    ] : []),
+  ], [user, reviewMode, isRelabeling]);
 
   useEffect(() => {
     let timeoutId;
