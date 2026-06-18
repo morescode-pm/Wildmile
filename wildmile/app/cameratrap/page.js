@@ -104,6 +104,9 @@ export default async function Page() {
           {/* Pane 2: Leaderboard */}
           <GridCol span={{ base: 12, md: 4 }}>
             <Leaderboard stats={stats} />
+            <Text c="dimmed" ta="center" mb="md" size="sm">
+                Looking for your stats? Check the new account settings page! (top right)
+            </Text>
           </GridCol>
 
           {/* Pane 3: Favorite Image */}
