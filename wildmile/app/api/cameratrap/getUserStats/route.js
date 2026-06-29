@@ -26,9 +26,13 @@ export async function GET(request) {
 
     // Get user info
     // const user = await User.findById(userId, "profile roles");
-    const progress = await UserProgress.findOne({ user: userId });
+    let progress = await UserProgress.findOne({ user: userId });
+    if (!progress) {
+      progress = new UserProgress({ user: userId });
+    }
     await progress.checkAchievements();
-    // await progress.save();
+    await progress.save();
+
     // Get achievements with populated details
     await progress.populate([
       {
@@ -45,12 +49,12 @@ export async function GET(request) {
     ]);
 
     // Find the highest level RANK achievement that has been earned
-    const rankAchievements = progress.achievements
+    const rankAchievements = (progress.achievements || [])
       .filter(
         (a) =>
           a.achievement?.type === "RANK" && a.progress === 100 && a.earnedAt,
       )
-      .sort((a, b) => b.achievement.level - a.achievement.level);
+      .sort((a, b) => (b.achievement?.level || 0) - (a.achievement?.level || 0));
 
     // Get the avatar from the highest rank achievement or use poop emoji
     const avatar =
@@ -59,7 +63,7 @@ export async function GET(request) {
         : "💩";
 
     // Format achievements for response
-    const formattedAchievements = progress.achievements
+    const formattedAchievements = (progress.achievements || [])
       .filter((a) => a.achievement)
       .map((achievement) => ({
         id: achievement.achievement._id,
@@ -115,24 +119,8 @@ export async function GET(request) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Enrich with preferred common names from Species model
-    const enrichedTopSpecies = await Promise.all(
-      topSpeciesList.map(async (s) => {
-        const speciesDoc = await Species.findOne({ name: s.scientificName }).select("preferred_common_name").lean();
-        return {
-          ...s,
-          commonName: speciesDoc?.preferred_common_name || s.scientificName,
-        };
-      })
-    );
-
-    // Convert domainRanks Map to object for JSON response
-    const domainRanks = {};
-    if (progress.domainRanks) {
-      progress.domainRanks.forEach((value, key) => {
-        domainRanks[key] = value;
-      });
-    }
+    // Get all unique scientific names for enrichment
+    const topSpeciesNames = topSpeciesList.map((s) => s.scientificName);
 
     // Calculate user volunteer hours
     const userVolunteerHoursResult = await Observation.aggregate([
@@ -196,7 +184,6 @@ export async function GET(request) {
           species: {
             $addToSet: {
               scientificName: "$scientificName",
-              commonName: "$commonName",
               observationType: "$observationType",
             },
           },
@@ -212,7 +199,11 @@ export async function GET(request) {
           as: "media",
         },
       },
-      { $unwind: "$media" },
+      {
+        $addFields: {
+          media: { $arrayElemAt: ["$media", 0] }
+        }
+      },
       {
         $project: {
           mediaId: "$_id",
@@ -223,9 +214,62 @@ export async function GET(request) {
       },
     ]);
 
+    // Collect all species names for bulk lookup
+    const historySpeciesNames = recentHistory.flatMap((item) =>
+      item.species
+        .filter((s) => s.observationType === "animal" && s.scientificName)
+        .map((s) => s.scientificName)
+    );
+
+    const allScientificNames = [
+      ...new Set([...topSpeciesNames, ...historySpeciesNames]),
+    ];
+
+    // Bulk lookup species for enrichment
+    const speciesDocs = await Species.find({
+      name: { $in: allScientificNames },
+    })
+      .select("name preferred_common_name")
+      .lean();
+
+    const speciesMap = new Map(
+      speciesDocs.map((d) => [d.name, d.preferred_common_name])
+    );
+
+    // Enrich top species
+    const enrichedTopSpecies = topSpeciesList.map((s) => ({
+      ...s,
+      commonName: speciesMap.get(s.scientificName) || s.scientificName,
+    }));
+
+    // Enrich recent history
+    const enrichedRecentHistory = recentHistory.map((item) => ({
+      ...item,
+      species: item.species.map((s) => ({
+        ...s,
+        commonName:
+          s.observationType === "animal"
+            ? speciesMap.get(s.scientificName) || s.scientificName
+            : s.scientificName,
+      })),
+    }));
+
+    // Convert domainRanks Map to object for JSON response
+    const domainRanks = {};
+    if (progress.domainRanks) {
+      progress.domainRanks.forEach((value, key) => {
+        domainRanks[key] = value;
+      });
+    }
+
+
+    const userDoc = progress.user && typeof progress.user.toObject === 'function'
+      ? progress.user.toObject()
+      : { _id: userId, profile: {}, roles: [] };
+
     const responseData = {
       user: {
-        ...progress.user.toObject(),
+        ...userDoc,
         avatar,
       },
       stats: {
@@ -250,7 +294,7 @@ export async function GET(request) {
       totalAnimalsObserved,
       totalBlanksLogged,
       volunteerHours,
-      recentHistory,
+      recentHistory: enrichedRecentHistory,
     };
 
     return NextResponse.json(responseData);
