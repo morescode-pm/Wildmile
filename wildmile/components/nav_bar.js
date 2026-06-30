@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import {
   Image,
   Group,
@@ -29,7 +30,6 @@ import { useUser } from "../lib/hooks";
 import { usePathname } from "next/navigation";
 import cx from "clsx";
 import classes from "styles/nav.module.css";
-import { useState } from "react";
 const nav_tabs = [
   {
     label: "Home",
@@ -253,6 +253,7 @@ export function HeaderNav({ children }) {
               opened={drawerOpened}
               onClick={toggleDrawer}
               className={classes.hiddenDesktop}
+              aria-label="Navigation"
             />
           </Group>
         </header>
@@ -292,15 +293,19 @@ export function HeaderNav({ children }) {
                     onClick={closeDrawer}
                     styles={{ label: { fontSize: rem(16) } }}
                   />
+                  <Divider color="dark.4" />
                   {user.roles && user.roles.length > 0 && (
-                    <NavLink
-                      label="Admin"
-                      leftSection={<IconBriefcase size="1.2rem" stroke={1.5} />}
-                      component={Link}
-                      href="/admin"
-                      onClick={closeDrawer}
-                      styles={{ label: { fontSize: rem(16) } }}
-                    />
+                    <>
+                      <NavLink
+                        label="Admin"
+                        leftSection={<IconBriefcase size="1.2rem" stroke={1.5} />}
+                        component={Link}
+                        href="/admin"
+                        onClick={closeDrawer}
+                        styles={{ label: { fontSize: rem(16) } }}
+                      />
+                      <Divider color="dark.4" />
+                    </>
                   )}
                   <NavLink
                     label="Logout"
@@ -318,32 +323,36 @@ export function HeaderNav({ children }) {
             <Divider my="sm" color={"dark"} />
 
             <Stack gap={0}>
-              {nav_tabs.map((tab) => (
-                <NavLink
-                  key={tab.label}
-                  label={tab.label}
-                  component={Link}
-                  href={tab.link}
-                  onClick={tab.subitems ? (e) => e.preventDefault() : closeDrawer}
-                  childrenOffset={28}
-                  className={classes.navLink}
-                  styles={{
-                    label: { fontSize: rem(18), fontWeight: 600, padding: `${rem(8)} 0` },
-                  }}
-                >
-                  {tab.subitems?.map((sub) => (
-                    <NavLink
-                      key={sub.label}
-                      label={sub.label}
-                      component={Link}
-                      href={sub.link}
-                      onClick={closeDrawer}
-                      styles={{
-                        label: { fontSize: rem(16), padding: `${rem(4)} 0` },
-                      }}
-                    />
-                  ))}
-                </NavLink>
+              {nav_tabs.map((tab, index) => (
+                <React.Fragment key={tab.label}>
+                  <NavLink
+                    label={tab.label}
+                    component={Link}
+                    href={tab.link}
+                    onClick={tab.subitems ? (e) => e.preventDefault() : closeDrawer}
+                    childrenOffset={28}
+                    className={classes.navLink}
+                    styles={{
+                      label: { fontSize: rem(18), fontWeight: 600, padding: `${rem(8)} 0` },
+                    }}
+                  >
+                    {tab.subitems?.map((sub, subIndex) => (
+                      <React.Fragment key={sub.label}>
+                        <NavLink
+                          label={sub.label}
+                          component={Link}
+                          href={sub.link}
+                          onClick={closeDrawer}
+                          styles={{
+                            label: { fontSize: rem(16), padding: `${rem(4)} 0` },
+                          }}
+                        />
+                        {subIndex < tab.subitems.length - 1 && <Divider color="dark.4" variant="dotted" />}
+                      </React.Fragment>
+                    ))}
+                  </NavLink>
+                  {index < nav_tabs.length - 1 && <Divider color="dark.4" />}
+                </React.Fragment>
               ))}
             </Stack>
 

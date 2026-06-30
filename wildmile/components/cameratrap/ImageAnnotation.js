@@ -167,7 +167,7 @@ export function ImageAnnotation({ filters }) {
   return (
     <>
       <Box id="image-annotation-card" h="100%" p={0}>
-        <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
+        <Stack gap={4} h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{
             position: "relative",
@@ -285,7 +285,7 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt={4}>
+        <Stack gap={4} mt={4}>
           <Group justify="space-between" wrap="nowrap">
             <Group gap={4} id="image-action-buttons" wrap="nowrap">
               <ActionIcon

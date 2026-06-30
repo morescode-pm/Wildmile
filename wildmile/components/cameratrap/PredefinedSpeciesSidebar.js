@@ -335,7 +335,7 @@ export default function PredefinedSpeciesSidebar({
       {selectedCategory && (
         <ScrollArea
           style={{ flex: selectedCategory === 'selected' ? 'none' : 1 }}
-          mah={selectedCategory === 'selected' ? 'none' : { base: 185, sm: "none" }}
+          mah={selectedCategory === 'selected' ? 'none' : { base: 202, sm: "none" }}
           offsetScrollbars
         >
           {selectedCategory === "all" ? (

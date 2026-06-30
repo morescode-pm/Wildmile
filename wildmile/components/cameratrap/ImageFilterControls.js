@@ -12,6 +12,7 @@ import {
   Text,
   Box,
   NumberInput,
+  rem,
 } from "@mantine/core";
 import {
   IconX,
@@ -127,9 +128,9 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
           id="get-images-button"
           size="sm"
           onClick={handleApplyFilters}
-          leftSection={<IconRefresh size={18} />}
+          style={{ width: rem(36), height: rem(36), padding: 0 }}
         >
-          <Box visibleFrom="xs">Get Images</Box>
+          <IconRefresh size={18} />
         </Button>
         {onJumpToEarliest && (
           <Button
@@ -139,24 +140,22 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
               onApplyFilters(filters);
               onJumpToEarliest(filters);
             }}
-            leftSection={<IconChevronsLeft size={18} />}
             variant="light"
             color="teal"
+            style={{ width: rem(36), height: rem(36), padding: 0 }}
           >
-            <Box visibleFrom="xs">Earliest</Box>
+            <IconChevronsLeft size={18} />
           </Button>
         )}
         <Button
           id="filters-button"
           size="sm"
           onClick={open}
-          leftSection={<IconAdjustmentsHorizontal size={18} />}
           variant={hasActiveFilters ? "filled" : "outline"}
           color={hasActiveFilters ? "yellow" : "grey"}
+          style={{ width: rem(36), height: rem(36), padding: 0 }}
         >
-          <Box visibleFrom="xs">
-            {hasActiveFilters ? "Filters Active" : "Filters"}
-          </Box>
+          <IconAdjustmentsHorizontal size={18} />
         </Button>
       </Group>
 

@@ -13,6 +13,7 @@ import {
   GridCol,
   ScrollArea,
   Box,
+  rem,
 } from "@mantine/core";
 import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded, useIsFetching } from "./ContextCamera";
 import { useUser } from "lib/hooks";
@@ -254,8 +255,8 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
-        style={{ flex: 1, margin: 0, padding: "5px" }}
-        gutter="xs"
+        style={{ flex: 1, margin: 0, padding: "2px" }}
+        gutter={4}
       >
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
@@ -269,45 +270,36 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
           <Paper withBorder p="sm" radius="md" style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
             {!reviewMode && (
               <Group id="main-navigation-bar" gap={4} justify="center" mb={4} wrap="nowrap" style={{ width: "100%" }}>
-                <Group gap={4} wrap="nowrap">
-                  <Tooltip label="Previous Image">
-                    <Button
-                      id="prev-image-button"
-                      onClick={() => handleNavigateImage("previous")}
-                      variant="default"
-                      radius="md"
-                      size="sm"
-                      loading={isFetching}
-                      px={{ base: 8, xs: "md" }}
-                    >
-                      <IconArrowLeft size={18} />
-                    </Button>
-                  </Tooltip>
-
-                  <Tooltip label="Next Image">
-                    <Button
-                      id="next-image-button"
-                      onClick={() => handleNavigateImage("next")}
-                      variant="default"
-                      radius="md"
-                      size="sm"
-                      loading={isFetching}
-                      px={{ base: 8, xs: "md" }}
-                    >
-                      <IconArrowRight size={18} />
-                    </Button>
-                  </Tooltip>
+                <Tooltip label="Previous Image">
                   <Button
-                    id="help-button"
+                    id="prev-image-button"
+                    onClick={() => handleNavigateImage("previous")}
+                    variant="default"
+                    radius="md"
                     size="sm"
-                    color="green"
-                    variant="outline"
-                    onClick={() => setRunTutorial((prev) => prev + 1)}
+                    loading={isFetching}
                     px={{ base: 8, xs: "md" }}
+                    style={{ width: rem(36), height: rem(36), padding: 0 }}
                   >
-                    <IconHelp size={18} />
+                    <IconArrowLeft size={18} />
                   </Button>
-                </Group>
+                </Tooltip>
+
+                <Tooltip label="Next Image">
+                  <Button
+                    id="next-image-button"
+                    onClick={() => handleNavigateImage("next")}
+                    variant="default"
+                    radius="md"
+                    size="sm"
+                    loading={isFetching}
+                    px={{ base: 8, xs: "md" }}
+                    style={{ width: rem(36), height: rem(36), padding: 0 }}
+                  >
+                    <IconArrowRight size={18} />
+                  </Button>
+                </Tooltip>
+
                 <ImageFilterControls
                   initialFilters={appliedFilters}
                   onApplyFilters={handleApplyFilters}
@@ -315,20 +307,33 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   deployments={deployments}
                   setRunTutorial={setRunTutorial}
                 />
+
                 <Button
                   variant="light"
                   color="blue"
                   size="sm"
                   id="review-mode-toggle"
-                  leftSection={<IconEye size={18} />}
                   onClick={() => {
                     setReviewMode(true);
                     setRelabeling(false);
                     fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                   }}
                   px={{ base: 8, xs: "md" }}
+                  style={{ width: rem(36), height: rem(36), padding: 0 }}
                 >
-                  <Box visibleFrom="xs">Review Mode</Box>
+                  <IconEye size={18} />
+                </Button>
+
+                <Button
+                  id="help-button"
+                  size="sm"
+                  color="green"
+                  variant="outline"
+                  onClick={() => setRunTutorial((prev) => prev + 1)}
+                  px={{ base: 8, xs: "md" }}
+                  style={{ width: rem(36), height: rem(36), padding: 0 }}
+                >
+                  <IconHelp size={18} />
                 </Button>
               </Group>
             )}
