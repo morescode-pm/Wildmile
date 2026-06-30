@@ -10,6 +10,7 @@ import {
   ActionIcon,
   Drawer,
   Text,
+  Box,
   NumberInput,
 } from "@mantine/core";
 import {
@@ -121,14 +122,14 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group gap={4} id="filter-controls-group">
+      <Group gap={4} id="filter-controls-group" wrap="nowrap">
         <Button
           id="get-images-button"
           size="sm"
           onClick={handleApplyFilters}
           leftSection={<IconRefresh size={18} />}
         >
-          Get Images
+          <Box visibleFrom="xs">Get Images</Box>
         </Button>
         {onJumpToEarliest && (
           <Button
@@ -142,7 +143,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
             variant="light"
             color="teal"
           >
-            Earliest
+            <Box visibleFrom="xs">Earliest</Box>
           </Button>
         )}
         <Button
@@ -153,7 +154,9 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
           variant={hasActiveFilters ? "filled" : "outline"}
           color={hasActiveFilters ? "yellow" : "grey"}
         >
-          {hasActiveFilters ? "Filters Active" : "Filters"}
+          <Box visibleFrom="xs">
+            {hasActiveFilters ? "Filters Active" : "Filters"}
+          </Box>
         </Button>
       </Group>
 

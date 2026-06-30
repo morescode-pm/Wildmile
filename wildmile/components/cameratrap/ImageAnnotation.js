@@ -46,7 +46,17 @@ export function ImageAnnotation({ filters }) {
   const imageSize = useMemo(() => {
     const width = currentImage?.naturalWidth || naturalSize.width;
     const height = currentImage?.naturalHeight || naturalSize.height;
-    if (width > 0 && containerWidth > 0 && containerHeight > 0) {
+    if (width > 0 && containerWidth > 0) {
+      // In mobile mode, if containerHeight is 0 or very small (auto height),
+      // we only scale by width to let the container grow.
+      if (containerHeight < 100) {
+        const ratio = containerWidth / width;
+        return {
+          width: containerWidth,
+          height: height * ratio,
+        };
+      }
+
       const ratio = Math.min(containerWidth / width, containerHeight / height);
       return {
         width: width * ratio,
@@ -161,8 +171,8 @@ export function ImageAnnotation({ filters }) {
         <Box
           style={{
             position: "relative",
-            flex: 1,
-            minHeight: 0,
+            flex: "1 1 auto",
+            minHeight: imageSize.height > 0 ? imageSize.height : 300,
             backgroundColor: "var(--mantine-color-dark-8)",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
@@ -193,7 +203,7 @@ export function ImageAnnotation({ filters }) {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%",
+                  height: containerHeight < 100 ? "auto" : "100%",
                   width: "100%",
                 }}
               >

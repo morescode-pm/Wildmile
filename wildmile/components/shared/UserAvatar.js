@@ -64,28 +64,32 @@ export function UserAvatar({ userId, size = "sm" }) {
       shadow="md"
       opened={opened}
     >
-      <Avatar
-        size={size}
-        src={
-          userStats?.domainRanks?.CAMERATRAP?.currentRank?.badge ||
-          userStats?.user?.avatar ||
-          "💩"
-        }
-        radius="xl"
-        style={{ cursor: "pointer" }}
-        onMouseEnter={open}
-        onMouseLeave={close}
-      ></Avatar>
-
       <Popover.Target>
-        <div onMouseEnter={open} onMouseLeave={close}>
-          <Text size="sm" fw={500}>
-            {userStats?.user?.profile?.name || "Anonymous"}
-          </Text>
-          <Text size="xs" c="dimmed">
-            Level {userStats?.level || 1}
-          </Text>
-        </div>
+        <Group
+          gap="xs"
+          wrap="nowrap"
+          style={{ cursor: "pointer", minWidth: 0, flex: 1 }}
+          onMouseEnter={open}
+          onMouseLeave={close}
+        >
+          <Avatar
+            size={size}
+            src={
+              userStats?.domainRanks?.CAMERATRAP?.currentRank?.badge ||
+              userStats?.user?.avatar ||
+              "💩"
+            }
+            radius="xl"
+          />
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <Text size="sm" fw={500} truncate="end" maw={150}>
+              {userStats?.user?.profile?.name || "Anonymous"}
+            </Text>
+            <Text size="xs" c="dimmed">
+              Level {userStats?.level || 1}
+            </Text>
+          </div>
+        </Group>
       </Popover.Target>
       <Popover.Dropdown onMouseEnter={open} onMouseLeave={close}>
         <Stack gap="xs">

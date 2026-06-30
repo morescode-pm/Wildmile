@@ -12,6 +12,7 @@ import {
   ScrollArea,
   Avatar,
   UnstyledButton,
+  NavLink,
   Text,
   Center,
   rem,
@@ -282,40 +283,69 @@ export function HeaderNav({ children }) {
                   </div>
                 </Group>
 
-                <Stack gap="xs" mt="md">
-                  <Link href="/profile" onClick={closeDrawer} className={classes.subLink}>
-                    <Group gap="sm">
-                      <IconSettings size="1.2rem" stroke={1.5} />
-                      <Text size="md">Account settings</Text>
-                    </Group>
-                  </Link>
+                <Stack gap={0} mt="md">
+                  <NavLink
+                    label="Account settings"
+                    leftSection={<IconSettings size="1.2rem" stroke={1.5} />}
+                    component={Link}
+                    href="/profile"
+                    onClick={closeDrawer}
+                    styles={{ label: { fontSize: rem(16) } }}
+                  />
                   {user.roles && user.roles.length > 0 && (
-                    <Link href="/admin" onClick={closeDrawer} className={classes.subLink}>
-                      <Group gap="sm">
-                        <IconBriefcase size="1.2rem" stroke={1.5} />
-                        <Text size="md">Admin</Text>
-                      </Group>
-                    </Link>
+                    <NavLink
+                      label="Admin"
+                      leftSection={<IconBriefcase size="1.2rem" stroke={1.5} />}
+                      component={Link}
+                      href="/admin"
+                      onClick={closeDrawer}
+                      styles={{ label: { fontSize: rem(16) } }}
+                    />
                   )}
-                  <UnstyledButton
+                  <NavLink
+                    label="Logout"
+                    leftSection={<IconLogout size="1.2rem" stroke={1.5} />}
                     onClick={() => {
                       handleLogout();
                       closeDrawer();
                     }}
-                    className={classes.subLink}
-                  >
-                    <Group gap="sm">
-                      <IconLogout size="1.2rem" stroke={1.5} />
-                      <Text size="md">Logout</Text>
-                    </Group>
-                  </UnstyledButton>
+                    styles={{ label: { fontSize: rem(16) } }}
+                  />
                 </Stack>
               </Box>
             ) : null}
 
             <Divider my="sm" color={"dark"} />
 
-            <Stack gap={0}>{items}</Stack>
+            <Stack gap={0}>
+              {nav_tabs.map((tab) => (
+                <NavLink
+                  key={tab.label}
+                  label={tab.label}
+                  component={Link}
+                  href={tab.link}
+                  onClick={tab.subitems ? (e) => e.preventDefault() : closeDrawer}
+                  childrenOffset={28}
+                  className={classes.navLink}
+                  styles={{
+                    label: { fontSize: rem(18), fontWeight: 600, padding: `${rem(8)} 0` },
+                  }}
+                >
+                  {tab.subitems?.map((sub) => (
+                    <NavLink
+                      key={sub.label}
+                      label={sub.label}
+                      component={Link}
+                      href={sub.link}
+                      onClick={closeDrawer}
+                      styles={{
+                        label: { fontSize: rem(16), padding: `${rem(4)} 0` },
+                      }}
+                    />
+                  ))}
+                </NavLink>
+              ))}
+            </Stack>
 
             <Divider my="sm" color={"dark"} />
             {!user && (

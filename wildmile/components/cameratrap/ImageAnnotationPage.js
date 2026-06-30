@@ -260,49 +260,54 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
           style={{
-            height: "calc(100vh - 70px)",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
+          h={{ base: "auto", md: "calc(100vh - 70px)" }}
         >
-          <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+          <Paper withBorder p="sm" radius="md" style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
             {!reviewMode && (
-              <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
-                <Tooltip label="Previous Image">
-                  <Button
-                    id="prev-image-button"
-                    onClick={() => handleNavigateImage("previous")}
-                    variant="default"
-                    radius="md"
-                    size="sm"
-                    loading={isFetching}
-                  >
-                    <IconArrowLeft size={18} />
-                  </Button>
-                </Tooltip>
+              <Group id="main-navigation-bar" gap={4} justify="center" mb={4} wrap="nowrap" style={{ width: "100%" }}>
+                <Group gap={4} wrap="nowrap">
+                  <Tooltip label="Previous Image">
+                    <Button
+                      id="prev-image-button"
+                      onClick={() => handleNavigateImage("previous")}
+                      variant="default"
+                      radius="md"
+                      size="sm"
+                      loading={isFetching}
+                      px={{ base: 8, xs: "md" }}
+                    >
+                      <IconArrowLeft size={18} />
+                    </Button>
+                  </Tooltip>
 
-                <Tooltip label="Next Image">
+                  <Tooltip label="Next Image">
+                    <Button
+                      id="next-image-button"
+                      onClick={() => handleNavigateImage("next")}
+                      variant="default"
+                      radius="md"
+                      size="sm"
+                      loading={isFetching}
+                      px={{ base: 8, xs: "md" }}
+                    >
+                      <IconArrowRight size={18} />
+                    </Button>
+                  </Tooltip>
                   <Button
-                    id="next-image-button"
-                    onClick={() => handleNavigateImage("next")}
-                    variant="default"
-                    radius="md"
+                    id="help-button"
                     size="sm"
-                    loading={isFetching}
+                    color="green"
+                    variant="outline"
+                    onClick={() => setRunTutorial((prev) => prev + 1)}
+                    px={{ base: 8, xs: "md" }}
                   >
-                    <IconArrowRight size={18} />
+                    <IconHelp size={18} />
                   </Button>
-                </Tooltip>
-                <Button
-                  id="help-button"
-                  size="sm"
-                  color="green"
-                  variant="outline"
-                  onClick={() => setRunTutorial((prev) => prev + 1)}
-                >
-                  <IconHelp size={18} />
-                </Button>
+                </Group>
                 <ImageFilterControls
                   initialFilters={appliedFilters}
                   onApplyFilters={handleApplyFilters}
@@ -321,9 +326,9 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     setRelabeling(false);
                     fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                   }}
+                  px={{ base: 8, xs: "md" }}
                 >
                   <Box visibleFrom="xs">Review Mode</Box>
-                  <Box hiddenFrom="xs"><IconEye size={18} /></Box>
                 </Button>
               </Group>
             )}

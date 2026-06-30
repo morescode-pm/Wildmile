@@ -285,7 +285,7 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   </Text>
                 )}
               </Stack>
-              <Group justify="space-between" mt="md" style={{ width: "100%" }}>
+              <Group justify="space-between" mt="md" style={{ width: "100%" }} wrap="nowrap" gap="xs">
                 <Tooltip label="Re-label">
                   <Button
                     id="relabel-button"
@@ -295,6 +295,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
                     size="lg"
                     leftSection={<IconX size={24} />}
                     onClick={handleRelabel}
+                    flex={1}
+                    px={{ base: 10, xs: "xl" }}
                   >
                     Re-label
                   </Button>
@@ -310,6 +312,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
                     rightSection={<IconCheck size={24} />}
                     onClick={handleConfirm}
                     loading={isSaving}
+                    flex={1}
+                    px={{ base: 10, xs: "xl" }}
                   >
                     Confirm
                   </Button>
