@@ -2,6 +2,7 @@
 import {
   Image,
   Group,
+  Stack,
   Button,
   Divider,
   Menu,
@@ -267,19 +268,70 @@ export function HeaderNav({ children }) {
           <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
             <Divider my="sm" color={"dark"} />
 
-            {user && user ? items : null}
+            {user ? (
+              <Box px="md" pb="md">
+                <Group>
+                  <Avatar src={photoSrc} radius="xl" size={40} />
+                  <div style={{ flex: 1 }}>
+                    <Text size="sm" fw={500}>
+                      {user.profile?.name || "Username"}
+                    </Text>
+                    <Text c="dimmed" size="xs">
+                      {user.email}
+                    </Text>
+                  </div>
+                </Group>
+
+                <Stack gap="xs" mt="md">
+                  <Link href="/profile" onClick={closeDrawer} className={classes.subLink}>
+                    <Group gap="sm">
+                      <IconSettings size="1.2rem" stroke={1.5} />
+                      <Text size="md">Account settings</Text>
+                    </Group>
+                  </Link>
+                  {user.roles && user.roles.length > 0 && (
+                    <Link href="/admin" onClick={closeDrawer} className={classes.subLink}>
+                      <Group gap="sm">
+                        <IconBriefcase size="1.2rem" stroke={1.5} />
+                        <Text size="md">Admin</Text>
+                      </Group>
+                    </Link>
+                  )}
+                  <UnstyledButton
+                    onClick={() => {
+                      handleLogout();
+                      closeDrawer();
+                    }}
+                    className={classes.subLink}
+                  >
+                    <Group gap="sm">
+                      <IconLogout size="1.2rem" stroke={1.5} />
+                      <Text size="md">Logout</Text>
+                    </Group>
+                  </UnstyledButton>
+                </Stack>
+              </Box>
+            ) : null}
 
             <Divider my="sm" color={"dark"} />
-            <Group position="center" grow pb="xl" px="md">
-              <Link href={getLoginUrl()}>
-                <Button variant="default" fullWidth>
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button fullWidth>Sign up</Button>
-              </Link>
-            </Group>
+
+            <Stack gap={0}>{items}</Stack>
+
+            <Divider my="sm" color={"dark"} />
+            {!user && (
+              <Group justify="center" grow pb="xl" px="md">
+                <Link href={getLoginUrl()} onClick={closeDrawer}>
+                  <Button variant="default" fullWidth size="md">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/signup" onClick={closeDrawer}>
+                  <Button fullWidth size="md">
+                    Sign up
+                  </Button>
+                </Link>
+              </Group>
+            )}
           </ScrollArea>
         </Drawer>
       </Box>

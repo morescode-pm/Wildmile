@@ -163,9 +163,12 @@ export function ImageAnnotation({ filters }) {
             position: "relative",
             flex: 1,
             minHeight: 0,
-            backgroundColor: "black",
+            backgroundColor: "var(--mantine-color-dark-8)",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <TransformWrapper
@@ -272,9 +275,9 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="xs">
-          <Group justify="space-between">
-            <Group gap="xs" id="image-action-buttons">
+        <Stack gap="xs" mt={4}>
+          <Group justify="space-between" wrap="nowrap">
+            <Group gap={4} id="image-action-buttons" wrap="nowrap">
               <ActionIcon
                 size="md"
                 variant="outline"
@@ -344,7 +347,7 @@ export function ImageAnnotation({ filters }) {
                 inline
                 label={currentImage?.favoriteCount}
                 disabled={!currentImage?.favoriteCount}
-                size={16}
+                size={14}
               >
                 <ActionIcon
                   size="md"
@@ -356,21 +359,21 @@ export function ImageAnnotation({ filters }) {
                   variant={isFavorite ? "filled" : "outline"}
                 >
                   {isFavorite ? (
-                    <IconHeartFilled size={22} />
+                    <IconHeartFilled size={20} />
                   ) : (
-                    <IconHeartPlus size={22} />
+                    <IconHeartPlus size={20} />
                   )}
                 </ActionIcon>
               </Indicator>
             </Group>
-            <Group gap="xs">
-              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
-                Time: {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
+            <Stack gap={0} align="flex-end">
+              <Text size="xs" c="dimmed" style={{ fontFamily: "monospace", fontSize: '0.65rem' }}>
+                {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
               </Text>
-              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
+              <Text size="xs" c="dimmed" style={{ fontFamily: "monospace", fontSize: '0.65rem' }}>
                 ID: {currentImage?.mediaID || 'N/A'}
               </Text>
-            </Group>
+            </Stack>
           </Group>
 
           <Group gap="xs" style={{ minHeight: 30 }}>

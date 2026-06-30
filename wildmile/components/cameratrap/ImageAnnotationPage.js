@@ -12,6 +12,7 @@ import {
   Grid,
   GridCol,
   ScrollArea,
+  Box,
 } from "@mantine/core";
 import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded, useIsFetching } from "./ContextCamera";
 import { useUser } from "lib/hooks";
@@ -312,12 +313,21 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                   }}
                 >
-                  Review Mode
+                  <Box visibleFrom="xs">Review Mode</Box>
+                </Button>
+                <Button
+                  id="help-button"
+                  size="sm"
+                  color="green"
+                  variant="outline"
+                  onClick={() => setRunTutorial((prev) => prev + 1)}
+                >
+                  <IconHelp size={18} />
                 </Button>
               </Group>
             )}
             {reviewMode && (
-              <Group justify="center" mb={4}>
+              <Group justify="center" mb={4} wrap="nowrap">
                 {isRelabeling ? (
                   <Button
                     variant="light"
@@ -326,10 +336,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     leftSection={<IconEye size={18} />}
                     onClick={() => setRelabeling(false)}
                   >
-                    Back to Review
+                    <Box visibleFrom="xs">Back to Review</Box>
                   </Button>
                 ) : (
-                  <Group gap={4}>
+                  <Group gap={4} wrap="nowrap">
                     <Button
                       variant="subtle"
                       color="gray"
@@ -341,7 +351,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                         setRelabeling(false);
                       }}
                     >
-                      Exit Review Mode
+                      <Box visibleFrom="xs">Exit Review Mode</Box>
                     </Button>
                   </Group>
                 )}

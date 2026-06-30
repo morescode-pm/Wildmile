@@ -274,17 +274,6 @@ export default function PredefinedSpeciesSidebar({
             </ActionIcon>
           )}
         </Group>
-        <Button
-          id="help-button"
-          size="xs"
-          color="green"
-          variant="outline"
-          onClick={() => setRunTutorial((prev) => prev + 1)}
-          leftSection={<IconHelp size={16} />}
-          style={{ width: 110 }}
-        >
-          Help
-        </Button>
       </Group>
 
       <Group gap={4} wrap="nowrap">
@@ -344,7 +333,11 @@ export default function PredefinedSpeciesSidebar({
       />
 
       {selectedCategory && (
-        <ScrollArea style={{ flex: 1 }} offsetScrollbars>
+        <ScrollArea
+          style={{ flex: 1 }}
+          mah={{ base: 185, sm: "none" }}
+          offsetScrollbars
+        >
           {selectedCategory === "all" ? (
             <Stack gap="md">
               {!isFilterActive && recentSpecies.length > 0 && (

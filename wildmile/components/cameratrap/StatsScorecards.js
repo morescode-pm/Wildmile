@@ -44,17 +44,17 @@ export function StatsScorecards({ stats }) {
   ];
 
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing="md">
+    <SimpleGrid cols={{ base: 2, sm: 2, md: 3, lg: 5 }} spacing={{ base: "xs", sm: "md" }}>
       {scorecardData.map((item) => (
         <Card key={item.title} withBorder padding="xs" radius="sm">
-          <Group justify="space-between">
-            <Text size="xs" c="dimmed" fw={500} tt="uppercase">
+          <Group justify="space-between" wrap="nowrap">
+            <Text size="xs" c="dimmed" fw={500} tt="uppercase" style={{ lineHeight: 1.1 }}>
               {item.title}
             </Text>
-            <item.icon size={20} color={`var(--mantine-color-${item.color}-6)`} />
+            <item.icon size={16} color={`var(--mantine-color-${item.color}-6)`} style={{ flexShrink: 0 }} />
           </Group>
-          <Group align="flex-end" gap="xs" mt="sm">
-            <Text size="xl" fw={700}>
+          <Group align="flex-end" gap="xs" mt="xs">
+            <Text size="lg" fw={700}>
               {item.value}
             </Text>
           </Group>
