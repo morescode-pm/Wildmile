@@ -123,12 +123,20 @@ export function HeaderNav({ children }) {
           withinPortal
         >
           <Menu.Target>
-            <Link href={link.link} className={classes.link}>
-              <Center>
+            <UnstyledButton
+              component={Link}
+              href={link.link}
+              className={classes.link}
+            >
+              <Center inline>
                 <span className={classes.linkLabel}>{link.label}</span>
-                <IconChevronDown size={15} stroke={2.5} />
+                <IconChevronDown
+                  size={rem(14)}
+                  stroke={2.5}
+                  style={{ marginLeft: rem(5) }}
+                />
               </Center>
-            </Link>
+            </UnstyledButton>
           </Menu.Target>
           <Menu.Dropdown>{menuItems}</Menu.Dropdown>
         </Menu>
@@ -187,7 +195,7 @@ export function HeaderNav({ children }) {
               visibleFrom="sm"
               className={classes.hiddenMobile}
             >
-              {user && user ? items : null}
+              {items}
             </Group>
 
             <Group className={classes.hiddenMobile}>

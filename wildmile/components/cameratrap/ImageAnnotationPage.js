@@ -279,10 +279,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     size="sm"
                     loading={isFetching}
                     leftSection={<IconArrowLeft size={18} />}
-                    px={{ base: 8, xs: "md" }}
+                    px={{ base: 8, sm: "md" }}
                     style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <Box visibleFrom="sm">Prev</Box>
+                    <Box visibleFrom="xs">Prev</Box>
                   </Button>
                 </Tooltip>
 
@@ -295,10 +295,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     size="sm"
                     loading={isFetching}
                     rightSection={<IconArrowRight size={18} />}
-                    px={{ base: 8, xs: "md" }}
+                    px={{ base: 8, sm: "md" }}
                     style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <Box visibleFrom="sm">Next</Box>
+                    <Box visibleFrom="xs">Next</Box>
                   </Button>
                 </Tooltip>
 
@@ -322,10 +322,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                       setRelabeling(false);
                       fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
                     }}
-                    px={{ base: 8, xs: "md" }}
+                    px={{ base: 8, sm: "md" }}
                     style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <Box visibleFrom="sm">Review</Box>
+                    <Box visibleFrom="xs">Review</Box>
                   </Button>
                 </Tooltip>
 
@@ -337,10 +337,10 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     variant="outline"
                     leftSection={<IconHelp size={18} />}
                     onClick={() => setRunTutorial((prev) => prev + 1)}
-                    px={{ base: 8, xs: "md" }}
+                    px={{ base: 8, sm: "md" }}
                     style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <Box visibleFrom="sm">Help</Box>
+                    <Box visibleFrom="xs">Help</Box>
                   </Button>
                 </Tooltip>
               </Group>

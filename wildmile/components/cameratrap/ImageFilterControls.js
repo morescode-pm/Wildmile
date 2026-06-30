@@ -133,7 +133,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
             leftSection={<IconRefresh size={18} />}
             style={{ minWidth: rem(36), height: rem(36) }}
           >
-            <Box visibleFrom="sm">Get Images</Box>
+            <Box visibleFrom="xs">Get Images</Box>
           </Button>
         </Tooltip>
         {onJumpToEarliest && (
@@ -150,7 +150,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
               leftSection={<IconChevronsLeft size={18} />}
               style={{ minWidth: rem(36), height: rem(36) }}
             >
-              <Box visibleFrom="sm">Earliest</Box>
+              <Box visibleFrom="xs">Earliest</Box>
             </Button>
           </Tooltip>
         )}
@@ -164,7 +164,7 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
             leftSection={<IconAdjustmentsHorizontal size={18} />}
             style={{ minWidth: rem(36), height: rem(36) }}
           >
-            <Box visibleFrom="sm">
+            <Box visibleFrom="xs">
               {hasActiveFilters ? "Filters Active" : "Filters"}
             </Box>
           </Button>
