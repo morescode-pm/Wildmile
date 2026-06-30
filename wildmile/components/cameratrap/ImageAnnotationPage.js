@@ -294,6 +294,15 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     <IconArrowRight size={18} />
                   </Button>
                 </Tooltip>
+                <Button
+                  id="help-button"
+                  size="sm"
+                  color="green"
+                  variant="outline"
+                  onClick={() => setRunTutorial((prev) => prev + 1)}
+                >
+                  <IconHelp size={18} />
+                </Button>
                 <ImageFilterControls
                   initialFilters={appliedFilters}
                   onApplyFilters={handleApplyFilters}
@@ -314,15 +323,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   }}
                 >
                   <Box visibleFrom="xs">Review Mode</Box>
-                </Button>
-                <Button
-                  id="help-button"
-                  size="sm"
-                  color="green"
-                  variant="outline"
-                  onClick={() => setRunTutorial((prev) => prev + 1)}
-                >
-                  <IconHelp size={18} />
+                  <Box hiddenFrom="xs"><IconEye size={18} /></Box>
                 </Button>
               </Group>
             )}
@@ -337,6 +338,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     onClick={() => setRelabeling(false)}
                   >
                     <Box visibleFrom="xs">Back to Review</Box>
+                    <Box hiddenFrom="xs"><IconEye size={18} /></Box>
                   </Button>
                 ) : (
                   <Group gap={4} wrap="nowrap">
@@ -352,6 +354,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                       }}
                     >
                       <Box visibleFrom="xs">Exit Review Mode</Box>
+                      <Box hiddenFrom="xs"><IconEdit size={18} /></Box>
                     </Button>
                   </Group>
                 )}
@@ -366,15 +369,16 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         <GridCol
           span={{ base: 12, md: 4, lg: 4 }}
           style={{
-            height: "calc(100vh - 70px)",
+            height: "auto",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
+          mah={{ md: "calc(100vh - 70px)" }}
         >
           <div
             style={{
-              flex: 1,
+              flex: "0 1 auto",
               display: "flex",
               flexDirection: "column",
               gap: "10px",

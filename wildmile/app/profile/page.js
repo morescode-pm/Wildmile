@@ -249,7 +249,7 @@ export default function ProfilePage() {
             <Title order={3} mt="sm">
               Activity Summary
             </Title>
-            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
+            <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
               <StatsCard
                 title="Images Reviewed"
                 value={userStats?.totalImagesReviewed || userStats?.stats?.imagesReviewed || 0}
