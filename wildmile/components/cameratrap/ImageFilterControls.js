@@ -13,6 +13,7 @@ import {
   Box,
   NumberInput,
   rem,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconX,
@@ -124,39 +125,50 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
   return (
     <>
       <Group gap={4} id="filter-controls-group" wrap="nowrap">
-        <Button
-          id="get-images-button"
-          size="sm"
-          onClick={handleApplyFilters}
-          style={{ width: rem(36), height: rem(36), padding: 0 }}
-        >
-          <IconRefresh size={18} />
-        </Button>
-        {onJumpToEarliest && (
+        <Tooltip label="Refresh Images">
           <Button
-            id="earliest-button"
+            id="get-images-button"
             size="sm"
-            onClick={() => {
-              onApplyFilters(filters);
-              onJumpToEarliest(filters);
-            }}
-            variant="light"
-            color="teal"
-            style={{ width: rem(36), height: rem(36), padding: 0 }}
+            onClick={handleApplyFilters}
+            leftSection={<IconRefresh size={18} />}
+            style={{ minWidth: rem(36), height: rem(36) }}
           >
-            <IconChevronsLeft size={18} />
+            <Box visibleFrom="sm">Get Images</Box>
           </Button>
+        </Tooltip>
+        {onJumpToEarliest && (
+          <Tooltip label="Jump to Earliest">
+            <Button
+              id="earliest-button"
+              size="sm"
+              onClick={() => {
+                onApplyFilters(filters);
+                onJumpToEarliest(filters);
+              }}
+              variant="light"
+              color="teal"
+              leftSection={<IconChevronsLeft size={18} />}
+              style={{ minWidth: rem(36), height: rem(36) }}
+            >
+              <Box visibleFrom="sm">Earliest</Box>
+            </Button>
+          </Tooltip>
         )}
-        <Button
-          id="filters-button"
-          size="sm"
-          onClick={open}
-          variant={hasActiveFilters ? "filled" : "outline"}
-          color={hasActiveFilters ? "yellow" : "grey"}
-          style={{ width: rem(36), height: rem(36), padding: 0 }}
-        >
-          <IconAdjustmentsHorizontal size={18} />
-        </Button>
+        <Tooltip label="Filter Settings">
+          <Button
+            id="filters-button"
+            size="sm"
+            onClick={open}
+            variant={hasActiveFilters ? "filled" : "outline"}
+            color={hasActiveFilters ? "yellow" : "grey"}
+            leftSection={<IconAdjustmentsHorizontal size={18} />}
+            style={{ minWidth: rem(36), height: rem(36) }}
+          >
+            <Box visibleFrom="sm">
+              {hasActiveFilters ? "Filters Active" : "Filters"}
+            </Box>
+          </Button>
+        </Tooltip>
       </Group>
 
       <Drawer

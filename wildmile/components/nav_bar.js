@@ -67,6 +67,24 @@ const nav_tabs = [
   {
     label: "Camera Traps",
     link: "/cameratrap",
+    subitems: [
+      {
+        label: "Identify",
+        link: "/cameratrap/identify",
+      },
+      {
+        label: "Explore",
+        link: "/cameratrap/explore",
+      },
+      {
+        label: "Wildlife Data",
+        link: "/cameratrap/wildlife",
+      },
+      {
+        label: "Project Data",
+        link: "/cameratrap/analytics/total-images",
+      },
+    ],
   },
 ];
 

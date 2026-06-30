@@ -278,10 +278,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     radius="md"
                     size="sm"
                     loading={isFetching}
+                    leftSection={<IconArrowLeft size={18} />}
                     px={{ base: 8, xs: "md" }}
-                    style={{ width: rem(36), height: rem(36), padding: 0 }}
+                    style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <IconArrowLeft size={18} />
+                    <Box visibleFrom="sm">Prev</Box>
                   </Button>
                 </Tooltip>
 
@@ -293,10 +294,11 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     radius="md"
                     size="sm"
                     loading={isFetching}
+                    rightSection={<IconArrowRight size={18} />}
                     px={{ base: 8, xs: "md" }}
-                    style={{ width: rem(36), height: rem(36), padding: 0 }}
+                    style={{ minWidth: rem(36), height: rem(36) }}
                   >
-                    <IconArrowRight size={18} />
+                    <Box visibleFrom="sm">Next</Box>
                   </Button>
                 </Tooltip>
 
@@ -308,33 +310,39 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   setRunTutorial={setRunTutorial}
                 />
 
-                <Button
-                  variant="light"
-                  color="blue"
-                  size="sm"
-                  id="review-mode-toggle"
-                  onClick={() => {
-                    setReviewMode(true);
-                    setRelabeling(false);
-                    fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
-                  }}
-                  px={{ base: 8, xs: "md" }}
-                  style={{ width: rem(36), height: rem(36), padding: 0 }}
-                >
-                  <IconEye size={18} />
-                </Button>
+                <Tooltip label="Review Mode">
+                  <Button
+                    variant="light"
+                    color="blue"
+                    size="sm"
+                    id="review-mode-toggle"
+                    leftSection={<IconEye size={18} />}
+                    onClick={() => {
+                      setReviewMode(true);
+                      setRelabeling(false);
+                      fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
+                    }}
+                    px={{ base: 8, xs: "md" }}
+                    style={{ minWidth: rem(36), height: rem(36) }}
+                  >
+                    <Box visibleFrom="sm">Review</Box>
+                  </Button>
+                </Tooltip>
 
-                <Button
-                  id="help-button"
-                  size="sm"
-                  color="green"
-                  variant="outline"
-                  onClick={() => setRunTutorial((prev) => prev + 1)}
-                  px={{ base: 8, xs: "md" }}
-                  style={{ width: rem(36), height: rem(36), padding: 0 }}
-                >
-                  <IconHelp size={18} />
-                </Button>
+                <Tooltip label="Tutorial Help">
+                  <Button
+                    id="help-button"
+                    size="sm"
+                    color="green"
+                    variant="outline"
+                    leftSection={<IconHelp size={18} />}
+                    onClick={() => setRunTutorial((prev) => prev + 1)}
+                    px={{ base: 8, xs: "md" }}
+                    style={{ minWidth: rem(36), height: rem(36) }}
+                  >
+                    <Box visibleFrom="sm">Help</Box>
+                  </Button>
+                </Tooltip>
               </Group>
             )}
             {reviewMode && (

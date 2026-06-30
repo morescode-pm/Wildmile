@@ -172,7 +172,7 @@ export function ImageAnnotation({ filters }) {
           style={{
             position: "relative",
             flex: "1 1 auto",
-            minHeight: imageSize.height > 0 ? imageSize.height : 300,
+            minHeight: 0,
             backgroundColor: "var(--mantine-color-dark-8)",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
@@ -285,7 +285,7 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap={4} mt={4}>
+        <Stack gap={4} mt={4} style={{ flexShrink: 0 }}>
           <Group justify="space-between" wrap="nowrap">
             <Group gap={4} id="image-action-buttons" wrap="nowrap">
               <ActionIcon
