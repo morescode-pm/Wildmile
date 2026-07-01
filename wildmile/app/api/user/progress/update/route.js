@@ -3,6 +3,7 @@ import dbConnect from "lib/db/setup";
 import { updateUserProgress } from "app/actions/UserActions";
 import { getSession } from "lib/getSession";
 import { headers } from "next/headers";
+import UserProgress from "models/users/UserProgress";
 
 export async function GET(request) {
   await dbConnect();
