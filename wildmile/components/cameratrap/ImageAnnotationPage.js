@@ -295,15 +295,35 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     style={{
                       flex: "1 1 0",
                       minWidth: rem(36),
-                      maxWidth: rem(120),
+                      maxWidth: rem(100),
                       height: rem(36),
                       overflow: "hidden",
                     }}
-                  >
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >
                     <Text
                       span
                       visibleFrom="xs"
-                      ml={4}
+                      pl={4}
                       style={{
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -332,15 +352,34 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     style={{
                       flex: "1 1 0",
                       minWidth: rem(36),
-                      maxWidth: rem(120),
+                      maxWidth: rem(100),
                       height: rem(36),
                       overflow: "hidden",
                     }}
-                  >
-                    <Text
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
                       span
                       visibleFrom="xs"
-                      mr={4}
+                      pr={4}
                       style={{
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -383,15 +422,34 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     style={{
                       flex: "1 1 0",
                       minWidth: rem(36),
-                      maxWidth: rem(120),
+                      maxWidth: rem(110),
                       height: rem(36),
                       overflow: "hidden",
                     }}
-                  >
-                    <Text
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
                       span
                       visibleFrom="xs"
-                      ml={4}
+                      pl={4}
                       style={{
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -419,15 +477,34 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     style={{
                       flex: "1 1 0",
                       minWidth: rem(36),
-                      maxWidth: rem(120),
+                      maxWidth: rem(110),
                       height: rem(36),
                       overflow: "hidden",
                     }}
-                  >
-                    <Text
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
                       span
                       visibleFrom="xs"
-                      ml={4}
+                      pl={4}
                       style={{
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -452,7 +529,7 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     style={{
                       flex: "1 1 auto",
                       minWidth: rem(36),
-                      maxWidth: rem(160),
+                      maxWidth: rem(200),
                       height: rem(36),
                       overflow: "hidden",
                     }}
@@ -489,14 +566,14 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                       style={{
                         flex: "1 1 auto",
                         minWidth: rem(36),
-                        maxWidth: rem(160),
+                        maxWidth: rem(200),
                         height: rem(36),
                         overflow: "hidden",
                       }}
                     >
                       <Text
                         span
-                        visibleFrom="xs"
+                        // visibleFrom="xs"
                         ml={4}
                         style={{
                           overflow: "hidden",
