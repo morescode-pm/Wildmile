@@ -191,7 +191,7 @@ export default function ProfilePage() {
                       <IconCalendar size={18} />
                     </ThemeIcon>
                     <Box>
-                      <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      <Text size="xs" c="dimmed" tt="uppercase" fw={700} mb={4}>
                         Joined
                       </Text>
                       <Text size="sm">
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                       <IconFlame size={18} />
                     </ThemeIcon>
                     <Box>
-                      <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      <Text size="xs" c="dimmed" tt="uppercase" fw={700} mb={4}>
                         Longest Streak
                       </Text>
                       <Text size="sm">{userStats?.streaks?.longest || 0} days</Text>
@@ -217,7 +217,7 @@ export default function ProfilePage() {
                       <IconFlame size={18} />
                     </ThemeIcon>
                     <Box>
-                      <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                      <Text size="xs" c="dimmed" tt="uppercase" fw={700} mb={4}>
                         Current Streak
                       </Text>
                       <Text size="sm">{userStats?.streaks?.current || 0} days</Text>
