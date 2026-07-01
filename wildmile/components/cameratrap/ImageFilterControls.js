@@ -10,7 +10,10 @@ import {
   ActionIcon,
   Drawer,
   Text,
+  Box,
   NumberInput,
+  rem,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconX,
@@ -121,40 +124,180 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group gap={4} id="filter-controls-group">
-        <Button
-          id="get-images-button"
-          size="sm"
-          onClick={handleApplyFilters}
-          leftSection={<IconRefresh size={18} />}
+      <Group
+        gap={4}
+        id="filter-controls-group"
+        wrap="nowrap"
+        style={{ flex: onJumpToEarliest ? "3 1 0" : "2 1 0" }}
+      >
+        <Tooltip
+          label="Refresh Images"
+          withinPortal
+          portalProps={{ zIndex: 1000000 }}
         >
-          Get Images
-        </Button>
-        {onJumpToEarliest && (
           <Button
-            id="earliest-button"
+            id="get-images-button"
             size="sm"
-            onClick={() => {
-              onApplyFilters(filters);
-              onJumpToEarliest(filters);
+            onClick={handleApplyFilters}
+            leftSection={<IconRefresh size={rem(18)} />}
+            px={8}
+            style={{
+              flex: "1 1 0",
+              minWidth: rem(50),
+              maxWidth: rem(150),
+              height: rem(36),
+              overflow: "hidden",
             }}
-            leftSection={<IconChevronsLeft size={18} />}
-            variant="light"
-            color="teal"
-          >
-            Earliest
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >
+            <Text
+              span
+              visibleFrom="xs"
+              pl={4}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Get Images
+            </Text>
           </Button>
+        </Tooltip>
+        {onJumpToEarliest && (
+          <Tooltip
+            label="Jump to Earliest"
+            withinPortal
+            portalProps={{ zIndex: 1000000 }}
+          >
+            <Button
+              id="earliest-button"
+              size="sm"
+              onClick={() => {
+                onApplyFilters(filters);
+                onJumpToEarliest(filters);
+              }}
+              variant="light"
+              color="teal"
+              leftSection={<IconChevronsLeft size={rem(18)} />}
+              px={8}
+              style={{
+                flex: "1 1 0",
+                minWidth: rem(50),
+                maxWidth: rem(120),
+                height: rem(36),
+                overflow: "hidden",
+              }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >
+              <Text
+                span
+                visibleFrom="xs"
+                pl={4}
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Earliest
+              </Text>
+            </Button>
+          </Tooltip>
         )}
-        <Button
-          id="filters-button"
-          size="sm"
-          onClick={open}
-          leftSection={<IconAdjustmentsHorizontal size={18} />}
-          variant={hasActiveFilters ? "filled" : "outline"}
-          color={hasActiveFilters ? "yellow" : "grey"}
+        <Tooltip
+          label="Filter Settings"
+          withinPortal
+          portalProps={{ zIndex: 1000000 }}
         >
-          {hasActiveFilters ? "Filters Active" : "Filters"}
-        </Button>
+          <Button
+            id="filters-button"
+            size="sm"
+            onClick={open}
+            variant={hasActiveFilters ? "filled" : "outline"}
+            color={hasActiveFilters ? "yellow" : "grey"}
+            leftSection={<IconAdjustmentsHorizontal size={rem(18)} />}
+            // px={8}
+            style={{
+              flex: "1 1 0",
+              minWidth: rem(50),
+              maxWidth: rem(120),
+              height: rem(36),
+              overflow: "hidden",
+            }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >
+            <Text
+              span
+              visibleFrom="xs"
+              pl={4}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {hasActiveFilters ? "Filters" : "Filters"}
+            </Text>
+          </Button>
+        </Tooltip>
       </Group>
 
       <Drawer

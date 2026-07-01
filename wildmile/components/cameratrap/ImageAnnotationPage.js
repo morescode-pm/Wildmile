@@ -12,6 +12,9 @@ import {
   Grid,
   GridCol,
   ScrollArea,
+  Box,
+  rem,
+  Text,
 } from "@mantine/core";
 import { useImage, useTutorial, useReviewMode, useRelabeling, useImageLoaded, useIsFetching } from "./ContextCamera";
 import { useUser } from "lib/hooks";
@@ -253,22 +256,33 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
       <LoadingOverlay visible={pageLoading && !runTutorial} overlayProps={{ blur: 2 }} />
       <Grid
         align="stretch"
-        style={{ flex: 1, margin: 0, padding: "5px" }}
-        gutter="xs"
+        style={{ flex: 1, margin: 0, padding: "2px" }}
+        gutter={4}
       >
         <GridCol
           span={{ base: 12, md: 8, lg: 8 }}
           style={{
-            height: "calc(100vh - 70px)",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
+          h={{ base: "auto", md: "calc(100vh - 70px)" }}
         >
-          <Paper withBorder p="sm" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+          <Paper withBorder p="sm" radius="md" style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
             {!reviewMode && (
-              <Group id="main-navigation-bar" gap={4} justify="center" mb={4}>
-                <Tooltip label="Previous Image">
+              <Group
+                id="main-navigation-bar"
+                gap={4}
+                justify="center"
+                mb={4}
+                wrap="nowrap"
+                style={{ width: "100%" }}
+              >
+                <Tooltip
+                  label="Previous Image"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="prev-image-button"
                     onClick={() => handleNavigateImage("previous")}
@@ -276,12 +290,56 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     radius="md"
                     size="sm"
                     loading={isFetching}
-                  >
-                    <IconArrowLeft size={18} />
+                    leftSection={<IconArrowLeft size={rem(18)} />}
+                    px={8}
+                    style={{
+                      flex: "1 1 0",
+                      minWidth: rem(36),
+                      maxWidth: rem(100),
+                      height: rem(36),
+                      overflow: "hidden",
+                    }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >
+                    <Text
+                      span
+                      visibleFrom="xs"
+                      pl={4}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Prev
+                    </Text>
                   </Button>
                 </Tooltip>
 
-                <Tooltip label="Next Image">
+                <Tooltip
+                  label="Next Image"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="next-image-button"
                     onClick={() => handleNavigateImage("next")}
@@ -289,10 +347,50 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                     radius="md"
                     size="sm"
                     loading={isFetching}
-                  >
-                    <IconArrowRight size={18} />
+                    rightSection={<IconArrowRight size={rem(18)} />}
+                    px={8}
+                    style={{
+                      flex: "1 1 0",
+                      minWidth: rem(36),
+                      maxWidth: rem(100),
+                      height: rem(36),
+                      overflow: "hidden",
+                    }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
+                      span
+                      visibleFrom="xs"
+                      pr={4}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Next
+                    </Text>
                   </Button>
                 </Tooltip>
+
                 <ImageFilterControls
                   initialFilters={appliedFilters}
                   onApplyFilters={handleApplyFilters}
@@ -300,48 +398,191 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
                   deployments={deployments}
                   setRunTutorial={setRunTutorial}
                 />
-                <Button
-                  variant="light"
-                  color="blue"
-                  size="sm"
-                  id="review-mode-toggle"
-                  leftSection={<IconEye size={18} />}
-                  onClick={() => {
-                    setReviewMode(true);
-                    setRelabeling(false);
-                    fetchCamtrapImage({ ...appliedFilters, reviewMode: true });
-                  }}
+
+                <Tooltip
+                  label="Review Mode"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
                 >
-                  Review Mode
-                </Button>
+                  <Button
+                    variant="light"
+                    color="blue"
+                    size="sm"
+                    id="review-mode-toggle"
+                    leftSection={<IconEye size={rem(18)} />}
+                    onClick={() => {
+                      setReviewMode(true);
+                      setRelabeling(false);
+                      fetchCamtrapImage({
+                        ...appliedFilters,
+                        reviewMode: true,
+                      });
+                    }}
+                    px={8}
+                    style={{
+                      flex: "1 1 0",
+                      minWidth: rem(36),
+                      maxWidth: rem(110),
+                      height: rem(36),
+                      overflow: "hidden",
+                    }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
+                      span
+                      visibleFrom="xs"
+                      pl={4}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Review
+                    </Text>
+                  </Button>
+                </Tooltip>
+
+                <Tooltip
+                  label="Tutorial Help"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
+                  <Button
+                    id="help-button"
+                    size="sm"
+                    color="green"
+                    variant="outline"
+                    leftSection={<IconHelp size={rem(18)} />}
+                    onClick={() => setRunTutorial((prev) => prev + 1)}
+                    px={8}
+                    style={{
+                      flex: "1 1 0",
+                      minWidth: rem(36),
+                      maxWidth: rem(110),
+                      height: rem(36),
+                      overflow: "hidden",
+                    }}
+                    styles={{
+                        inner: {
+                          justifyContent: 'center',
+                          width: '100%',
+                        },
+                        section: {
+                          // Keep a clean zero-margin baseline
+                          marginRight: 0,
+                          marginLeft: 0,
+                        },
+                        label: {
+                          // If the label is empty (text hidden), hide it completely so it loses its width
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          // This css pseudo-selector targets the label when it has no text content
+                          ':empty': {
+                            display: 'none',
+                          }
+                        }
+                      }}
+                    >                    <Text
+                      span
+                      visibleFrom="xs"
+                      pl={4}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Help
+                    </Text>
+                  </Button>
+                </Tooltip>
               </Group>
             )}
             {reviewMode && (
-              <Group justify="center" mb={4}>
+              <Group justify="center" mb={4} wrap="nowrap">
                 {isRelabeling ? (
                   <Button
                     variant="light"
                     color="blue"
                     size="sm"
-                    leftSection={<IconEye size={18} />}
+                    leftSection={<IconEye size={rem(18)} />}
                     onClick={() => setRelabeling(false)}
+                    style={{
+                      flex: "1 1 auto",
+                      minWidth: rem(36),
+                      maxWidth: rem(200),
+                      height: rem(36),
+                      overflow: "hidden",
+                    }}
                   >
-                    Back to Review
+                    <Text
+                      span
+                      visibleFrom="xs"
+                      ml={4}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Back to Review
+                    </Text>
                   </Button>
                 ) : (
-                  <Group gap={4}>
+                  <Group
+                    gap={4}
+                    wrap="nowrap"
+                    style={{ width: "100%", justifyContent: "center" }}
+                  >
                     <Button
                       variant="subtle"
                       color="gray"
                       size="sm"
-                      leftSection={<IconEdit size={18} />}
+                      leftSection={<IconEdit size={rem(18)} />}
                       onClick={(e) => {
                         e.preventDefault();
                         setReviewMode(false);
                         setRelabeling(false);
                       }}
+                      style={{
+                        flex: "1 1 auto",
+                        minWidth: rem(36),
+                        maxWidth: rem(200),
+                        height: rem(36),
+                        overflow: "hidden",
+                      }}
                     >
-                      Exit Review Mode
+                      <Text
+                        span
+                        // visibleFrom="xs"
+                        ml={4}
+                        style={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Exit Review Mode
+                      </Text>
                     </Button>
                   </Group>
                 )}
@@ -356,15 +597,16 @@ export const ImageAnnotationPage = ({ initialImageId }) => {
         <GridCol
           span={{ base: 12, md: 4, lg: 4 }}
           style={{
-            height: "calc(100vh - 70px)",
+            height: "auto",
             display: "flex",
             flexDirection: "column",
             minHeight: 0,
           }}
+          mah={{ md: "calc(100vh - 70px)" }}
         >
           <div
             style={{
-              flex: 1,
+              flex: "0 1 auto",
               display: "flex",
               flexDirection: "column",
               gap: "10px",

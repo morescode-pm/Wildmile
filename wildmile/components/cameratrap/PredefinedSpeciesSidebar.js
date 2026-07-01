@@ -137,7 +137,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "selected",
       label: (
-        <Tooltip label="Selected Animals">
+        <Tooltip label="Selected Animals" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <IconListCheck size={20} stroke={1.5} />
           </Center>
@@ -147,7 +147,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "all",
       label: (
-        <Tooltip label="All Species">
+        <Tooltip label="All Species" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <IconSearch size={20} stroke={1.5} />
           </Center>
@@ -157,7 +157,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "Mammals",
       label: (
-        <Tooltip label="Mammals">
+        <Tooltip label="Mammals" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <Rabbit strokeWidth={1.5} />
           </Center>
@@ -167,7 +167,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "Reptiles",
       label: (
-        <Tooltip label="Reptiles">
+        <Tooltip label="Reptiles" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <Turtle strokeWidth={1.5} />
           </Center>
@@ -177,7 +177,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "Amphibians",
       label: (
-        <Tooltip label="Amphibians">
+        <Tooltip label="Amphibians" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <FrogIcon strokeWidth={1.5} />
           </Center>
@@ -187,7 +187,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "Birds",
       label: (
-        <Tooltip label="Birds">
+        <Tooltip label="Birds" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <Bird />
           </Center>
@@ -197,7 +197,7 @@ export default function PredefinedSpeciesSidebar({
     {
       value: "Fish",
       label: (
-        <Tooltip label="Fish">
+        <Tooltip label="Fish" withinPortal portalProps={{ zIndex: 1000000 }}>
           <Center>
             <Fish />
           </Center>
@@ -274,17 +274,6 @@ export default function PredefinedSpeciesSidebar({
             </ActionIcon>
           )}
         </Group>
-        <Button
-          id="help-button"
-          size="xs"
-          color="green"
-          variant="outline"
-          onClick={() => setRunTutorial((prev) => prev + 1)}
-          leftSection={<IconHelp size={16} />}
-          style={{ width: 110 }}
-        >
-          Help
-        </Button>
       </Group>
 
       <Group gap={4} wrap="nowrap">
@@ -344,7 +333,11 @@ export default function PredefinedSpeciesSidebar({
       />
 
       {selectedCategory && (
-        <ScrollArea style={{ flex: 1 }} offsetScrollbars>
+        <ScrollArea
+          style={{ flex: selectedCategory === 'selected' ? 'none' : 1 }}
+          mah={{ base: 210, sm: "none" }}
+          offsetScrollbars
+        >
           {selectedCategory === "all" ? (
             <Stack gap="md">
               {!isFilterActive && recentSpecies.length > 0 && (

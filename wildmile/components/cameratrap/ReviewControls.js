@@ -285,8 +285,12 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   </Text>
                 )}
               </Stack>
-              <Group justify="space-between" mt="md" style={{ width: "100%" }}>
-                <Tooltip label="Re-label">
+              <Group justify="space-between" mt="md" style={{ width: "100%" }} wrap="nowrap" gap="xs">
+                <Tooltip
+                  label="Re-label"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="relabel-button"
                     variant="light"
@@ -295,12 +299,18 @@ export const ReviewControls = ({ fetchNextImage }) => {
                     size="lg"
                     leftSection={<IconX size={24} />}
                     onClick={handleRelabel}
+                    flex={1}
+                    px={{ base: 10, xs: "xl" }}
                   >
                     Re-label
                   </Button>
                 </Tooltip>
 
-                <Tooltip label="Confirm">
+                <Tooltip
+                  label="Confirm"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="confirm-button"
                     variant="filled"
@@ -310,6 +320,8 @@ export const ReviewControls = ({ fetchNextImage }) => {
                     rightSection={<IconCheck size={24} />}
                     onClick={handleConfirm}
                     loading={isSaving}
+                    flex={1}
+                    px={{ base: 10, xs: "xl" }}
                   >
                     Confirm
                   </Button>

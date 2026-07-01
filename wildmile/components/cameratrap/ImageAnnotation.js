@@ -46,7 +46,17 @@ export function ImageAnnotation({ filters }) {
   const imageSize = useMemo(() => {
     const width = currentImage?.naturalWidth || naturalSize.width;
     const height = currentImage?.naturalHeight || naturalSize.height;
-    if (width > 0 && containerWidth > 0 && containerHeight > 0) {
+    if (width > 0 && containerWidth > 0) {
+      // In mobile mode, if containerHeight is 0 or very small (auto height),
+      // we only scale by width to let the container grow.
+      if (containerHeight < 100) {
+        const ratio = containerWidth / width;
+        return {
+          width: containerWidth,
+          height: height * ratio,
+        };
+      }
+
       const ratio = Math.min(containerWidth / width, containerHeight / height);
       return {
         width: width * ratio,
@@ -157,15 +167,18 @@ export function ImageAnnotation({ filters }) {
   return (
     <>
       <Box id="image-annotation-card" h="100%" p={0}>
-        <Stack gap="xs" h="100%" style={{ overflow: "hidden" }}>
+        <Stack gap={4} h="100%" style={{ overflow: "hidden" }}>
         <Box
           style={{
             position: "relative",
-            flex: 1,
+            flex: "1 1 auto",
             minHeight: 0,
-            backgroundColor: "black",
+            backgroundColor: "var(--mantine-color-dark-8)",
             borderRadius: "var(--mantine-radius-md)",
             overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <TransformWrapper
@@ -190,7 +203,7 @@ export function ImageAnnotation({ filters }) {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%",
+                  height: containerHeight < 100 ? "auto" : "100%",
                   width: "100%",
                 }}
               >
@@ -272,9 +285,9 @@ export function ImageAnnotation({ filters }) {
           </ActionIcon>
         </Box>
 
-        <Stack gap="xs" mt="xs">
-          <Group justify="space-between">
-            <Group gap="xs" id="image-action-buttons">
+        <Stack gap={4} mt={4} style={{ flexShrink: 0 }}>
+          <Group justify="space-between" wrap="nowrap">
+            <Group gap={4} id="image-action-buttons" wrap="nowrap">
               <ActionIcon
                 size="md"
                 variant="outline"
@@ -344,7 +357,7 @@ export function ImageAnnotation({ filters }) {
                 inline
                 label={currentImage?.favoriteCount}
                 disabled={!currentImage?.favoriteCount}
-                size={16}
+                size={14}
               >
                 <ActionIcon
                   size="md"
@@ -356,21 +369,21 @@ export function ImageAnnotation({ filters }) {
                   variant={isFavorite ? "filled" : "outline"}
                 >
                   {isFavorite ? (
-                    <IconHeartFilled size={22} />
+                    <IconHeartFilled size={20} />
                   ) : (
-                    <IconHeartPlus size={22} />
+                    <IconHeartPlus size={20} />
                   )}
                 </ActionIcon>
               </Indicator>
             </Group>
-            <Group gap="xs">
-              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
-                Time: {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
+            <Stack gap={0} align="flex-end">
+              <Text size="xs" c="dimmed" style={{ fontFamily: "monospace", fontSize: '0.65rem' }}>
+                {currentImage?.timestamp ? new Date(currentImage.timestamp).toLocaleString("en-US", { timeZone: "UTC" }) : 'N/A'}
               </Text>
-              <Text size="xs" fw={500} style={{ fontFamily: "monospace" }}>
+              <Text size="xs" c="dimmed" style={{ fontFamily: "monospace", fontSize: '0.65rem' }}>
                 ID: {currentImage?.mediaID || 'N/A'}
               </Text>
-            </Group>
+            </Stack>
           </Group>
 
           <Group gap="xs" style={{ minHeight: 30 }}>

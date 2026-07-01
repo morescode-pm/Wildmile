@@ -82,7 +82,7 @@ export default async function Page() {
   return (
     <Container maw="95%" mt="xl" my="5rem">
       <Stack gap="md">
-        <Title order={2}>Welcome to the Camera Crew!</Title>
+        <Title order={2}>Welcome Camera Crew!</Title>
         <StatsScorecards stats={stats} />
 
         <Grid gutter="md">

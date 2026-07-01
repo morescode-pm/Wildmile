@@ -36,7 +36,7 @@ const WildlifeSearch = () => {
       <Stack gap="xs" h="100%">
         <Box
           style={{
-            flex: 1,
+            flex: "0 1 auto",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
