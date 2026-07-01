@@ -19,7 +19,7 @@ export function StatsScorecards({ stats }) {
       color: "blue",
     },
     {
-      title: "Identified",
+      title: "Images Reviewed",
       value: stats.uniqueMediaIds.toLocaleString(),
       icon: IconEye,
       color: "green",
@@ -42,14 +42,14 @@ export function StatsScorecards({ stats }) {
   return (
     <SimpleGrid cols={{ base: 2, sm: 4, md: 4, lg: 4 }} spacing={{ base: 6, sm: "md" }}>
       {scorecardData.map((item) => (
-        <Card key={item.title} withBorder padding={6} radius="sm">
+        <Card key={item.title} withBorder py={10} px={8} radius="sm">
           <Group justify="space-between" wrap="nowrap" gap={4}>
             <Text size="10px" c="dimmed" fw={700} tt="uppercase" style={{ lineHeight: 1, flex: 1 }} truncate="end">
               {item.title}
             </Text>
             <item.icon size={14} color={`var(--mantine-color-${item.color}-6)`} style={{ flexShrink: 0 }} />
           </Group>
-          <Group align="baseline" gap={4} mt={4} wrap="nowrap">
+          <Group align="baseline" gap={4} mt={8} wrap="nowrap">
             <Text size="md" fw={500} style={{ lineHeight: 1 }}>
               {item.value}
             </Text>
