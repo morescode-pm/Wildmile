@@ -14,7 +14,7 @@ export function StatsScorecards({ stats }) {
     {
       title: "Total Images",
       value: stats.totalImages.toLocaleString(),
-      subValue: `(${stats.newImages30Days.toLocaleString()} new)`,
+      subValue: `(${stats.newImages30Days.toLocaleString()} new 30 days)`,
       icon: IconPhoto,
       color: "blue",
     },
@@ -50,7 +50,7 @@ export function StatsScorecards({ stats }) {
             <item.icon size={14} color={`var(--mantine-color-${item.color}-6)`} style={{ flexShrink: 0 }} />
           </Group>
           <Group align="baseline" gap={4} mt={4} wrap="nowrap">
-            <Text size="md" fw={800} style={{ lineHeight: 1 }}>
+            <Text size="md" fw={500} style={{ lineHeight: 1 }}>
               {item.value}
             </Text>
             {item.subValue && (
