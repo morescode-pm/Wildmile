@@ -39,27 +39,19 @@ const nav_tabs = [
     label: "Trash",
     link: "/trash",
     subitems: [
-      {
-        label: "New Log",
-        link: "/trash/log",
-      },
-      {
-        label: "History",
-        link: "/trash/history",
-      },
+      { label: "Overview", link: "/trash" },
+      { label: "New Log", link: "/trash/log" },
+      { label: "History", link: "/trash/history" },
     ],
   },
   {
     label: "Plants",
     link: "/plants",
     subitems: [
-      {
-        label: "Species List",
-        link: "/plants/species",
-      },
+      { label: "Overview", link: "/plants" },
+      { label: "Species List", link: "/plants/species" },
     ],
   },
-  // Subitems for projects need seeding somehow
   {
     label: "Projects",
     link: "/projects",
@@ -68,22 +60,11 @@ const nav_tabs = [
     label: "Camera Traps",
     link: "/cameratrap",
     subitems: [
-      {
-        label: "Identify",
-        link: "/cameratrap/identify",
-      },
-      {
-        label: "Explore",
-        link: "/cameratrap/explore",
-      },
-      {
-        label: "Wildlife Data",
-        link: "/cameratrap/wildlife",
-      },
-      {
-        label: "Project Data",
-        link: "/cameratrap/analytics/total-images",
-      },
+      { label: "Overview", link: "/cameratrap" },
+      { label: "Identify", link: "/cameratrap/identify" },
+      { label: "Explore", link: "/cameratrap/explore" },
+      { label: "Wildlife Data", link: "/cameratrap/wildlife" },
+      { label: "Project Data", link: "/cameratrap/analytics/total-images" },
     ],
   },
 ];
@@ -106,28 +87,19 @@ export function HeaderNav({ children }) {
   }
 
   const items = nav_tabs.map((link) => {
-    const menuItems = link.subitems?.map((item) => (
-      <Menu.Item key={item.label}>
-        <Link href={item.link} className={classes.subLink}>
-          {item.label}
-        </Link>
-      </Menu.Item>
-    ));
-
-    if (menuItems) {
+    const hasSubitems = Array.isArray(link.subitems) && link.subitems.length > 0;
+    if (hasSubitems) {
       return (
         <Menu
           key={link.label}
           trigger="hover"
           transitionProps={{ exitDuration: 0 }}
           withinPortal
+          openDelay={100}
+          closeDelay={200}
         >
           <Menu.Target>
-            <UnstyledButton
-              component={Link}
-              href={link.link}
-              className={classes.link}
-            >
+            <UnstyledButton className={classes.link}>
               <Center inline>
                 <span className={classes.linkLabel}>{link.label}</span>
                 <IconChevronDown
@@ -138,7 +110,18 @@ export function HeaderNav({ children }) {
               </Center>
             </UnstyledButton>
           </Menu.Target>
-          <Menu.Dropdown>{menuItems}</Menu.Dropdown>
+          <Menu.Dropdown>
+            {link.subitems.map((item) => (
+              <Menu.Item
+                key={item.label}
+                component={Link}
+                href={item.link}
+                className={classes.subLink}
+              >
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
         </Menu>
       );
     }
@@ -349,37 +332,51 @@ export function HeaderNav({ children }) {
             <Divider my="sm" color={"dark"} />
 
             <Stack gap={0}>
-              {nav_tabs.map((tab, index) => (
-                <React.Fragment key={tab.label}>
-                  <NavLink
-                    label={tab.label}
-                    component={Link}
-                    href={tab.link}
-                    onClick={tab.subitems ? (e) => e.preventDefault() : closeDrawer}
-                    childrenOffset={28}
-                    className={classes.navLink}
-                    styles={{
-                      label: { fontSize: rem(18), fontWeight: 600, padding: `${rem(8)} 0` },
-                    }}
-                  >
-                    {tab.subitems?.map((sub, subIndex) => (
-                      <React.Fragment key={sub.label}>
-                        <NavLink
-                          label={sub.label}
-                          component={Link}
-                          href={sub.link}
-                          onClick={closeDrawer}
-                          styles={{
-                            label: { fontSize: rem(16), padding: `${rem(4)} 0` },
-                          }}
-                        />
-                        {subIndex < tab.subitems.length - 1 && <Divider color="dark.4" variant="dotted" />}
-                      </React.Fragment>
-                    ))}
-                  </NavLink>
-                  {index < nav_tabs.length - 1 && <Divider color="dark.4" />}
-                </React.Fragment>
-              ))}
+              {nav_tabs.map((tab, index) => {
+                const hasSubitems =
+                  Array.isArray(tab.subitems) && tab.subitems.length > 0;
+                return (
+                  <React.Fragment key={tab.label}>
+                    <NavLink
+                      label={tab.label}
+                      component={hasSubitems ? "button" : Link}
+                      href={hasSubitems ? undefined : tab.link}
+                      onClick={hasSubitems ? undefined : closeDrawer}
+                      childrenOffset={28}
+                      className={classes.navLink}
+                      styles={{
+                        label: {
+                          fontSize: rem(18),
+                          fontWeight: 600,
+                          padding: `${rem(8)} 0`,
+                        },
+                      }}
+                    >
+                      {hasSubitems &&
+                        tab.subitems.map((sub, subIndex) => (
+                          <React.Fragment key={sub.label}>
+                            <NavLink
+                              label={sub.label}
+                              component={Link}
+                              href={sub.link}
+                              onClick={closeDrawer}
+                              styles={{
+                                label: {
+                                  fontSize: rem(16),
+                                  padding: `${rem(4)} 0`,
+                                },
+                              }}
+                            />
+                            {subIndex < tab.subitems.length - 1 && (
+                              <Divider color="dark.4" variant="dotted" />
+                            )}
+                          </React.Fragment>
+                        ))}
+                    </NavLink>
+                    {index < nav_tabs.length - 1 && <Divider color="dark.4" />}
+                  </React.Fragment>
+                );
+              })}
             </Stack>
 
             <Divider my="sm" color={"dark"} />

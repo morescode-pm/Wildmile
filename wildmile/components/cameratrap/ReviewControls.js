@@ -286,7 +286,11 @@ export const ReviewControls = ({ fetchNextImage }) => {
                 )}
               </Stack>
               <Group justify="space-between" mt="md" style={{ width: "100%" }} wrap="nowrap" gap="xs">
-                <Tooltip label="Re-label">
+                <Tooltip
+                  label="Re-label"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="relabel-button"
                     variant="light"
@@ -302,7 +306,11 @@ export const ReviewControls = ({ fetchNextImage }) => {
                   </Button>
                 </Tooltip>
 
-                <Tooltip label="Confirm">
+                <Tooltip
+                  label="Confirm"
+                  withinPortal
+                  portalProps={{ zIndex: 1000000 }}
+                >
                   <Button
                     id="confirm-button"
                     variant="filled"

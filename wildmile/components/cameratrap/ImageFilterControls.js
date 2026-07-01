@@ -124,20 +124,51 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
 
   return (
     <>
-      <Group gap={4} id="filter-controls-group" wrap="nowrap">
-        <Tooltip label="Refresh Images">
+      <Group
+        gap={4}
+        id="filter-controls-group"
+        wrap="nowrap"
+        style={{ flex: onJumpToEarliest ? "3 1 0" : "2 1 0" }}
+      >
+        <Tooltip
+          label="Refresh Images"
+          withinPortal
+          portalProps={{ zIndex: 1000000 }}
+        >
           <Button
             id="get-images-button"
             size="sm"
             onClick={handleApplyFilters}
-            leftSection={<IconRefresh size={18} />}
-            style={{ minWidth: rem(36), height: rem(36) }}
+            leftSection={<IconRefresh size={rem(18)} />}
+            px={8}
+            style={{
+              flex: "1 1 0",
+              minWidth: rem(36),
+              maxWidth: rem(120),
+              height: rem(36),
+              overflow: "hidden",
+            }}
           >
-            <Box visibleFrom="xs">Get Images</Box>
+            <Text
+              span
+              visibleFrom="xs"
+              ml={4}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Get Images
+            </Text>
           </Button>
         </Tooltip>
         {onJumpToEarliest && (
-          <Tooltip label="Jump to Earliest">
+          <Tooltip
+            label="Jump to Earliest"
+            withinPortal
+            portalProps={{ zIndex: 1000000 }}
+          >
             <Button
               id="earliest-button"
               size="sm"
@@ -147,26 +178,64 @@ export function ImageFilterControls({ onApplyFilters, onJumpToEarliest, initialF
               }}
               variant="light"
               color="teal"
-              leftSection={<IconChevronsLeft size={18} />}
-              style={{ minWidth: rem(36), height: rem(36) }}
+              leftSection={<IconChevronsLeft size={rem(18)} />}
+              px={8}
+              style={{
+                flex: "1 1 0",
+                minWidth: rem(36),
+                maxWidth: rem(120),
+                height: rem(36),
+                overflow: "hidden",
+              }}
             >
-              <Box visibleFrom="xs">Earliest</Box>
+              <Text
+                span
+                visibleFrom="xs"
+                ml={4}
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Earliest
+              </Text>
             </Button>
           </Tooltip>
         )}
-        <Tooltip label="Filter Settings">
+        <Tooltip
+          label="Filter Settings"
+          withinPortal
+          portalProps={{ zIndex: 1000000 }}
+        >
           <Button
             id="filters-button"
             size="sm"
             onClick={open}
             variant={hasActiveFilters ? "filled" : "outline"}
             color={hasActiveFilters ? "yellow" : "grey"}
-            leftSection={<IconAdjustmentsHorizontal size={18} />}
-            style={{ minWidth: rem(36), height: rem(36) }}
+            leftSection={<IconAdjustmentsHorizontal size={rem(18)} />}
+            px={8}
+            style={{
+              flex: "1 1 0",
+              minWidth: rem(36),
+              maxWidth: rem(160),
+              height: rem(36),
+              overflow: "hidden",
+            }}
           >
-            <Box visibleFrom="xs">
+            <Text
+              span
+              visibleFrom="xs"
+              ml={4}
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
               {hasActiveFilters ? "Filters Active" : "Filters"}
-            </Box>
+            </Text>
           </Button>
         </Tooltip>
       </Group>
