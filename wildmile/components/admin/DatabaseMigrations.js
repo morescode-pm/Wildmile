@@ -23,6 +23,17 @@ import {
 // an object with { id, name, description, endpoint, method }.
 const MIGRATIONS = [
   {
+    id: "recalculate-all-user-stats",
+    name: "Recalculate All User Stats",
+    description:
+      "Globally synchronizes and recalculates statistics and achievements for every user in the system. " +
+      "Processes camera trap observations, trash logs, and volunteer hours. " +
+      "Useful for updating profiles after model changes or fixing historical data inconsistencies. " +
+      "Warning: This may take several minutes depending on the number of users and observations.",
+    endpoint: "/api/admin/recalculate-stats",
+    method: "POST",
+  },
+  {
     id: "backfill-random-seed",
     name: "Backfill Random Seed",
     description:

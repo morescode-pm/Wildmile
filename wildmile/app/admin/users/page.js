@@ -12,9 +12,8 @@ import {
   Badge,
   Menu,
   ActionIcon,
-  Tooltip,
 } from "@mantine/core";
-import { IconDots, IconPlus, IconMinus, IconRefresh } from "@tabler/icons-react";
+import { IconDots, IconPlus, IconMinus } from "@tabler/icons-react";
 
 // Role configuration for UI display
 const ROLE_CONFIG = {
@@ -136,36 +135,6 @@ export default function UserAdminPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const handleRecalculateStats = async (userId = null) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/recalculate-stats", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to recalculate stats");
-      }
-
-      const result = await response.json();
-      // If single user, update that user's roles/stats in the list if needed
-      if (userId && result.result) {
-        // We might want to refresh the user list here
-        handleSearch();
-      } else {
-        // If all users, refresh the whole list
-        handleSearch();
-      }
-    } catch (error) {
-      console.error("Error recalculating stats:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleRoleChange = async (userId, role, action) => {
     setLoading(true);
     try {
@@ -215,13 +184,6 @@ export default function UserAdminPage() {
 
         <Menu.Dropdown>
           <Menu.Label>Manage Roles</Menu.Label>
-          <Menu.Item
-            leftSection={<IconRefresh size={14} />}
-            onClick={() => handleRecalculateStats(user._id)}
-          >
-            Recalculate Stats
-          </Menu.Item>
-          <Menu.Divider />
           {availableRoles.map((role) => {
             const config = ROLE_CONFIG[role];
             const hasRole = user.roles?.includes(role);
@@ -268,25 +230,13 @@ export default function UserAdminPage() {
       <Title order={2} mb="md">
         User Role Management
       </Title>
-      <Group mb="xl" justify="space-between">
+      <Group mb="xl">
         <TextInput
           placeholder="Search by name or email (leave empty to show all users with roles)"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ flex: 1 }}
         />
-        {userPermissions.canManage.includes("SuperAdmin") && (
-          <Tooltip label="Recalculate statistics and achievements for ALL users. Warning: This may take a while.">
-            <Button
-              variant="outline"
-              color="orange"
-              leftSection={<IconRefresh size={16} />}
-              onClick={() => handleRecalculateStats()}
-            >
-              Sync All User Stats
-            </Button>
-          </Tooltip>
-        )}
       </Group>
 
       <Table striped>
