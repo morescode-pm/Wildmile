@@ -158,7 +158,8 @@ export function DatabaseMigrations() {
       <Text size="sm" c="dimmed">
         One-time database operations that update schema or backfill data. Each
         migration is safe to re-run — it will only modify documents that haven't
-        been updated yet. Recalculate All User Stats globally synchronizes and recalculates statistics and achievements for every user.
+        been updated yet. Recalculate All User Stats globally synchronizes and
+        recalculates statistics and achievements for every user.
       </Text>
       <Divider />
       {MIGRATIONS.map((migration) => (

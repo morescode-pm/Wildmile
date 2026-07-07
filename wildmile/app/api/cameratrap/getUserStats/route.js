@@ -4,7 +4,6 @@ import Observation from "models/cameratrap/Observation";
 import User from "models/User";
 import UserProgress from "models/users/UserProgress";
 import Species from "models/Species";
-import CameratrapMedia from "models/cameratrap/Media";
 import mongoose from "mongoose";
 import { updateUserStats } from "lib/db/updateUserStats";
 
@@ -68,43 +67,50 @@ export async function GET(request) {
     const formattedAchievements = (progress.achievements || [])
       .filter((a) => a.achievement)
       .map((achievement) => ({
-        id: achievement.achievement._id,
-        name: achievement.achievement.name,
-        description: achievement.achievement.description,
-        icon: achievement.achievement.icon,
-        badge: achievement.achievement.badge,
-        level: achievement.achievement.level,
-        type: achievement.achievement.type,
-        domain: achievement.achievement.domain,
-        points: achievement.achievement.points,
+        _id: achievement._id,
         progress: achievement.progress,
         earnedAt: achievement.earnedAt,
-        criteria: achievement.achievement.criteria,
+        achievement: {
+          _id: achievement.achievement._id,
+          name: achievement.achievement.name,
+          description: achievement.achievement.description,
+          icon: achievement.achievement.icon,
+          badge: achievement.achievement.badge,
+          level: achievement.achievement.level,
+          type: achievement.achievement.type,
+          domain: achievement.achievement.domain,
+          points: achievement.achievement.points,
+          criteria: achievement.achievement.criteria,
+        },
       }));
 
-    // Get all animal observations by the user for top species calculation
-    const animalObservations = await Observation.find({
-      creator: userId,
-      observationType: "animal",
-    });
+    // Use aggregation to get top species counts (much faster than fetching all observations)
+    const topSpeciesResult = await Observation.aggregate([
+      {
+        $match: {
+          creator: new mongoose.Types.ObjectId(userId),
+          observationType: "animal",
+          scientificName: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$scientificName",
+          count: { $sum: { $ifNull: ["$count", 1] } },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 0,
+          scientificName: "$_id",
+          count: 1,
+        },
+      },
+    ]);
 
-    // Get top species and fetch their preferred common names
-    const speciesCounts = animalObservations.reduce((acc, obs) => {
-      const key = obs.scientificName;
-      if (!key) return acc;
-      if (!acc[key]) {
-        acc[key] = {
-          scientificName: key,
-          count: 0,
-        };
-      }
-      acc[key].count += obs.count || 1;
-      return acc;
-    }, {});
-
-    const topSpeciesList = Object.values(speciesCounts)
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+    const topSpeciesList = topSpeciesResult;
 
     // Get all unique scientific names for enrichment
     const topSpeciesNames = topSpeciesList.map((s) => s.scientificName);
