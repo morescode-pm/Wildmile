@@ -297,33 +297,43 @@ async function updateUserStats(userId) {
       };
     });
 
-    // Get highest rank achievement for avatar
-    const highestRank = Object.values(formattedDomainRanks)
-      .map((domain) => domain.currentRank)
-      .filter(Boolean)
-      .sort((a, b) => b.level - a.level)[0];
+    // Find the highest level RANK achievement that has been earned
+    const rankAchievements = (progress.achievements || [])
+      .filter(
+        (a) =>
+          a.achievement?.type === "RANK" && a.progress === 100 && a.earnedAt
+      )
+      .sort((a, b) => (b.achievement?.level || 0) - (a.achievement?.level || 0));
+
+    // Get the avatar from the highest rank achievement or use poop emoji
+    const avatar =
+      rankAchievements.length > 0
+        ? rankAchievements[0].achievement.badge
+        : "💩";
 
     return {
       user: {
         ...user.toObject(),
-        avatar: highestRank?.badge || "💩",
+        avatar,
       },
       stats: progress.stats,
       streaks: progress.streaks,
-      achievements: progress.achievements.map((a) => ({
-        id: a.achievement._id,
-        name: a.achievement.name,
-        description: a.achievement.description,
-        icon: a.achievement.icon,
-        badge: a.achievement.badge,
-        level: a.achievement.level,
-        type: a.achievement.type,
-        domain: a.achievement.domain,
-        points: a.achievement.points,
-        progress: a.progress,
-        earnedAt: a.earnedAt,
-        criteria: a.achievement.criteria,
-      })),
+      achievements: progress.achievements
+        .filter((a) => a.achievement)
+        .map((a) => ({
+          id: a.achievement._id,
+          name: a.achievement.name,
+          description: a.achievement.description,
+          icon: a.achievement.icon,
+          badge: a.achievement.badge,
+          level: a.achievement.level,
+          type: a.achievement.type,
+          domain: a.achievement.domain,
+          points: a.achievement.points,
+          progress: a.progress,
+          earnedAt: a.earnedAt,
+          criteria: a.achievement.criteria,
+        })),
       totalPoints: progress.totalPoints,
       level: progress.level,
       domainRanks: formattedDomainRanks,
@@ -344,11 +354,13 @@ async function updateAllUserStats() {
   try {
     const users = await User.find({});
     const results = [];
+    let updatedCount = 0;
 
     for (const user of users) {
       try {
-        const progress = await updateUserStats(user._id);
-        results.push({ userId: user._id, success: true, progress });
+        await updateUserStats(user._id);
+        updatedCount++;
+        results.push({ userId: user._id, success: true });
       } catch (error) {
         results.push({
           userId: user._id,
@@ -359,7 +371,11 @@ async function updateAllUserStats() {
     }
 
     console.log("Successfully processed all users");
-    return results;
+    return {
+      results,
+      updatedCount,
+      totalCount: users.length,
+    };
   } catch (error) {
     console.error("Error updating all user stats:", error);
     throw error;

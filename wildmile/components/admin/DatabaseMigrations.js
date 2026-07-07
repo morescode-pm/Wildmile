@@ -32,6 +32,17 @@ const MIGRATIONS = [
     endpoint: "/api/cameratrap/backfill-random-seed",
     method: "GET",
   },
+  {
+    id: "recalculate-all-user-stats",
+    name: "Recalculate All User Stats",
+    description:
+      "Globally synchronizes and recalculates statistics and achievements for every user in the system. " +
+      "Processes camera trap observations, trash logs, and volunteer hours. " +
+      "Useful for updating profiles after model changes or fixing historical data inconsistencies. " +
+      "Warning: This may take several minutes depending on the number of users and observations.",
+    endpoint: "/api/admin/recalculate-stats",
+    method: "POST",
+  },
 ];
 
 function MigrationCard({ migration }) {
@@ -43,7 +54,7 @@ function MigrationCard({ migration }) {
     setResult(null);
     try {
       const response = await fetch(migration.endpoint, {
-        method: migration.method,
+        method: migration.method || "GET",
       });
       const data = await response.json();
       if (response.ok) {
@@ -115,6 +126,11 @@ function MigrationCard({ migration }) {
                 {result.modifiedCount}
               </Text>
             )}
+            {result.updatedCount !== undefined && (
+              <Text size="sm" mt={4}>
+                Updated: {result.updatedCount} · Total: {result.totalCount}
+              </Text>
+            )}
           </Alert>
         )}
 
@@ -147,7 +163,8 @@ export function DatabaseMigrations() {
       <Text size="sm" c="dimmed">
         One-time database operations that update schema or backfill data. Each
         migration is safe to re-run — it will only modify documents that haven't
-        been updated yet.
+        been updated yet. Recalculate All User Stats globally synchronizes and
+        recalculates statistics and achievements for every user.
       </Text>
       <Divider />
       {MIGRATIONS.map((migration) => (
