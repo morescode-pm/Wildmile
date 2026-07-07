@@ -14,14 +14,17 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
+  const refresh = searchParams.get("refresh") === "true";
 
   if (!userId) {
     return NextResponse.json({ error: "User ID is required" }, { status: 400 });
   }
 
   try {
-    // Update user stats - this ensures historical data is re-synced
-    await updateUserStats(userId);
+    // Update user stats only if requested - this ensures historical data is re-synced
+    if (refresh) {
+      await updateUserStats(userId);
+    }
 
     // Get user info
     // const user = await User.findById(userId, "profile roles");
