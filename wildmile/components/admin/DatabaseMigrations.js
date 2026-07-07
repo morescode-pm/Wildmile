@@ -23,6 +23,16 @@ import {
 // an object with { id, name, description, endpoint, method }.
 const MIGRATIONS = [
   {
+    id: "backfill-random-seed",
+    name: "Backfill Random Seed",
+    description:
+      "Adds a randomSeed field to all CameratrapMedia documents that don't have one. " +
+      "Required for the fast random image lookup (replaces slow $sample queries). " +
+      "Safe to re-run — only touches documents missing the field.",
+    endpoint: "/api/cameratrap/backfill-random-seed",
+    method: "GET",
+  },
+  {
     id: "recalculate-all-user-stats",
     name: "Recalculate All User Stats",
     description:
@@ -32,16 +42,6 @@ const MIGRATIONS = [
       "Warning: This may take several minutes depending on the number of users and observations.",
     endpoint: "/api/admin/recalculate-stats",
     method: "POST",
-  },
-  {
-    id: "backfill-random-seed",
-    name: "Backfill Random Seed",
-    description:
-      "Adds a randomSeed field to all CameratrapMedia documents that don't have one. " +
-      "Required for the fast random image lookup (replaces slow $sample queries). " +
-      "Safe to re-run — only touches documents missing the field.",
-    endpoint: "/api/cameratrap/backfill-random-seed",
-    method: "GET",
   },
 ];
 
