@@ -26,19 +26,14 @@ export async function POST(request) {
     if (userId) {
       // Recalculate for a specific user
       const result = await updateUserStats(userId);
-      const message = result.updated
-        ? `Stats updated for user ${userId}`
-        : `No changes needed for user ${userId}`;
-      return NextResponse.json({ success: true, message, result });
+      return NextResponse.json({ success: true, message: `Stats updated for user ${userId}`, result });
     } else {
       // Recalculate for ALL users
       const data = await updateAllUserStats();
-      const message = `Stats updated: ${data.updatedCount}, Skipped: ${data.skippedCount} (Total: ${data.totalCount})`;
       return NextResponse.json({
         success: true,
-        message,
+        message: `Stats updated for all users (${data.updatedCount}/${data.totalCount})`,
         updatedCount: data.updatedCount,
-        skippedCount: data.skippedCount,
         totalCount: data.totalCount,
         results: data.results,
       });

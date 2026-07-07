@@ -246,40 +246,21 @@ async function updateUserStats(userId) {
       progress = new UserProgress({ user: user._id });
     }
 
-    // Update streaks only if they changed
-    if (progress.streaks.current !== currentStreak) {
-      progress.streaks.current = currentStreak;
-    }
-    const newLongestStreak = Math.max(
-      longestStreak,
-      progress.streaks?.longest || 0
-    );
-    if (progress.streaks.longest !== newLongestStreak) {
-      progress.streaks.longest = newLongestStreak;
-    }
-    if (
-      progress.streaks.lastLoginDate?.getTime() !== lastLoginDate?.getTime()
-    ) {
-      progress.streaks.lastLoginDate = lastLoginDate;
-    }
+    // Update streaks
+    progress.streaks = {
+      current: currentStreak,
+      longest: Math.max(longestStreak, progress.streaks?.longest || 0),
+      lastLoginDate: lastLoginDate,
+    };
 
-    // Update stats only if they changed
-    for (const [key, value] of Object.entries(stats)) {
-      if (progress.stats[key] !== value) {
-        progress.stats[key] = value;
-      }
-    }
+    // Update stats
+    Object.assign(progress.stats, stats);
 
     // Check achievements (which now handles points calculation)
     await progress.checkAchievements();
 
-    // Check if anything has changed
-    const isModified = progress.isModified();
-
-    // Save progress if modified
-    if (isModified) {
-      await progress.save();
-    }
+    // Save progress
+    await progress.save();
 
     // Return populated data
     await progress.populate([
@@ -331,7 +312,6 @@ async function updateUserStats(userId) {
         : "💩";
 
     return {
-      updated: isModified,
       user: {
         ...user.toObject(),
         avatar,
@@ -375,17 +355,12 @@ async function updateAllUserStats() {
     const users = await User.find({});
     const results = [];
     let updatedCount = 0;
-    let skippedCount = 0;
 
     for (const user of users) {
       try {
-        const result = await updateUserStats(user._id);
-        if (result.updated) {
-          updatedCount++;
-        } else {
-          skippedCount++;
-        }
-        results.push({ userId: user._id, success: true, updated: result.updated });
+        await updateUserStats(user._id);
+        updatedCount++;
+        results.push({ userId: user._id, success: true });
       } catch (error) {
         results.push({
           userId: user._id,
@@ -399,7 +374,6 @@ async function updateAllUserStats() {
     return {
       results,
       updatedCount,
-      skippedCount,
       totalCount: users.length,
     };
   } catch (error) {

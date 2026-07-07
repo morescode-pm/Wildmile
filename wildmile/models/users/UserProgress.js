@@ -124,8 +124,8 @@ UserProgressSchema.methods.checkAchievements = async function () {
     }
   });
 
-  // Calculate total points locally first
-  let newTotalPoints = 0;
+  // Reset total points for recalculation
+  this.totalPoints = 0;
   const newAchievements = [];
 
   // First pass: Process non-RANK achievements
@@ -151,10 +151,8 @@ UserProgressSchema.methods.checkAchievements = async function () {
         const existing = this.achievements[existingIndex];
         const wasCompleted = existing.progress === 100 && existing.earnedAt;
 
-        // Update progress only if it changed
-        if (existing.progress !== validProgress) {
-          existing.progress = validProgress;
-        }
+        // Update progress
+        existing.progress = validProgress;
 
         // Check if newly completed (not previously earned)
         if (
@@ -164,13 +162,13 @@ UserProgressSchema.methods.checkAchievements = async function () {
         ) {
           console.log(`Achievement newly completed: ${achievement.name}`);
           existing.earnedAt = new Date();
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
           newAchievements.push(achievement);
         } else if (wasCompleted) {
           // Add points for previously completed achievements
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
         }
@@ -179,10 +177,8 @@ UserProgressSchema.methods.checkAchievements = async function () {
         // Since achievements are sorted by level, the highest eligible rank will be set last
         if (eligible) {
           const domainRank = this.domainRanks.get(achievement.domain) || {};
-          if (domainRank.currentRank?.toString() !== achievement._id.toString()) {
-            domainRank.currentRank = achievement._id;
-            this.domainRanks.set(achievement.domain, domainRank);
-          }
+          domainRank.currentRank = achievement._id;
+          this.domainRanks.set(achievement.domain, domainRank);
         }
       } else {
         // Add new achievement
@@ -194,7 +190,7 @@ UserProgressSchema.methods.checkAchievements = async function () {
         });
 
         if (eligible) {
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
           newAchievements.push(achievement);
@@ -226,9 +222,7 @@ UserProgressSchema.methods.checkAchievements = async function () {
         const existing = this.achievements[existingIndex];
         const wasCompleted = existing.progress === 100 && existing.earnedAt;
 
-        if (existing.progress !== validProgress) {
-          existing.progress = validProgress;
-        }
+        existing.progress = validProgress;
 
         // Check if newly completed (not previously earned)
         if (
@@ -240,13 +234,13 @@ UserProgressSchema.methods.checkAchievements = async function () {
           existing.earnedAt = new Date();
 
           // Award points for reaching new rank
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
           newAchievements.push(achievement);
         } else if (wasCompleted) {
           // Add points for previously earned rank
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
         }
@@ -261,7 +255,7 @@ UserProgressSchema.methods.checkAchievements = async function () {
 
         if (eligible) {
           // Award points for new rank
-          newTotalPoints += achievement.points;
+          this.totalPoints += achievement.points;
           domainPoints[achievement.domain] =
             (domainPoints[achievement.domain] || 0) + achievement.points;
 
@@ -272,10 +266,8 @@ UserProgressSchema.methods.checkAchievements = async function () {
         // Since achievements are sorted by level, the highest eligible rank will be set last
         if (eligible) {
           const domainRank = this.domainRanks.get(achievement.domain) || {};
-          if (domainRank.currentRank?.toString() !== achievement._id.toString()) {
-            domainRank.currentRank = achievement._id;
-            this.domainRanks.set(achievement.domain, domainRank);
-          }
+          domainRank.currentRank = achievement._id;
+          this.domainRanks.set(achievement.domain, domainRank);
         }
       }
     } catch (error) {
@@ -286,17 +278,11 @@ UserProgressSchema.methods.checkAchievements = async function () {
     }
   }
 
-  // Update final domain points and total points only if they changed
-  if (this.totalPoints !== newTotalPoints) {
-    this.totalPoints = newTotalPoints;
-  }
-
+  // Update final domain points
   for (const [domain, points] of Object.entries(domainPoints)) {
     const domainRank = this.domainRanks.get(domain) || {};
-    if (domainRank.points !== points) {
-      domainRank.points = points;
-      this.domainRanks.set(domain, domainRank);
-    }
+    domainRank.points = points;
+    this.domainRanks.set(domain, domainRank);
     console.log(`Final points for ${domain}: ${points}`);
   }
 
@@ -310,16 +296,12 @@ UserProgressSchema.methods.checkAchievements = async function () {
   const growthFactor = 2.15;
   const getPointsForLevel = (level) =>
     basePoints * Math.pow(growthFactor, level - 1);
-  const newLevel = Math.max(
+  this.level = Math.max(
     1,
     Math.floor(
       Math.log(this.totalPoints / basePoints) / Math.log(growthFactor)
     ) + 1
   );
-
-  if (this.level !== newLevel) {
-    this.level = newLevel;
-  }
   console.log(`Final total points: ${this.totalPoints}, Level: ${this.level}`);
 
   return newAchievements; // Now only contains truly new achievements

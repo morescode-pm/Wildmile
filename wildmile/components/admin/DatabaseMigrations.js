@@ -128,8 +128,7 @@ function MigrationCard({ migration }) {
             )}
             {result.updatedCount !== undefined && (
               <Text size="sm" mt={4}>
-                Updated: {result.updatedCount} · Skipped: {result.skippedCount} ·
-                Total: {result.totalCount}
+                Updated: {result.updatedCount} · Total: {result.totalCount}
               </Text>
             )}
           </Alert>
