@@ -32,7 +32,9 @@ export async function GET(request) {
       progress = new UserProgress({ user: userId });
     }
     await progress.checkAchievements();
-    await progress.save();
+    if (progress.isModified()) {
+      await progress.save();
+    }
 
     // Get achievements with populated details
     await progress.populate([

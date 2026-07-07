@@ -246,15 +246,29 @@ async function updateUserStats(userId) {
       progress = new UserProgress({ user: user._id });
     }
 
-    // Update streaks
-    progress.streaks = {
-      current: currentStreak,
-      longest: Math.max(longestStreak, progress.streaks?.longest || 0),
-      lastLoginDate: lastLoginDate,
-    };
+    // Update streaks only if they changed
+    if (progress.streaks.current !== currentStreak) {
+      progress.streaks.current = currentStreak;
+    }
+    const newLongestStreak = Math.max(
+      longestStreak,
+      progress.streaks?.longest || 0
+    );
+    if (progress.streaks.longest !== newLongestStreak) {
+      progress.streaks.longest = newLongestStreak;
+    }
+    if (
+      progress.streaks.lastLoginDate?.getTime() !== lastLoginDate?.getTime()
+    ) {
+      progress.streaks.lastLoginDate = lastLoginDate;
+    }
 
-    // Update stats
-    Object.assign(progress.stats, stats);
+    // Update stats only if they changed
+    for (const [key, value] of Object.entries(stats)) {
+      if (progress.stats[key] !== value) {
+        progress.stats[key] = value;
+      }
+    }
 
     // Check achievements (which now handles points calculation)
     await progress.checkAchievements();
