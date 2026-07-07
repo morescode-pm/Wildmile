@@ -149,19 +149,32 @@ function MigrationCard({ migration }) {
 }
 
 export function DatabaseMigrations() {
+  const migrations = MIGRATIONS.filter((m) => m.method === "GET");
+  const maintenance = MIGRATIONS.filter((m) => m.method === "POST");
+
   return (
     <Stack gap="md">
       <Group gap="sm">
         <IconDatabase size={24} />
-        <Title order={3}>Database Migrations</Title>
+        <Title order={3}>Database Operations</Title>
       </Group>
       <Text size="sm" c="dimmed">
-        One-time database operations that update schema or backfill data. Each
-        migration is safe to re-run — it will only modify documents that haven't
-        been updated yet.
+        Manage system data through migrations and maintenance tasks.
       </Text>
-      <Divider />
-      {MIGRATIONS.map((migration) => (
+
+      <Divider label="Maintenance & Synchronization" labelPosition="left" />
+      <Text size="xs" c="dimmed">
+        Repeatable tasks to synchronize data and update calculated statistics. Safe to run anytime.
+      </Text>
+      {maintenance.map((migration) => (
+        <MigrationCard key={migration.id} migration={migration} />
+      ))}
+
+      <Divider label="Schema Migrations & Backfills" labelPosition="left" mt="lg" />
+      <Text size="xs" c="dimmed">
+        One-time operations to update the database schema or backfill missing fields.
+      </Text>
+      {migrations.map((migration) => (
         <MigrationCard key={migration.id} migration={migration} />
       ))}
     </Stack>
