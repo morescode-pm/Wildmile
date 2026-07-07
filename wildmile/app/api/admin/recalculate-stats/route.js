@@ -14,7 +14,15 @@ export async function POST(request) {
   }
 
   try {
-    const { userId } = await request.json();
+    // Safely parse JSON body, handle empty bodies for global recalculation
+    let userId;
+    try {
+      const body = await request.json();
+      userId = body?.userId;
+    } catch (e) {
+      // Body is empty or not JSON, which is fine for global recalculation
+      userId = null;
+    }
 
     if (userId) {
       // Recalculate for a specific user
