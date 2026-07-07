@@ -6,7 +6,7 @@ import UserProgress from "models/users/UserProgress";
 import Species from "models/Species";
 import CameratrapMedia from "models/cameratrap/Media";
 import mongoose from "mongoose";
-// import { updateUserStats } from "lib/db/updateUserStats";
+import { updateUserStats } from "lib/db/updateUserStats";
 
 // Update single user
 export async function GET(request) {
@@ -20,9 +20,8 @@ export async function GET(request) {
   }
 
   try {
-    // Update user stats
-    // await updateUserStats(userId);
-    // console.log(progress);
+    // Update user stats - this ensures historical data is re-synced
+    await updateUserStats(userId);
 
     // Get user info
     // const user = await User.findById(userId, "profile roles");
@@ -80,26 +79,11 @@ export async function GET(request) {
         criteria: achievement.achievement.criteria,
       }));
 
-    // Get all observations by the user
-    const observations = await Observation.find({ creator: userId });
-
-    // Calculate total images reviewed (unique media IDs)
-    const uniqueMediaIds = new Set(observations.map((obs) => obs.mediaId));
-    const totalImagesReviewed = uniqueMediaIds.size;
-
-    // Calculate total animals observed
-    const animalObservations = observations.filter(
-      (obs) => obs.observationType === "animal",
-    );
-    const totalAnimalsObserved = animalObservations.reduce(
-      (sum, obs) => sum + (obs.count || 1),
-      0,
-    );
-
-    // Calculate total blanks logged
-    const totalBlanksLogged = observations.filter(
-      (obs) => obs.observationType === "blank",
-    ).length;
+    // Get all animal observations by the user for top species calculation
+    const animalObservations = await Observation.find({
+      creator: userId,
+      observationType: "animal",
+    });
 
     // Get top species and fetch their preferred common names
     const speciesCounts = animalObservations.reduce((acc, obs) => {
@@ -274,9 +258,6 @@ export async function GET(request) {
       },
       stats: {
         ...progress.stats,
-        totalImagesReviewed,
-        totalAnimalsObserved,
-        totalBlanksLogged,
         uniqueSpeciesCount: enrichedTopSpecies.length,
       },
       streaks: progress.streaks,
@@ -285,14 +266,10 @@ export async function GET(request) {
       level: progress.level,
       domainRanks,
       topSpecies: enrichedTopSpecies,
-      uniqueSpeciesCount: [
-        ...new Set(
-          animalObservations.map((o) => o.scientificName).filter(Boolean),
-        ),
-      ].length,
-      totalImagesReviewed,
-      totalAnimalsObserved,
-      totalBlanksLogged,
+      uniqueSpeciesCount: progress.stats.uniqueSpecies || 0,
+      totalImagesReviewed: progress.stats.imagesReviewed || 0,
+      totalAnimalsObserved: progress.stats.animalsObserved || 0,
+      totalBlanksLogged: progress.stats.blanksLogged || 0,
       volunteerHours,
       recentHistory: enrichedRecentHistory,
     };
