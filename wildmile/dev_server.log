@@ -1,0 +1,37 @@
+▲ Next.js 16.2.10 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 531ms
+
+○ Compiling /admin/migrations ...
+⨯ ./app/admin/layout.js:2:1
+Module not found: Can't resolve '@mantine/core'
+  1 | "use client";
+> 2 | import { Grid, GridCol } from "@mantine/core";
+    | ^
+  3 | import { AdminSidebar } from "components/admin/AdminSidebar";
+  4 |
+  5 | export default function AdminLayout({ children }) {
+
+https://nextjs.org/docs/messages/module-not-found
+⨯ ./app/admin/layout.js:2:1
+Module not found: Can't resolve '@mantine/core'
+  1 | "use client";
+> 2 | import { Grid, GridCol } from "@mantine/core";
+    | ^
+  3 | import { AdminSidebar } from "components/admin/AdminSidebar";
+  4 |
+  5 | export default function AdminLayout({ children }) {
+
+https://nextjs.org/docs/messages/module-not-found
+⨯ ./app/admin/layout.js:2:1
+Module not found: Can't resolve '@mantine/core'
+  1 | "use client";
+> 2 | import { Grid, GridCol } from "@mantine/core";
+    | ^
+  3 | import { AdminSidebar } from "components/admin/AdminSidebar";
+  4 |
+  5 | export default function AdminLayout({ children }) {
+
+https://nextjs.org/docs/messages/module-not-found
+ HEAD /admin/migrations 500 in 15.6s (next.js: 15.4s, application-code: 147ms)
