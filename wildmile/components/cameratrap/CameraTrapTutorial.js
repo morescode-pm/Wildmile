@@ -1,5 +1,5 @@
 import React from 'react';
-import { Joyride, STATUS } from 'react-joyride';
+import { Joyride, STATUS, ACTIONS } from 'react-joyride';
 import { useTutorial } from './ContextCamera';
 
 const steps = [
@@ -52,7 +52,10 @@ export const CameraTrapTutorial = () => {
   const handleJoyrideCallback = (data) => {
     const { status, type, index, action } = data;
 
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    if (
+      [STATUS.FINISHED, STATUS.SKIPPED].includes(status) ||
+      [ACTIONS.CLOSE, ACTIONS.SKIP].includes(action)
+    ) {
       setRun(0);
     }
   };
@@ -68,6 +71,7 @@ export const CameraTrapTutorial = () => {
       scrollOffset={100}
       disableScrolling={false}
       callback={handleJoyrideCallback}
+      disableOverlayClose={false}
       styles={{
         options: {
           primaryColor: '#40c057', // Green
