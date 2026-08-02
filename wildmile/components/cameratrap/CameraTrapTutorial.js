@@ -50,11 +50,12 @@ export const CameraTrapTutorial = () => {
   const [run, setRun] = useTutorial();
 
   const handleJoyrideCallback = (data) => {
-    const { status, type, index, action } = data;
+    const { status, type, index, action, origin } = data;
 
     if (
       [STATUS.FINISHED, STATUS.SKIPPED].includes(status) ||
-      [ACTIONS.CLOSE, ACTIONS.SKIP].includes(action)
+      [ACTIONS.CLOSE, ACTIONS.SKIP].includes(action) ||
+      ['overlay', 'keyboard', 'button_close', 'button_skip'].includes(origin)
     ) {
       setRun(0);
     }
