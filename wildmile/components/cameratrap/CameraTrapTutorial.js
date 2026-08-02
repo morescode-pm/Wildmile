@@ -87,9 +87,16 @@ export const CameraTrapTutorial = () => {
       scrollOffset={100}
       disableScrolling={false}
       callback={handleJoyrideCallback}
+      onEvent={handleJoyrideCallback}
       disableOverlayClose={false}
       disableBeacon={true}
       skipBeacon={true}
+      options={{
+        overlayClickAction: 'close',
+        dismissKeyAction: 'close',
+        closeButtonAction: 'skip',
+        skipBeacon: true,
+      }}
       styles={{
         options: {
           primaryColor: '#40c057', // Green
