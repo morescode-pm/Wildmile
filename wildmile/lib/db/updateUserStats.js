@@ -5,8 +5,13 @@ import Observation from "models/cameratrap/Observation";
 import TrashLog from "models/Trash";
 import IndividualTrashItem from "models/IndividualTrashItem";
 import TrashItem from "models/TrashItem";
+import Achievement from "models/users/Achievement";
 
-// Function to update a single user's stats
+/**
+ * Updates a user's statistics based on their observations and trash logs.
+ * @param {string} userId - The ID of the user to update.
+ * @returns {Promise<Object>} - The updated UserProgress document.
+ */
 async function updateUserStats(userId) {
   await dbConnect();
 
@@ -16,34 +21,82 @@ async function updateUserStats(userId) {
       throw new Error(`User not found with ID: ${userId}`);
     }
 
-    // Get user's observations sorted by date
-    const observations = await Observation.find({
-      creator: user._id,
-    }).sort({ createdAt: 1 });
+    const [observations, trashLogResult, trashItemsAggregation] =
+      await Promise.all([
+        Observation.find({ creator: user._id }).sort({ createdAt: 1 }).lean(),
+        TrashLog.aggregate([
+          { $match: { creator: user._id, deleted: false } },
+          {
+            $group: {
+              _id: null,
+              cleanupEvents: { $sum: 1 },
+              weightCollected: { $sum: "$weight" },
+              totalVolunteers: { $sum: "$numOfParticipants" },
+              sitesMonitored: { $addToSet: "$site" },
+              totalHours: {
+                $sum: {
+                  $divide: [{ $subtract: ["$timeEnd", "$timeStart"] }, 3600000],
+                },
+              },
+            },
+          },
+        ]),
+        IndividualTrashItem.aggregate([
+          { $match: { creator: user._id } },
+          {
+            $lookup: {
+              from: "trashitems",
+              localField: "itemId",
+              foreignField: "_id",
+              as: "itemDetails",
+            },
+          },
+          { $unwind: "$itemDetails" },
+          {
+            $group: {
+              _id: null,
+              itemsLogged: { $sum: "$quantity" },
+              uniqueMaterials: { $addToSet: "$itemDetails.material" },
+              uniqueCategories: { $addToSet: "$itemDetails.catagory" },
+              locationsMonitored: {
+                $addToSet: {
+                  $cond: [
+                    { $ifNull: ["$location", false] },
+                    {
+                      $concat: [
+                        "$location.coordinates.0",
+                        ",",
+                        "$location.coordinates.1",
+                      ],
+                    },
+                    null,
+                  ],
+                },
+              },
+            },
+          },
+        ]),
+      ]);
 
-    // Calculate streaks
+    const [trashLogStats] = trashLogResult;
+
     let currentStreak = 0;
     let longestStreak = 0;
     let lastLoginDate = null;
 
     if (observations.length > 0) {
-      // Convert observation dates to local date strings (without time)
       const observationDates = observations.map((obs) =>
         new Date(obs.createdAt).toLocaleDateString()
       );
-
-      // Get unique dates
       const uniqueDates = [...new Set(observationDates)];
       uniqueDates.sort();
 
-      // Calculate streaks
       currentStreak = 1;
       let tempStreak = 1;
 
       for (let i = 1; i < uniqueDates.length; i++) {
         const prevDate = new Date(uniqueDates[i - 1]);
         const currDate = new Date(uniqueDates[i]);
-
         const dayDiff = Math.floor(
           (currDate - prevDate) / (1000 * 60 * 60 * 24)
         );
@@ -58,7 +111,6 @@ async function updateUserStats(userId) {
         }
       }
 
-      // Check if current streak is still active
       const lastDate = new Date(uniqueDates[uniqueDates.length - 1]);
       const today = new Date();
       const daysSinceLastObservation = Math.floor(
@@ -72,9 +124,7 @@ async function updateUserStats(userId) {
       lastLoginDate = new Date(uniqueDates[uniqueDates.length - 1]);
     }
 
-    // Initialize stats object
     const stats = {
-      // Camera Trap stats
       imagesReviewed: 0,
       animalsObserved: 0,
       uniqueSpecies: new Set(),
@@ -82,8 +132,6 @@ async function updateUserStats(userId) {
       deploymentsReviewed: new Set(),
       speciesConsensus: 0,
       expertVerified: 0,
-
-      // Trash stats
       itemsLogged: 0,
       uniqueMaterials: new Set(),
       uniqueCategories: new Set(),
@@ -97,11 +145,9 @@ async function updateUserStats(userId) {
       sitesMonitored: new Set(),
     };
 
-    // Calculate total images reviewed (unique media IDs)
     const uniqueMediaIds = new Set(observations.map((obs) => obs.mediaId));
     stats.imagesReviewed = uniqueMediaIds.size;
 
-    // Calculate total animals observed
     const animalObservations = observations.filter(
       (obs) => obs.observationType === "animal"
     );
@@ -110,24 +156,20 @@ async function updateUserStats(userId) {
       0
     );
 
-    // Calculate total blanks logged
     stats.blanksLogged = observations.filter(
       (obs) => obs.observationType === "blank"
     ).length;
 
-    // Calculate unique species
     stats.uniqueSpecies = new Set(
       animalObservations
         .map((obs) => obs.scientificName)
         .filter((name) => name && name.trim() !== "")
     );
 
-    // Calculate deployments reviewed
     stats.deploymentsReviewed = new Set(
       observations.map((obs) => obs.deployment).filter(Boolean)
     );
 
-    // Calculate consensus and expert verified
     stats.speciesConsensus = observations.filter(
       (obs) => obs.consensusReached
     ).length;
@@ -135,69 +177,6 @@ async function updateUserStats(userId) {
     stats.expertVerified = observations.filter(
       (obs) => obs.expertVerified
     ).length;
-
-    // Trash Log Aggregation
-    const [trashLogStats] = await TrashLog.aggregate([
-      { $match: { creator: user._id, deleted: false } },
-      {
-        $group: {
-          _id: null,
-          cleanupEvents: { $sum: 1 },
-          weightCollected: { $sum: "$weight" },
-          totalVolunteers: { $sum: "$numOfParticipants" },
-          sitesMonitored: { $addToSet: "$site" },
-          totalHours: {
-            $sum: {
-              $divide: [
-                { $subtract: ["$timeEnd", "$timeStart"] },
-                3600000, // Convert ms to hours
-              ],
-            },
-          },
-        },
-      },
-    ]);
-
-    // Individual Trash Items Aggregation
-    const trashItemsAggregation = await IndividualTrashItem.aggregate([
-      {
-        $match: { creator: user._id },
-      },
-      {
-        $lookup: {
-          from: "trashitems",
-          localField: "itemId",
-          foreignField: "_id",
-          as: "itemDetails",
-        },
-      },
-      {
-        $unwind: "$itemDetails",
-      },
-      {
-        $group: {
-          _id: null,
-          itemsLogged: { $sum: "$quantity" },
-          uniqueMaterials: { $addToSet: "$itemDetails.material" },
-          uniqueCategories: { $addToSet: "$itemDetails.catagory" },
-          locationsMonitored: {
-            $addToSet: {
-              $cond: [
-                { $ifNull: ["$location", false] },
-                {
-                  $concat: [
-                    "$location.coordinates.0",
-                    ",",
-                    "$location.coordinates.1",
-                  ],
-                },
-                null,
-              ],
-            },
-          },
-        },
-      },
-    ]);
 
     // Update stats from trash log aggregation
     if (trashLogStats) {
@@ -257,89 +236,21 @@ async function updateUserStats(userId) {
     Object.assign(progress.stats, stats);
 
     // Check achievements (which now handles points calculation)
-    await progress.checkAchievements();
+    const newlyEarned = await progress.checkAchievements();
 
     // Save progress
     await progress.save();
 
-    // Return populated data
-    await progress.populate([
-      {
-        path: "achievements.achievement",
-        model: "Achievement",
-        select: "name description icon badge level type domain criteria points",
-      },
-      {
-        path: "domainRanks.$*.currentRank",
-        model: "Achievement",
-        select: "name description icon badge level type domain criteria points",
-      },
-    ]);
-
-    // Transform domain ranks to include populated data
-    const formattedDomainRanks = {};
-    progress.domainRanks.forEach((value, domain) => {
-      formattedDomainRanks[domain] = {
-        points: value.points || 0,
-        currentRank: value.currentRank
-          ? {
-              id: value.currentRank._id,
-              name: value.currentRank.name,
-              description: value.currentRank.description,
-              icon: value.currentRank.icon,
-              badge: value.currentRank.badge,
-              level: value.currentRank.level,
-              type: value.currentRank.type,
-              domain: value.currentRank.domain,
-              points: value.currentRank.points,
-            }
-          : null,
-      };
-    });
-
-    // Get highest rank achievement for avatar
-    const highestRank = Object.values(formattedDomainRanks)
-      .map((domain) => domain.currentRank)
-      .filter(Boolean)
-      .sort((a, b) => b.level - a.level)[0];
-
-    return {
-      user: {
-        ...user.toObject(),
-        avatar: highestRank?.badge || "💩",
-      },
-      stats: progress.stats,
-      streaks: progress.streaks,
-      achievements: progress.achievements.map((a) => ({
-        id: a.achievement._id,
-        name: a.achievement.name,
-        description: a.achievement.description,
-        icon: a.achievement.icon,
-        badge: a.achievement.badge,
-        level: a.achievement.level,
-        type: a.achievement.type,
-        domain: a.achievement.domain,
-        points: a.achievement.points,
-        progress: a.progress,
-        earnedAt: a.earnedAt,
-        criteria: a.achievement.criteria,
-      })),
-      totalPoints: progress.totalPoints,
-      level: progress.level,
-      domainRanks: formattedDomainRanks,
-      lastActive:
-        progress.stats.lastActive ||
-        (progress.streaks.lastLoginDate
-          ? new Date(progress.streaks.lastLoginDate)
-          : null),
-    };
+    return { progress, newlyEarned };
   } catch (error) {
     console.error(`Error updating stats for user ${userId}:`, error);
     throw error;
   }
 }
 
-// Function to update all users' stats
+/**
+ * Updates all users' stats.
+ */
 async function updateAllUserStats() {
   try {
     const users = await User.find({});
@@ -363,26 +274,6 @@ async function updateAllUserStats() {
   } catch (error) {
     console.error("Error updating all user stats:", error);
     throw error;
-  }
-}
-
-// Allow running directly from command line
-if (require.main === module) {
-  const userId = process.argv[2];
-  if (userId) {
-    updateUserStats(userId)
-      .then(() => process.exit(0))
-      .catch((error) => {
-        console.error(error);
-        process.exit(1);
-      });
-  } else {
-    updateAllUserStats()
-      .then(() => process.exit(0))
-      .catch((error) => {
-        console.error(error);
-        process.exit(1);
-      });
   }
 }
 

@@ -6,7 +6,7 @@ import UserProgress from "models/users/UserProgress";
 import Species from "models/Species";
 import CameratrapMedia from "models/cameratrap/Media";
 import mongoose from "mongoose";
-// import { updateUserStats } from "lib/db/updateUserStats";
+import { updateUserStats } from "lib/db/updateUserStats";
 
 // Update single user
 export async function GET(request) {
@@ -21,8 +21,7 @@ export async function GET(request) {
 
   try {
     // Update user stats
-    // await updateUserStats(userId);
-    // console.log(progress);
+    await updateUserStats(userId);
 
     // Get user info
     // const user = await User.findById(userId, "profile roles");
